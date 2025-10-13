@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminSubscriptionController;
 use App\Http\Controllers\Admin\AdminSupportTicketController;
 use App\Http\Controllers\Admin\AdminTransactionController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\LicenseController;
 use Illuminate\Support\Facades\Route;
 
 // Admin routes
@@ -72,6 +73,13 @@ Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->
 
      // SPM Management
      Route::resource('spm', AdminSpmController::class)->except(['create', 'store']);
+
+     // License Management
+     Route::resource('licenses', LicenseController::class)->except(['create', 'store', 'edit', 'update']);
+     Route::post('licenses/{license}/revoke', [LicenseController::class, 'revoke'])->name('licenses.revoke');
+     Route::post('licenses/{license}/extend', [LicenseController::class, 'extend'])->name('licenses.extend');
+     Route::post('licenses/{license}/change-limit', [LicenseController::class, 'changeLimit'])->name('licenses.change-limit');
+     Route::post('licenses/generate-manual', [LicenseController::class, 'generateManual'])->name('licenses.generate-manual');
 
     // Settings Management
     Route::prefix('settings')->name('settings.')->group(function () {

@@ -15,6 +15,43 @@
                         @csrf
                         @method('PUT')
 
+                        <!-- Product Media Section -->
+                        <div class="card border-dark mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">🖼️ Product Media</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="thumbnail" class="form-label">Thumbnail (400×400)</label>
+                                            <input type="file" name="thumbnail" id="thumbnail" class="form-control" accept="image/*">
+                                            @if($product->thumbnail)
+                                                <small class="text-muted">Current: <a href="{{ asset('storage/' . $product->thumbnail) }}" target="_blank">View</a></small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="screenshots" class="form-label">Screenshots / Gallery</label>
+                                            <input type="file" name="screenshots[]" id="screenshots" class="form-control" accept="image/*" multiple>
+                                            @if($product->screenshots && count($product->screenshots) > 0)
+                                                <small class="text-muted">Current: {{ count($product->screenshots) }} images</small>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="main_file" class="form-label">Main File (ZIP)</label>
+                                    <input type="file" name="main_file" id="main_file" class="form-control" accept=".zip,.rar">
+                                    @if($product->file_path)
+                                        <small class="text-muted">Current: {{ number_format($product->file_size / 1024 / 1024, 2) }} MB</small>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Product Basics Section -->
                         <div class="card border-primary mb-4">
                             <div class="card-header bg-primary text-white">

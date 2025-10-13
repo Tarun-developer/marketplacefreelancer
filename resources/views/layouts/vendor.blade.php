@@ -52,13 +52,17 @@
         <span>Payouts</span>
     </a>
 
-    <div class="menu-section-title mt-4">Account</div>
-    <a href="{{ route('profile.edit') }}" class="menu-item">
-        <i class="bi bi-shop"></i>
-        <span>Store Settings</span>
-    </a>
-    <a href="#" class="menu-item">
-        <i class="bi bi-gear"></i>
-        <span>Settings</span>
-    </a>
+     <div class="menu-section-title mt-4">Account</div>
+     <a href="{{ route('profile.edit') }}" class="menu-item">
+         <i class="bi bi-shop"></i>
+         <span>Store Settings</span>
+     </a>
+     <a href="{{ route('vendor.documentation') }}" class="menu-item">
+         <i class="bi bi-book"></i>
+         <span>License Docs</span>
+     </a>
+     <a href="#" class="menu-item">
+         <i class="bi bi-gear"></i>
+         <span>Settings</span>
+     </a>
 @endsection

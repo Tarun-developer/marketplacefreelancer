@@ -123,6 +123,11 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(\App\Modules\Products\Models\Product::class);
     }
 
+    public function licenses()
+    {
+        return $this->hasMany(License::class, 'buyer_id');
+    }
+
     public function reviews()
     {
         return $this->hasMany(\App\Modules\Reviews\Models\Review::class);

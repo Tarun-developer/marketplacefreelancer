@@ -15,6 +15,11 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
      Route::resource('products', VendorProductController::class);
      Route::post('products/{product}/create-version', [VendorProductController::class, 'createVersion'])->name('products.create-version');
 
+     // Documentation
+     Route::get('documentation', function () {
+         return view('vendor.documentation');
+     })->name('documentation');
+
     // Orders Management
     Route::resource('orders', VendorOrderController::class)->only(['index', 'show']);
 

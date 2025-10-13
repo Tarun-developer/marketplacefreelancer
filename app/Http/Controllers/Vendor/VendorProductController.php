@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
+use App\Models\License;
 use App\Modules\Products\Models\Product;
 use App\Modules\Products\Models\ProductVersion;
 use Illuminate\Http\Request;
@@ -37,6 +38,10 @@ class VendorProductController extends Controller
             'demo_url' => 'nullable|url',
             'documentation_url' => 'nullable|url',
             'video_preview' => 'nullable|url',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'screenshots' => 'nullable|array',
+            'screenshots.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'main_file' => 'nullable|file|mimes:zip,rar|max:102400',
             'standard_price' => 'nullable|numeric|min:0',
             'professional_price' => 'nullable|numeric|min:0',
             'ultimate_price' => 'nullable|numeric|min:0',
@@ -64,9 +69,28 @@ class VendorProductController extends Controller
             'status' => 'required|in:active,inactive',
         ]);
 
-        $productData = array_merge($validated, [
+        // Handle file uploads
+        $fileData = [];
+
+        if ($request->hasFile('thumbnail')) {
+            $fileData['thumbnail'] = $request->file('thumbnail')->store('product-thumbnails', 'public');
+        }
+
+        if ($request->hasFile('screenshots')) {
+            $screenshots = [];
+            foreach ($request->file('screenshots') as $screenshot) {
+                $screenshots[] = $screenshot->store('product-screenshots', 'public');
+            }
+            $fileData['screenshots'] = $screenshots;
+        }
+
+        if ($request->hasFile('main_file')) {
+            $fileData['file_path'] = $request->file('main_file')->store('product-files', 'public');
+            $fileData['file_size'] = $request->file('main_file')->getSize();
+        }
+
+        $productData = array_merge($validated, $fileData, [
             'slug' => \Str::slug($validated['name']),
-            'file_path' => 'placeholder',
             'price' => $validated['standard_price'] ?? 0,
             'currency' => 'USD',
             'license_type' => 'single',
@@ -124,6 +148,10 @@ class VendorProductController extends Controller
             'demo_url' => 'nullable|url',
             'documentation_url' => 'nullable|url',
             'video_preview' => 'nullable|url',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'screenshots' => 'nullable|array',
+            'screenshots.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'main_file' => 'nullable|file|mimes:zip,rar|max:102400',
             'standard_price' => 'nullable|numeric|min:0',
             'professional_price' => 'nullable|numeric|min:0',
             'ultimate_price' => 'nullable|numeric|min:0',
@@ -151,7 +179,41 @@ class VendorProductController extends Controller
             'status' => 'required|in:active,inactive,suspended',
         ]);
 
-        $productData = array_merge($validated, [
+        // Handle file uploads
+        $fileData = [];
+
+        if ($request->hasFile('thumbnail')) {
+            // Delete old thumbnail if exists
+            if ($product->thumbnail) {
+                Storage::disk('public')->delete($product->thumbnail);
+            }
+            $fileData['thumbnail'] = $request->file('thumbnail')->store('product-thumbnails', 'public');
+        }
+
+        if ($request->hasFile('screenshots')) {
+            // Delete old screenshots if exists
+            if ($product->screenshots) {
+                foreach ($product->screenshots as $screenshot) {
+                    Storage::disk('public')->delete($screenshot);
+                }
+            }
+            $screenshots = [];
+            foreach ($request->file('screenshots') as $screenshot) {
+                $screenshots[] = $screenshot->store('product-screenshots', 'public');
+            }
+            $fileData['screenshots'] = $screenshots;
+        }
+
+        if ($request->hasFile('main_file')) {
+            // Delete old main file if exists
+            if ($product->file_path) {
+                Storage::disk('public')->delete($product->file_path);
+            }
+            $fileData['file_path'] = $request->file('main_file')->store('product-files', 'public');
+            $fileData['file_size'] = $request->file('main_file')->getSize();
+        }
+
+        $productData = array_merge($validated, $fileData, [
             'slug' => \Str::slug($validated['name']),
             'price' => $validated['standard_price'] ?? $product->price,
         ]);

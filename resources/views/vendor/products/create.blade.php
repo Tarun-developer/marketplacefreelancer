@@ -15,6 +15,37 @@
                     <form action="{{ route('vendor.products.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
+                        <!-- Product Media Section -->
+                        <div class="card border-dark mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">🖼️ Product Media</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="thumbnail" class="form-label">Thumbnail (400×400)</label>
+                                            <input type="file" name="thumbnail" id="thumbnail" class="form-control" accept="image/*">
+                                            <small class="text-muted">Main cover image for your product</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="screenshots" class="form-label">Screenshots / Gallery</label>
+                                            <input type="file" name="screenshots[]" id="screenshots" class="form-control" accept="image/*" multiple>
+                                            <small class="text-muted">Multiple images with drag-and-drop sorting</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="main_file" class="form-label">Main File (ZIP)</label>
+                                    <input type="file" name="main_file" id="main_file" class="form-control" accept=".zip,.rar">
+                                    <small class="text-muted">Product archive (scripts, code, template, etc.)</small>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Product Basics Section -->
                         <div class="card border-primary mb-4">
                             <div class="card-header bg-primary text-white">

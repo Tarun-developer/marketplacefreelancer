@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\SubscriptionApiController;
 use App\Http\Controllers\Api\SupportApiController;
 use App\Http\Controllers\Api\UserApiController;
 use App\Http\Controllers\Api\WalletApiController;
+use App\Http\Controllers\LicenseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -66,9 +67,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Support
     Route::apiResource('support-tickets', SupportApiController::class);
 
-    // Subscriptions
-    Route::get('subscription-plans', [SubscriptionApiController::class, 'plans']);
-    Route::post('subscribe', [SubscriptionApiController::class, 'subscribe']);
-    Route::get('my-subscription', [SubscriptionApiController::class, 'mySubscription']);
-    Route::post('cancel-subscription', [SubscriptionApiController::class, 'cancel']);
-});
+     // Subscriptions
+     Route::get('subscription-plans', [SubscriptionApiController::class, 'plans']);
+     Route::post('subscribe', [SubscriptionApiController::class, 'subscribe']);
+     Route::get('my-subscription', [SubscriptionApiController::class, 'mySubscription']);
+     Route::post('cancel-subscription', [SubscriptionApiController::class, 'cancel']);
+
+     // License Validation (public endpoint)
+     Route::post('validate-license', [LicenseController::class, 'validateLicense']);
+ });

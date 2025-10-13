@@ -138,6 +138,11 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(\App\Models\SpmProject::class, 'project_id');
     }
 
+    public function licenses(): HasMany
+    {
+        return $this->hasMany(\App\Models\License::class);
+    }
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'product_tags');
