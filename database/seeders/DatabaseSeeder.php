@@ -77,9 +77,12 @@ class DatabaseSeeder extends Seeder
                  'password' => bcrypt('password'),
                  'role' => 'admin',
                  'is_active' => true,
+                 'email_verified_at' => now(),
              ]
          );
-         $admin->assignRole('super_admin');
+         if (!$admin->hasRole('super_admin')) {
+             $admin->assignRole('super_admin');
+         }
 
          $admin2 = \App\Models\User::firstOrCreate(
              ['email' => 'admin2@marketfusion.com'],

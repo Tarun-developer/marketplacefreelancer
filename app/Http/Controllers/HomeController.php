@@ -51,7 +51,7 @@ class HomeController extends Controller
             'total_users' => User::count(),
             'total_products' => Product::where('is_approved', true)->count(),
             'total_services' => Service::where('status', 'active')->count(),
-            'total_freelancers' => User::role('Freelancer')->count(),
+            'total_freelancers' => User::role('freelancer')->count(),
         ];
 
         return view('welcome', compact(

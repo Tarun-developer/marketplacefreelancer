@@ -11,6 +11,9 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        // Reset cached roles and permissions
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
         // Create permissions
         $permissions = [
             'view dashboard',
@@ -23,6 +26,20 @@ class RolePermissionSeeder extends Seeder
             'manage disputes',
             'manage support',
             'view reports',
+            // Additional permissions
+            'view users', 'create users', 'edit users', 'delete users',
+            'view products', 'create products', 'edit products', 'delete products', 'approve products',
+            'view services', 'create services', 'edit services', 'delete services',
+            'view jobs', 'create jobs', 'edit jobs', 'delete jobs', 'bid on jobs',
+            'view orders', 'create orders', 'edit orders', 'delete orders',
+            'view transactions', 'manage wallet', 'withdraw funds', 'add funds',
+            'create tickets', 'view tickets', 'manage tickets',
+            'create disputes', 'view disputes',
+            'create reviews', 'view reviews', 'manage reviews',
+            'access admin panel', 'manage settings',
+            // SPM permissions
+            'access spm', 'create projects', 'manage projects', 'create tasks', 'manage tasks',
+            'log time', 'approve time', 'create milestones', 'manage extra work',
         ];
 
         foreach ($permissions as $permission) {
