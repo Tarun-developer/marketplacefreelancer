@@ -67,6 +67,66 @@ class User extends Authenticatable implements HasMedia
         return $this->hasOne(Kyc::class);
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(\App\Modules\Subscriptions\Models\Subscription::class);
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(\App\Modules\Wallet\Models\Wallet::class);
+    }
+
+    public function walletTransactions()
+    {
+        return $this->hasMany(\App\Modules\Wallet\Models\WalletTransaction::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(\App\Modules\Orders\Models\Order::class);
+    }
+
+    public function services()
+    {
+        return $this->hasMany(\App\Modules\Services\Models\Service::class);
+    }
+
+    public function jobs()
+    {
+        return $this->hasMany(\App\Modules\Jobs\Models\Job::class);
+    }
+
+    public function bids()
+    {
+        return $this->hasMany(\App\Modules\Jobs\Models\Bid::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(\App\Modules\Products\Models\Product::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(\App\Modules\Reviews\Models\Review::class);
+    }
+
+    public function disputes()
+    {
+        return $this->hasMany(\App\Modules\Disputes\Models\Dispute::class);
+    }
+
+    public function supportTickets()
+    {
+        return $this->hasMany(\App\Modules\Support\Models\SupportTicket::class);
+    }
+
+    public function conversations()
+    {
+        return $this->belongsToMany(\App\Modules\Chat\Models\Conversation::class, 'conversation_user');
+    }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('avatar')
