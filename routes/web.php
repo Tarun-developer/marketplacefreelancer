@@ -1,12 +1,20 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PublicProductController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+// Public Product Routes
+Route::prefix('products')->name('products.')->group(function () {
+    Route::get('/', [PublicProductController::class, 'index'])->name('index');
+    Route::get('/category/{category}', [PublicProductController::class, 'category'])->name('category');
+    Route::get('/{product:slug}', [PublicProductController::class, 'show'])->name('show');
+});
 
 // Authentication routes (using Laravel Breeze or similar)
 require __DIR__.'/auth.php';
