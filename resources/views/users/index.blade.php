@@ -7,6 +7,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100">
+    @include('partials.header')
+
     <div class="min-h-screen flex">
         <!-- Sidebar -->
         <div class="w-64 bg-gray-800 text-white">
@@ -23,12 +25,11 @@
 
         <!-- Main Content -->
         <div class="flex-1">
-            <header class="bg-white shadow p-4">
-                <div class="flex justify-between items-center">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
                     <h1 class="text-2xl font-bold">Users Management</h1>
                     <a href="{{ route('users.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Add User</a>
                 </div>
-            </header>
             <main class="p-6">
                 @if(session('success'))
                     <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -76,7 +77,7 @@
                 <div class="mt-4">
                     {{ $users->links() }}
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 </body>

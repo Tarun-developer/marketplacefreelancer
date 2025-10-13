@@ -7,6 +7,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-100">
+    @include('partials.header')
+
     <div class="min-h-screen flex">
         <!-- Sidebar -->
         <div class="w-64 bg-gray-800 text-white">
@@ -14,19 +16,15 @@
                 <h2 class="text-xl font-bold">Admin Panel</h2>
             </div>
             <nav class="mt-4">
-                <a href="#" class="block py-2 px-4 hover:bg-gray-700">Dashboard</a>
-                <a href="#" class="block py-2 px-4 hover:bg-gray-700">Users</a>
+                <a href="{{ route('dashboard') }}" class="block py-2 px-4 hover:bg-gray-700">Dashboard</a>
+                <a href="{{ route('users.index') }}" class="block py-2 px-4 hover:bg-gray-700">Users</a>
                 <a href="#" class="block py-2 px-4 hover:bg-gray-700">Products</a>
                 <a href="#" class="block py-2 px-4 hover:bg-gray-700">Orders</a>
-                <a href="#" class="block py-2 px-4 hover:bg-gray-700">Reports</a>
             </nav>
         </div>
 
         <!-- Main Content -->
         <div class="flex-1">
-            <header class="bg-white shadow p-4">
-                <h1 class="text-2xl font-bold">Admin Dashboard</h1>
-            </header>
             <main class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
                     <div class="bg-white p-6 rounded-lg shadow">
