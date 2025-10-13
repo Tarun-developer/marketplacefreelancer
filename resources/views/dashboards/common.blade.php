@@ -318,9 +318,6 @@ document.getElementById('paymentMethod').addEventListener('change', function() {
     document.getElementById('paypalFields').style.display = method === 'paypal' ? 'block' : 'none';
     document.getElementById('freeFields').style.display = method === 'free' ? 'block' : 'none';
 });
-        }
-    });
-});
 
 // Add hover effects
 document.querySelectorAll('.role-card').forEach(card => {
