@@ -205,8 +205,11 @@ class DatabaseSeeder extends Seeder
                      'type' => 'payment',
                      'description' => 'Payment for order ' . ($i + 1),
                  ]
-             );
-         }
-     }
+          );
+
+          // Seed subscription plans
+          $this->call(SubscriptionPlanSeeder::class);
+      }
+}
      }
 }
