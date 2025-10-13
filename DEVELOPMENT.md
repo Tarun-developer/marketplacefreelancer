@@ -77,10 +77,11 @@ php artisan db:seed
 #### 6. Admin Dashboard
 - **Complete Admin Panel** with sidebar navigation
 - **CRUD Operations** for users, products, categories, services, jobs, orders, disputes, transactions, support tickets, reviews, subscriptions
-- **Settings Management**: Comprehensive settings with tabs for General, Security, Notifications, Maintenance, Integrations
+- **Settings Management**: Comprehensive settings with tabs for General, Security, Notifications, Maintenance, Roles, Integrations
 - **Role-based Access**: Only admins can access admin features
 - **Theme System**: Light/dark mode toggle with CSS variables
 - **Role-Specific Layouts**: Separate layouts for admin, vendor, client, freelancer with tailored menus
+- **Settings Table**: Database-driven settings management with key-value storage
 
 #### 7. User Dashboards
 - **Vendor Dashboard**: Product management, orders, earnings

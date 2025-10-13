@@ -110,10 +110,11 @@ Location: `resources/views/`
 7. **admin/settings/index.blade.php**
    - Purpose: Comprehensive settings page
    - Features:
-     - Tabbed interface (General, Security, Notifications, Maintenance, Integrations)
+     - Tabbed interface (General, Security, Notifications, Maintenance, Roles, Integrations)
      - Form validation
      - Cache clearing tools
      - Bootstrap styling
+     - Role cost management
 
 8. **auth/onboarding.blade.php**
    - Purpose: Role selection page for first-time users
@@ -129,6 +130,20 @@ Location: `resources/views/`
      - Role cards with hover effects
      - Real-time platform statistics
      - AJAX role assignment
+
+10. **app/Models/Setting.php**
+    - Purpose: Settings model for database-driven configuration
+    - Features:
+      - Key-value storage with type casting
+      - Group-based organization
+      - Static methods for easy access
+
+11. **database/migrations/2025_10_13_110000_create_settings_table.php**
+    - Purpose: Migration for settings table
+    - Features:
+      - Flexible key-value storage
+      - Type and group columns
+      - Optimized for admin settings
 
 ---
 

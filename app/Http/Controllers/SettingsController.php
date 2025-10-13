@@ -254,6 +254,9 @@ class SettingsController extends Controller
         // Clear cache
         Cache::forget('role_settings');
 
+        // Clear config cache
+        Artisan::call('config:clear');
+
         return redirect()->route('admin.settings.index')->with('success', 'Role settings updated successfully.');
     }
 

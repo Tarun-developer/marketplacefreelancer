@@ -140,11 +140,13 @@ $user->assignRole(['freelancer', 'client']);
 **File**: `resources/views/admin/settings/index.blade.php`
 
 **Features**:
-- **Tabbed Interface**: 5 tabs - General, Security, Notifications, Maintenance, Integrations
-- **Comprehensive Options**: 20+ settings across categories
+- **Tabbed Interface**: 6 tabs - General, Security, Notifications, Maintenance, Roles, Integrations
+- **Comprehensive Options**: 25+ settings across categories
 - **Bootstrap Styling**: Cards, forms, responsive grid
 - **Interactive Elements**: AJAX cache clearing, form validation
 - **Security Features**: Password policies, 2FA, CAPTCHA settings
+- **Role Management**: Configurable role costs and approval settings
+- **Database Storage**: Persistent settings using dedicated settings table
 
 **Settings Categories**:
 - **General**: Site info, currency, commission, timezone
@@ -464,7 +466,8 @@ app/Http/Controllers/Admin/
 ├── AdminReviewController.php
 └── AdminSubscriptionController.php
 
-app/Http/Controllers/SettingsController.php (Enhanced with onboarding)
+app/Http/Controllers/SettingsController.php (Enhanced with onboarding and settings)
+app/Models/Setting.php (NEW)
 
 resources/views/
 ├── layouts/
@@ -475,16 +478,21 @@ resources/views/
 ├── admin/
 │   ├── dashboard.blade.php (Enhanced)
 │   ├── services/index.blade.php (Enhanced)
-│   ├── settings/index.blade.php (NEW)
+│   ├── settings/index.blade.php (Enhanced)
 │   └── [other admin views]
 ├── auth/
 │   └── onboarding.blade.php (NEW)
+├── dashboards/
+│   └── common.blade.php (NEW)
+├── checkout.blade.php (NEW)
 ```
 
 ### Modified Files
 ```
 app/Models/User.php (Added current_role field)
-routes/web.php (Added onboarding routes)
+routes/web.php (Added onboarding and checkout routes)
+config/settings.php (Added database integration)
+database/migrations/2025_10_13_110000_create_settings_table.php (NEW)
 ```
 
 ### Modified Files
@@ -531,9 +539,10 @@ resources/views/welcome.blade.php (Enhanced hero section)
 ✅ Responsive design for all screens
 ✅ Action confirmations for safety
 ✅ Flash messages for feedback
-✅ Comprehensive settings with 5 categories
+✅ Comprehensive settings with 6 categories
 ✅ Theme system (light/dark mode)
 ✅ Role-specific layouts for all user types
+✅ Database-driven settings management
 
 ### User Experience
 ✅ Role-based dashboards with separate layouts
@@ -690,17 +699,19 @@ This implementation provides a **complete, production-ready admin panel** with f
 - ✅ Enhanced dashboard with real statistics
 - ✅ Professional admin layout with sidebar and theme system
 - ✅ Role-specific layouts for admin, vendor, client, freelancer
-- ✅ Comprehensive settings page with 5 categories
+- ✅ Comprehensive settings page with 6 categories
 - ✅ Theme toggle system for easy customization
 - ✅ Onboarding flow for first-time users with clear role selection
 - ✅ Multi-role support with dynamic dashboard switching
+- ✅ Database-driven settings management with persistent storage
+- ✅ Payment gateway integration for role upgrades
 - ✅ Sample views demonstrating best practices
 - ✅ Complete integration with existing models
 - ✅ Modern, responsive UI design with Bootstrap
 - ✅ Fixed various relationship and routing issues
 
 ### Ready for Production
-All implementations are ready to use and can be extended with additional views following the provided examples. The theme system and multi-role support provide a flexible, user-friendly experience.
+All implementations are ready to use and can be extended with additional views following the provided examples. The theme system, multi-role support, and database-driven settings provide a flexible, scalable, and user-friendly experience.
 
 ---
 
