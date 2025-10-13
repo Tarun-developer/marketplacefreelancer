@@ -21,7 +21,27 @@ class ClientJobController extends Controller
 
     public function create()
     {
-        return view('client.jobs.create');
+        // Get user's purchased products for support job option
+        $purchasedProducts = \App\Modules\Orders\Models\Order::where('buyer_id', auth()->id())
+            ->where('status', 'completed')
+            ->with('orderable')
+            ->whereHasMorph('orderable', [\App\Modules\Products\Models\Product::class])
+            ->latest()
+            ->get()
+            ->pluck('orderable')
+            ->unique('id')
+            ->filter();
+
+        // Get user's active subscriptions
+        $activeSubscriptions = \App\Modules\Orders\Models\Order::where('buyer_id', auth()->id())
+            ->where('status', 'completed')
+            ->whereNotNull('subscription_ends_at')
+            ->where('subscription_ends_at', '>', now())
+            ->with('orderable')
+            ->latest()
+            ->get();
+
+        return view('client.jobs.create', compact('purchasedProducts', 'activeSubscriptions'));
     }
 
     public function store(Request $request)
@@ -35,6 +55,9 @@ class ClientJobController extends Controller
             'duration' => 'nullable|string|max:100',
             'skills_required' => 'nullable|string',
             'expires_at' => 'nullable|date|after:today',
+            'job_type' => 'nullable|in:regular,support',
+            'product_id' => 'nullable|exists:products,id',
+            'order_id' => 'nullable|exists:orders,id',
         ]);
 
         // Process skills
@@ -56,6 +79,24 @@ class ClientJobController extends Controller
 
         // Set default currency
         $validated['currency'] = 'USD';
+
+        // Handle job type
+        $validated['job_type'] = $request->input('job_type', 'regular');
+
+        // Check if this is a subscription-based job
+        if ($request->has('order_id') && $request->order_id) {
+            $order = \App\Modules\Orders\Models\Order::find($request->order_id);
+            if ($order && $order->subscription_ends_at && $order->subscription_ends_at > now()) {
+                $validated['is_subscription_based'] = true;
+                $validated['priority'] = 1; // Higher priority for subscription users
+            }
+        }
+
+        // For support jobs, set product_id and add to vendor's queue
+        if ($validated['job_type'] === 'support' && $request->has('product_id')) {
+            $validated['product_id'] = $request->product_id;
+            $validated['priority'] = 2; // Highest priority for support requests
+        }
 
         $job = Job::create($validated);
 
@@ -146,5 +187,47 @@ class ClientJobController extends Controller
     {
         // Placeholder for favorites functionality
         return view('client.favorites');
+    }
+
+    public function messages(Job $job)
+    {
+        // Ensure user owns this job
+        if ($job->client_id !== auth()->id()) {
+            abort(403, 'Unauthorized access to this job');
+        }
+
+        $messages = $job->messages()
+            ->with('user')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Mark messages as read
+        $job->messages()
+            ->where('user_id', '!=', auth()->id())
+            ->where('is_read', false)
+            ->update(['is_read' => true, 'read_at' => now()]);
+
+        return view('client.jobs.messages', compact('job', 'messages'));
+    }
+
+    public function sendMessage(Request $request, Job $job)
+    {
+        // Ensure user is part of this job (client or accepted freelancer)
+        if ($job->client_id !== auth()->id() && !$job->bids()->where('freelancer_id', auth()->id())->where('status', 'accepted')->exists()) {
+            abort(403, 'Unauthorized access to this job');
+        }
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:5000',
+        ]);
+
+        \App\Modules\Jobs\Models\JobMessage::create([
+            'job_id' => $job->id,
+            'user_id' => auth()->id(),
+            'message' => $validated['message'],
+        ]);
+
+        return redirect()->route('client.jobs.messages', $job->id)
+            ->with('success', 'Message sent successfully!');
     }
 }

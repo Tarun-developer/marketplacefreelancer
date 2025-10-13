@@ -13,6 +13,8 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
 
     // Jobs Management
     Route::resource('jobs', ClientJobController::class);
+    Route::get('jobs/{job}/messages', [ClientJobController::class, 'messages'])->name('jobs.messages');
+    Route::post('jobs/{job}/messages', [ClientJobController::class, 'sendMessage'])->name('jobs.sendMessage');
 
     // Orders Management
     Route::resource('orders', ClientOrderController::class)->only(['index', 'show']);

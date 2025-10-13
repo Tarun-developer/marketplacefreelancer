@@ -253,6 +253,14 @@
                         <i class="bi bi-lightning-charge text-warning me-2"></i>Quick Actions
                     </h6>
                     <div class="d-grid gap-2">
+                        <a href="{{ route('client.jobs.messages', $job->id) }}" class="btn btn-primary">
+                            <i class="bi bi-chat-dots me-1"></i>View Messages
+                            @if($job->messages()->where('user_id', '!=', auth()->id())->where('is_read', false)->count() > 0)
+                                <span class="badge bg-danger ms-2">
+                                    {{ $job->messages()->where('user_id', '!=', auth()->id())->where('is_read', false)->count() }}
+                                </span>
+                            @endif
+                        </a>
                         @if($job->status === 'open')
                             <button class="btn btn-outline-warning">
                                 <i class="bi bi-pause-circle me-1"></i>Close Bidding

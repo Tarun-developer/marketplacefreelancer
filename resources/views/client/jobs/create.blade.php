@@ -23,8 +23,71 @@
 
     <div class="row">
         <div class="col-lg-8">
-            <form action="{{ route('client.jobs.store') }}" method="POST">
+            <form action="{{ route('client.jobs.store') }}" method="POST" id="jobForm">
                 @csrf
+
+                <!-- Job Type Selection -->
+                @if($purchasedProducts->count() > 0 || $activeSubscriptions->count() > 0)
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-gradient text-white border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <h5 class="mb-0"><i class="bi bi-star me-2"></i>Special Job Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Job Type</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="job_type" id="regular_job" value="regular" checked>
+                                    <label class="form-check-label" for="regular_job">
+                                        <strong>Regular Job</strong>
+                                        <div class="small text-muted">Post a job for all freelancers</div>
+                                    </label>
+                                </div>
+                                @if($purchasedProducts->count() > 0)
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="job_type" id="support_job" value="support">
+                                    <label class="form-check-label" for="support_job">
+                                        <strong>Product Support</strong>
+                                        <div class="small text-muted">Get support for a purchased product</div>
+                                    </label>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Product Support Section -->
+                        @if($purchasedProducts->count() > 0)
+                        <div id="productSupportSection" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Product Support:</strong> Contact the vendor directly for support on your purchased product. This will be sent only to the vendor who sold you this product.
+                            </div>
+                            <div class="mb-3">
+                                <label for="product_id" class="form-label fw-semibold">Select Product</label>
+                                <select class="form-select" id="product_id" name="product_id">
+                                    <option value="">Choose a product...</option>
+                                    @foreach($purchasedProducts as $product)
+                                        <option value="{{ $product->id }}">
+                                            {{ $product->title }} - Purchased {{ $product->created_at ? $product->created_at->diffForHumans() : 'recently' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        @endif
+
+                        <!-- Active Subscriptions -->
+                        @if($activeSubscriptions->count() > 0)
+                        <div class="alert alert-success mt-3">
+                            <i class="bi bi-check-circle me-2"></i>
+                            <strong>You have {{ $activeSubscriptions->count() }} active subscription(s)!</strong>
+                            <p class="mb-0 small">Jobs posted with active subscriptions get higher priority and are shown to more freelancers.</p>
+                            <input type="hidden" name="order_id" value="{{ $activeSubscriptions->first()->id }}">
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
 
                 <!-- Basic Information -->
                 <div class="card border-0 shadow-sm mb-4">
@@ -319,6 +382,37 @@
 </style>
 
 <script>
+// Toggle product support section
+document.addEventListener('DOMContentLoaded', function() {
+    const regularJobRadio = document.getElementById('regular_job');
+    const supportJobRadio = document.getElementById('support_job');
+    const productSupportSection = document.getElementById('productSupportSection');
+    const productSelect = document.getElementById('product_id');
+
+    if (supportJobRadio) {
+        supportJobRadio.addEventListener('change', function() {
+            if (this.checked) {
+                productSupportSection.style.display = 'block';
+                if (productSelect) {
+                    productSelect.required = true;
+                }
+            }
+        });
+    }
+
+    if (regularJobRadio) {
+        regularJobRadio.addEventListener('change', function() {
+            if (this.checked) {
+                productSupportSection.style.display = 'none';
+                if (productSelect) {
+                    productSelect.required = false;
+                    productSelect.value = '';
+                }
+            }
+        });
+    }
+});
+
 // Validate budget range
 document.getElementById('budget_max').addEventListener('input', function() {
     const minBudget = parseFloat(document.getElementById('budget_min').value) || 0;
