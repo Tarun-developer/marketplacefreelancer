@@ -55,7 +55,7 @@ Location: `app/Http/Controllers/Admin/`
 
 ---
 
-### Admin Views (2 files)
+### Admin Views (Multiple files)
 Location: `resources/views/`
 
 1. **layouts/admin.blade.php**
@@ -66,8 +66,30 @@ Location: `resources/views/`
      - Top bar with user info
      - Flash message support
      - Responsive design
+     - Theme toggle (light/dark mode)
 
-2. **admin/dashboard.blade.php**
+2. **layouts/vendor.blade.php**
+   - Purpose: Layout for vendor role
+   - Features:
+     - Vendor-specific sidebar menu
+     - Theme toggle
+     - Responsive design
+
+3. **layouts/client.blade.php**
+   - Purpose: Layout for client role
+   - Features:
+     - Client-specific sidebar menu
+     - Theme toggle
+     - Responsive design
+
+4. **layouts/freelancer.blade.php**
+   - Purpose: Layout for freelancer role
+   - Features:
+     - Freelancer-specific sidebar menu
+     - Theme toggle
+     - Responsive design
+
+5. **admin/dashboard.blade.php**
    - Purpose: Main admin dashboard
    - Features:
      - 8 statistics cards
@@ -76,7 +98,7 @@ Location: `resources/views/`
      - Quick action buttons
      - System status
 
-3. **admin/services/index.blade.php**
+6. **admin/services/index.blade.php**
    - Purpose: Services listing page (example view)
    - Features:
      - Search and filter
@@ -84,6 +106,21 @@ Location: `resources/views/`
      - Data table with actions
      - Pagination
      - Status badges
+
+7. **admin/settings/index.blade.php**
+   - Purpose: Comprehensive settings page
+   - Features:
+     - Tabbed interface (General, Security, Notifications, Maintenance, Integrations)
+     - Form validation
+     - Cache clearing tools
+     - Bootstrap styling
+
+8. **auth/onboarding.blade.php**
+   - Purpose: Role selection page for first-time users
+   - Features:
+     - Visual role cards with descriptions
+     - AJAX role selection
+     - Clear onboarding flow
 
 ---
 
@@ -297,6 +334,7 @@ Legend:
 - ⏳ Export functionality
 - ⏳ Bulk actions
 - ⏳ Advanced filters
+- ⏳ Multi-Role System Implementation
 
 ---
 
@@ -340,13 +378,19 @@ All admin routes follow:
    - Create for: jobs, orders, disputes, etc.
    - Follow same structure
 
-3. **Add Enhancements**
+3. **Implement Multi-Role System**
+   - Allow users to have multiple roles
+   - Add role switcher UI
+   - Update layouts for dynamic menus
+   - Test role-based access
+
+4. **Add Enhancements**
    - Charts with Chart.js
    - Export to CSV/PDF
    - Advanced search
    - Bulk operations
 
-4. **Deploy**
+5. **Deploy**
    - Test thoroughly
    - Review security
    - Deploy to production

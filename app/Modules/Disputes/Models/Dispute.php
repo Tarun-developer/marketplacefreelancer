@@ -11,16 +11,17 @@ class Dispute extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'order_id',
-        'raised_by',
-        'reason',
-        'description',
-        'status',
-        'resolved_by',
-        'resolved_at',
-        'resolution',
-    ];
+     protected $fillable = [
+         'order_id',
+         'raised_by',
+         'reason',
+         'description',
+         'status',
+         'resolved_by',
+         'resolved_at',
+         'resolution',
+         'resolution_notes',
+     ];
 
     protected $casts = [
         'resolved_at' => 'datetime',

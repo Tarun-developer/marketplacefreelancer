@@ -10,15 +10,16 @@ class WalletTransaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'wallet_id',
-        'amount',
-        'currency',
-        'type',
-        'description',
-        'reference_id',
-        'reference_type',
-    ];
+     protected $fillable = [
+         'wallet_id',
+         'amount',
+         'currency',
+         'type',
+         'status',
+         'description',
+         'reference_id',
+         'reference_type',
+     ];
 
     protected $casts = [
         'amount' => 'decimal:2',

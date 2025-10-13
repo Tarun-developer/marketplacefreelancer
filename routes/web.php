@@ -50,7 +50,7 @@ Route::middleware(['auth', 'role:super_admin|admin'])->prefix('admin')->name('ad
     Route::post('transactions/{transaction}/reject', [\App\Http\Controllers\Admin\AdminTransactionController::class, 'reject'])->name('transactions.reject');
 
     // Disputes Management
-    Route::resource('disputes', \App\Http\Controllers\Admin\AdminDisputeController::class)->only(['index', 'show', 'update']);
+    Route::resource('disputes', \App\Http\Controllers\Admin\AdminDisputeController::class)->only(['index', 'show', 'edit', 'update']);
     Route::post('disputes/{dispute}/resolve', [\App\Http\Controllers\Admin\AdminDisputeController::class, 'resolve'])->name('disputes.resolve');
 
     // Support Tickets Management
@@ -80,8 +80,21 @@ Route::middleware(['auth', 'role:super_admin|admin'])->prefix('admin')->name('ad
     Route::delete('subscription-plans/{plan}', [\App\Http\Controllers\Admin\AdminSubscriptionController::class, 'destroyPlan'])->name('subscriptions.plans.destroy');
 
     // Settings
-    Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
-    Route::post('settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/', [SettingsController::class, 'index'])->name('index');
+        Route::post('/update', [SettingsController::class, 'update'])->name('update');
+        Route::post('/security', [SettingsController::class, 'updateSecurity'])->name('security');
+        Route::post('/notifications', [SettingsController::class, 'updateNotifications'])->name('notifications');
+        Route::post('/maintenance', [SettingsController::class, 'updateMaintenance'])->name('maintenance');
+        Route::post('/integrations', [SettingsController::class, 'updateIntegrations'])->name('integrations');
+        Route::post('/clear-cache', [SettingsController::class, 'clearCache'])->name('clear-cache');
+        Route::post('/clear-view-cache', [SettingsController::class, 'clearViewCache'])->name('clear-view-cache');
+        Route::post('/clear-route-cache', [SettingsController::class, 'clearRouteCache'])->name('clear-route-cache');
+    });
+
+    // Onboarding routes
+    Route::get('onboarding', [SettingsController::class, 'showOnboarding'])->name('onboarding');
+    Route::post('onboarding/set-role', [SettingsController::class, 'setRole'])->name('onboarding.set-role');
 });
 
 // Vendor Routes

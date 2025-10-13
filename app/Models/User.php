@@ -24,14 +24,15 @@ class User extends Authenticatable implements HasMedia
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role',
-        'is_active',
-        'email_verified_at',
-    ];
+     protected $fillable = [
+         'name',
+         'email',
+         'password',
+         'role',
+         'current_role',
+         'is_active',
+         'email_verified_at',
+     ];
 
     /**
      * The attributes that should be hidden for serialization.

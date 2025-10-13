@@ -8,35 +8,35 @@ use Illuminate\Http\Request;
 
 class AdminTransactionController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = WalletTransaction::with(['user', 'wallet']);
+     public function index(Request $request)
+     {
+         $query = WalletTransaction::with(['wallet.user']);
 
-        if ($request->filled('search')) {
-            $query->whereHas('user', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->search.'%');
-            });
-        }
+         if ($request->filled('search')) {
+             $query->whereHas('wallet.user', function ($q) use ($request) {
+                 $q->where('name', 'like', '%'.$request->search.'%');
+             });
+         }
 
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
-        }
+         if ($request->filled('type')) {
+             $query->where('type', $request->type);
+         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+         if ($request->filled('status')) {
+             $query->where('status', $request->status);
+         }
 
-        $transactions = $query->latest()->paginate(20);
+         $transactions = $query->latest()->paginate(20);
 
-        return view('admin.transactions.index', compact('transactions'));
-    }
+         return view('admin.transactions.index', compact('transactions'));
+     }
 
-    public function show(WalletTransaction $transaction)
-    {
-        $transaction->load(['user', 'wallet']);
+     public function show(WalletTransaction $transaction)
+     {
+         $transaction->load(['wallet.user']);
 
-        return view('admin.transactions.show', compact('transaction'));
-    }
+         return view('admin.transactions.show', compact('transaction'));
+     }
 
     public function approve(WalletTransaction $transaction)
     {

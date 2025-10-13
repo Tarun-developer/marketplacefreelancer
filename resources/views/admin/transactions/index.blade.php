@@ -72,52 +72,57 @@
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>User</th>
-                            <th>Amount</th>
-                            <th>Gateway</th>
-                            <th>Status</th>
-                            <th>Type</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transactions as $transaction)
-                            <tr>
-                                <td>#{{ $transaction->id }}</td>
-                                <td>{{ $transaction->user->name }}</td>
-                                <td>${{ number_format($transaction->amount, 2) }}</td>
-                                <td>{{ $transaction->gateway }}</td>
-                                <td>
-                                    <span class="badge @if($transaction->status === 'completed') bg-success @elseif($transaction->status === 'pending') bg-warning @elseif($transaction->status === 'failed') bg-danger @else bg-info @endif">
-                                        {{ ucfirst($transaction->status) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge {{ $transaction->type === 'payment' ? 'bg-primary' : 'bg-secondary' }}">
-                                        {{ ucfirst($transaction->type) }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{{ route('admin.transactions.show', $transaction) }}" class="btn btn-sm btn-primary">View</a>
-                                    <a href="{{ route('admin.transactions.edit', $transaction) }}" class="btn btn-sm btn-warning">Edit</a>
-                                    <form action="{{ route('admin.transactions.destroy', $transaction) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this transaction?')">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center text-muted py-4">No transactions found</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
+                     <thead>
+                         <tr>
+                             <th>ID</th>
+                             <th>User</th>
+                             <th>Amount</th>
+                             <th>Currency</th>
+                             <th>Status</th>
+                             <th>Type</th>
+                             <th>Description</th>
+                             <th>Actions</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                         @forelse($transactions as $transaction)
+                             <tr>
+                                 <td>#{{ $transaction->id }}</td>
+                                 <td>{{ $transaction->wallet->user->name }}</td>
+                                 <td>${{ number_format($transaction->amount, 2) }}</td>
+                                 <td>{{ $transaction->currency }}</td>
+                                 <td>
+                                     <span class="badge @if($transaction->status === 'completed') bg-success @elseif($transaction->status === 'pending') bg-warning @elseif($transaction->status === 'failed') bg-danger @else bg-info @endif">
+                                         {{ ucfirst($transaction->status) }}
+                                     </span>
+                                 </td>
+                                 <td>
+                                     <span class="badge {{ $transaction->type === 'credit' ? 'bg-primary' : 'bg-secondary' }}">
+                                         {{ ucfirst($transaction->type) }}
+                                     </span>
+                                 </td>
+                                 <td>{{ $transaction->description ?? 'N/A' }}</td>
+                                 <td>
+                                     <a href="{{ route('admin.transactions.show', $transaction) }}" class="btn btn-sm btn-primary">View</a>
+                                     @if($transaction->status === 'pending')
+                                         <form action="{{ route('admin.transactions.approve', $transaction) }}" method="POST" class="d-inline">
+                                             @csrf
+                                             <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                         </form>
+                                         <form action="{{ route('admin.transactions.reject', $transaction) }}" method="POST" class="d-inline">
+                                             @csrf
+                                             <input type="hidden" name="rejection_reason" value="Rejected by admin">
+                                             <button type="submit" class="btn btn-sm btn-warning">Reject</button>
+                                         </form>
+                                     @endif
+                                 </td>
+                             </tr>
+                         @empty
+                             <tr>
+                                 <td colspan="8" class="text-center text-muted py-4">No transactions found</td>
+                             </tr>
+                         @endforelse
+                     </tbody>
                 </table>
             </div>
 

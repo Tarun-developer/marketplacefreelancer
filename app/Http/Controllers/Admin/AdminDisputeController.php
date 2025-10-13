@@ -8,33 +8,40 @@ use Illuminate\Http\Request;
 
 class AdminDisputeController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Dispute::with(['user', 'order']);
+     public function index(Request $request)
+     {
+         $query = Dispute::with(['raisedBy', 'order']);
 
-        if ($request->filled('search')) {
-            $query->whereHas('order', function ($q) use ($request) {
-                $q->where('id', 'like', '%'.$request->search.'%');
-            });
-        }
+         if ($request->filled('search')) {
+             $query->whereHas('order', function ($q) use ($request) {
+                 $q->where('id', 'like', '%'.$request->search.'%');
+             });
+         }
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+         if ($request->filled('status')) {
+             $query->where('status', $request->status);
+         }
 
-        $disputes = $query->latest()->paginate(15);
+         $disputes = $query->latest()->paginate(15);
 
-        return view('admin.disputes.index', compact('disputes'));
-    }
+         return view('admin.disputes.index', compact('disputes'));
+     }
 
-    public function show(Dispute $dispute)
-    {
-        $dispute->load(['user', 'order', 'messages']);
+     public function show(Dispute $dispute)
+     {
+         $dispute->load(['raisedBy', 'order']);
 
-        return view('admin.disputes.show', compact('dispute'));
-    }
+         return view('admin.disputes.show', compact('dispute'));
+     }
 
-    public function update(Request $request, Dispute $dispute)
+     public function edit(Dispute $dispute)
+     {
+         $dispute->load(['raisedBy', 'order']);
+
+         return view('admin.disputes.edit', compact('dispute'));
+     }
+
+     public function update(Request $request, Dispute $dispute)
     {
         $validated = $request->validate([
             'status' => 'required|in:pending,investigating,resolved,closed',

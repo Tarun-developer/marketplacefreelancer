@@ -214,10 +214,11 @@
                          </button>
                          <h1 class="h4 mb-0">@yield('page-title', 'Dashboard')</h1>
                      </div>
-                     <div class="d-flex align-items-center">
-                         <span class="me-2 text-muted">{{ auth()->user()->name }}</span>
-                         <span class="badge bg-primary">{{ ucfirst(auth()->user()->getRoleNames()->first() ?? 'User') }}</span>
-                     </div>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-outline-secondary me-2" id="theme-toggle">🌙</button>
+                        <span class="me-2 text-muted">{{ auth()->user()->name }}</span>
+                        <span class="badge bg-primary">{{ ucfirst(auth()->user()->getRoleNames()->first() ?? 'User') }}</span>
+                    </div>
                  </div>
              </header>
 
@@ -269,6 +270,12 @@
         document.getElementById('mobile-sidebar-toggle').addEventListener('click', function() {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('show');
+        });
+
+        // Theme Toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('theme-dark');
+            this.textContent = document.body.classList.contains('theme-dark') ? '☀️' : '🌙';
         });
     </script>
 </body>
