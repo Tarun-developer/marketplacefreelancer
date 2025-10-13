@@ -32,7 +32,7 @@ class ProductVersion extends Model
         'download_count' => 'integer',
     ];
 
-    public function product(): BelongsTo
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }

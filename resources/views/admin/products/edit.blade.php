@@ -19,132 +19,16 @@
                         @csrf
                         @method('PUT')
 
-                        <!-- Basic Information -->
-                        <div class="card border-primary mb-4">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0">Basic Information</h5>
+                        <!-- Product Media Section -->
+                        <div class="card border-dark mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">🖼️ Product Media</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
-                                            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $product->name) }}" required>
-                                            @error('name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="product_type" class="form-label">Product Type</label>
-                                            <select name="product_type" id="product_type" class="form-select">
-                                                <option value="script" {{ old('product_type', $product->product_type) == 'script' ? 'selected' : '' }}>Script</option>
-                                                <option value="plugin" {{ old('product_type', $product->product_type) == 'plugin' ? 'selected' : '' }}>Plugin</option>
-                                                <option value="template" {{ old('product_type', $product->product_type) == 'template' ? 'selected' : '' }}>Template</option>
-                                                <option value="graphic" {{ old('product_type', $product->product_type) == 'graphic' ? 'selected' : '' }}>Graphic</option>
-                                                <option value="course" {{ old('product_type', $product->product_type) == 'course' ? 'selected' : '' }}>Course</option>
-                                                <option value="service" {{ old('product_type', $product->product_type) == 'service' ? 'selected' : '' }}>Service</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="short_description" class="form-label">Short Description</label>
-                                    <input type="text" name="short_description" id="short_description" class="form-control" value="{{ old('short_description', $product->short_description) }}" maxlength="500">
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
-                                    <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="6" required>{{ old('description', $product->description) }}</textarea>
-                                    @error('description')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="category_id" class="form-label">Category</label>
-                                            <select name="category_id" id="category_id" class="form-select">
-                                                <option value="">Select Category</option>
-                                                @foreach(\App\Modules\Products\Models\Category::where('is_active', true)->get() as $category)
-                                                    <option value="{{ $category->id }}" {{ (old('category_id', $product->category_id) == $category->id) ? 'selected' : '' }}>
-                                                        {{ $category->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="version" class="form-label">Version</label>
-                                            <input type="text" name="version" id="version" class="form-control" value="{{ old('version', $product->version) }}">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pricing -->
-                        <div class="card border-success mb-4">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0">Pricing & Licensing</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group mb-3">
-                                            <label for="standard_price" class="form-label">Standard License ($)</label>
-                                            <input type="number" name="standard_price" id="standard_price" class="form-control" step="0.01" min="0" value="{{ old('standard_price', $product->standard_price) }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group mb-3">
-                                            <label for="professional_price" class="form-label">Professional License ($)</label>
-                                            <input type="number" name="professional_price" id="professional_price" class="form-control" step="0.01" min="0" value="{{ old('professional_price', $product->professional_price) }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group mb-3">
-                                            <label for="ultimate_price" class="form-label">Ultimate License ($)</label>
-                                            <input type="number" name="ultimate_price" id="ultimate_price" class="form-control" step="0.01" min="0" value="{{ old('ultimate_price', $product->ultimate_price) }}">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="discount_percentage" class="form-label">Discount (%)</label>
-                                            <input type="number" name="discount_percentage" id="discount_percentage" class="form-control" step="0.01" min="0" max="100" value="{{ old('discount_percentage', $product->discount_percentage) }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <div class="form-check">
-                                                <input type="checkbox" name="is_free" id="is_free" class="form-check-input" value="1" {{ old('is_free', $product->is_free) ? 'checked' : '' }}>
-                                                <label for="is_free" class="form-check-label">
-                                                    Free Product
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Media Upload -->
-                        <div class="card border-info mb-4">
-                            <div class="card-header bg-info text-white">
-                                <h5 class="mb-0">Media Management</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group mb-3">
-                                            <label for="thumbnail" class="form-label">Thumbnail</label>
+                                            <label for="thumbnail" class="form-label">Thumbnail (400×400)</label>
                                             <input type="file" name="thumbnail" id="thumbnail" class="form-control" accept="image/*">
                                             @if($product->thumbnail)
                                                 <small class="text-muted">Current: <a href="{{ asset('storage/' . $product->thumbnail) }}" target="_blank">View</a></small>
@@ -153,7 +37,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label for="screenshots" class="form-label">Screenshots</label>
+                                            <label for="screenshots" class="form-label">Screenshots / Gallery</label>
                                             <input type="file" name="screenshots[]" id="screenshots" class="form-control" accept="image/*" multiple>
                                             @if($product->screenshots && count($product->screenshots) > 0)
                                                 <small class="text-muted">Current: {{ count($product->screenshots) }} images</small>
@@ -172,58 +56,295 @@
                             </div>
                         </div>
 
-                        <!-- SEO & Metadata -->
-                        <div class="card border-warning mb-4">
-                            <div class="card-header bg-warning">
-                                <h5 class="mb-0">SEO & Metadata</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="form-group mb-3">
-                                    <label for="meta_title" class="form-label">Meta Title</label>
-                                    <input type="text" name="meta_title" id="meta_title" class="form-control" value="{{ old('meta_title', $product->meta_title) }}" maxlength="255">
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="meta_description" class="form-label">Meta Description</label>
-                                    <textarea name="meta_description" id="meta_description" class="form-control" rows="3" maxlength="500">{{ old('meta_description', $product->meta_description) }}</textarea>
-                                </div>
-
-                                <div class="form-group mb-3">
-                                    <label for="search_keywords" class="form-label">Search Keywords</label>
-                                    <input type="text" name="search_keywords[]" id="search_keywords" class="form-control" value="{{ old('search_keywords', $product->search_keywords ? implode(', ', $product->search_keywords) : '') }}" data-role="tagsinput">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Advanced Settings -->
-                        <div class="card border-secondary mb-4">
-                            <div class="card-header bg-secondary text-white">
-                                <h5 class="mb-0">Advanced Settings</h5>
+                        <!-- Product Basics Section -->
+                        <div class="card border-primary mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">🗂️ Product Basics</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label for="compatible_with" class="form-label">Compatible With</label>
-                                            <input type="text" name="compatible_with" id="compatible_with" class="form-control" value="{{ old('compatible_with', $product->compatible_with) }}">
+                                            <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
+                                            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $product->name) }}" required>
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
-                                            <label for="framework_technology" class="form-label">Framework/Technology</label>
-                                            <input type="text" name="framework_technology" id="framework_technology" class="form-control" value="{{ old('framework_technology', $product->framework_technology) }}">
+                                            <label for="product_type" class="form-label">Product Type <span class="text-danger">*</span></label>
+                                            <select name="product_type" id="product_type" class="form-select @error('product_type') is-invalid @enderror" required>
+                                                <option value="">Select type</option>
+                                                <option value="script" {{ old('product_type', $product->product_type) == 'script' ? 'selected' : '' }}>Script</option>
+                                                <option value="plugin" {{ old('product_type', $product->product_type) == 'plugin' ? 'selected' : '' }}>Plugin</option>
+                                                <option value="template" {{ old('product_type', $product->product_type) == 'template' ? 'selected' : '' }}>Template</option>
+                                                <option value="graphic" {{ old('product_type', $product->product_type) == 'graphic' ? 'selected' : '' }}>Graphic</option>
+                                                <option value="course" {{ old('product_type', $product->product_type) == 'course' ? 'selected' : '' }}>Course</option>
+                                                <option value="service" {{ old('product_type', $product->product_type) == 'service' ? 'selected' : '' }}>Service</option>
+                                            </select>
+                                            @error('product_type')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="short_description" class="form-label">Short Description</label>
+                                    <input type="text" name="short_description" id="short_description" class="form-control" value="{{ old('short_description', $product->short_description) }}" maxlength="500">
+                                    <small class="text-muted">1-2 lines summary for listing previews</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="description" class="form-label">Detailed Description <span class="text-danger">*</span></label>
+                                    <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" rows="6" required>{{ old('description', $product->description) }}</textarea>
+                                    @error('description')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <small class="text-muted">Full product details (supports Markdown)</small>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
+                                            <select name="category_id" id="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
+                                                <option value="">Select a category</option>
+                                                @foreach(\App\Modules\Products\Models\Category::where('is_active', true)->get() as $category)
+                                                    <option value="{{ $category->id }}" {{ (old('category_id', $product->category_id) == $category->id) ? 'selected' : '' }}>
+                                                        {{ $category->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('category_id')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="tags" class="form-label">Tags / Keywords</label>
+                                            <input type="text" name="tags[]" id="tags" class="form-control" value="{{ old('tags', $product->tags ? implode(', ', $product->tags) : '') }}" data-role="tagsinput">
+                                            <small class="text-muted">SEO and search tags (comma separated)</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="demo_url" class="form-label">Demo URL</label>
+                                            <input type="url" name="demo_url" id="demo_url" class="form-control" value="{{ old('demo_url', $product->demo_url) }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="documentation_url" class="form-label">Documentation URL</label>
+                                            <input type="url" name="documentation_url" id="documentation_url" class="form-control" value="{{ old('documentation_url', $product->documentation_url) }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="video_preview" class="form-label">Video Preview (YouTube/Vimeo)</label>
+                                    <input type="url" name="video_preview" id="video_preview" class="form-control" value="{{ old('video_preview', $product->video_preview) }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pricing & Licensing Section -->
+                        <div class="card border-success mb-4">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">💰 Pricing & Licensing</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label for="standard_price" class="form-label">Standard License ($)</label>
+                                            <input type="number" name="standard_price" id="standard_price" class="form-control" step="0.01" min="0" value="{{ old('standard_price', $product->standard_price) }}">
+                                            <small class="text-muted">Base price for single-site usage</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label for="professional_price" class="form-label">Professional License ($)</label>
+                                            <input type="number" name="professional_price" id="professional_price" class="form-control" step="0.01" min="0" value="{{ old('professional_price', $product->professional_price) }}">
+                                            <small class="text-muted">Extended use / developer license</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group mb-3">
+                                            <label for="ultimate_price" class="form-label">Ultimate License ($)</label>
+                                            <input type="number" name="ultimate_price" id="ultimate_price" class="form-control" step="0.01" min="0" value="{{ old('ultimate_price', $product->ultimate_price) }}">
+                                            <small class="text-muted">Full commercial or SaaS license</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="discount_percentage" class="form-label">Discount / Flash Sale (%)</label>
+                                            <input type="number" name="discount_percentage" id="discount_percentage" class="form-control" step="0.01" min="0" max="100" value="{{ old('discount_percentage', $product->discount_percentage) }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="is_free" id="is_free" class="form-check-input" value="1" {{ old('is_free', $product->is_free) ? 'checked' : '' }}>
+                                                <label for="is_free" class="form-check-label">
+                                                    Apply for Free Download?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="money_back_guarantee" id="money_back_guarantee" class="form-check-input" value="1" {{ old('money_back_guarantee', $product->money_back_guarantee) ? 'checked' : '' }}>
+                                                <label for="money_back_guarantee" class="form-check-label">
+                                                    Money Back Guarantee?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="refund_days" class="form-label">Days for Refund</label>
+                                            <input type="number" name="refund_days" id="refund_days" class="form-control" min="0" max="365" value="{{ old('refund_days', $product->refund_days) }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="refund_terms" class="form-label">Refund Terms</label>
+                                    <textarea name="refund_terms" id="refund_terms" class="form-control" rows="3">{{ old('refund_terms', $product->refund_terms) }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Release & Versioning Section -->
+                        <div class="card border-info mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">🧾 Product Release & Versioning</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="version" class="form-label">Version Number</label>
+                                            <input type="text" name="version" id="version" class="form-control" value="{{ old('version', $product->version) }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="release_date" class="form-label">Release Date</label>
+                                            <input type="date" name="release_date" id="release_date" class="form-control" value="{{ old('release_date', $product->release_date ? $product->release_date->format('Y-m-d') : '') }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="changelog" class="form-label">Changelog / Release Notes</label>
+                                    <textarea name="changelog" id="changelog" class="form-control" rows="4">{{ old('changelog', $product->changelog) }}</textarea>
+                                    <small class="text-muted">Supports Markdown/HTML</small>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="feature_update_available" id="feature_update_available" class="form-check-input" value="1" {{ old('feature_update_available', $product->feature_update_available) ? 'checked' : '' }}>
+                                                <label for="feature_update_available" class="form-check-label">
+                                                    Feature Update Available?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="item_support_available" id="item_support_available" class="form-check-input" value="1" {{ old('item_support_available', $product->item_support_available) ? 'checked' : '' }}>
+                                                <label for="item_support_available" class="form-check-label">
+                                                    Item Support Available?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="support_duration" class="form-label">Support Duration</label>
+                                    <select name="support_duration" id="support_duration" class="form-select">
+                                        <option value="">Select duration</option>
+                                        <option value="6_months" {{ old('support_duration', $product->support_duration) == '6_months' ? 'selected' : '' }}>6 Months</option>
+                                        <option value="12_months" {{ old('support_duration', $product->support_duration) == '12_months' ? 'selected' : '' }}>12 Months</option>
+                                        <option value="lifetime" {{ old('support_duration', $product->support_duration) == 'lifetime' ? 'selected' : '' }}>Lifetime</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Metadata & SEO Section -->
+                        <div class="card border-warning mb-4">
+                            <div class="card-header bg-warning">
+                                <h5 class="mb-0">📊 Additional Metadata & SEO</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <label for="meta_title" class="form-label">Meta Title</label>
+                                    <input type="text" name="meta_title" id="meta_title" class="form-control" value="{{ old('meta_title', $product->meta_title) }}" maxlength="255">
+                                    <small class="text-muted">SEO title override (auto-generated if blank)</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="meta_description" class="form-label">Meta Description</label>
+                                    <textarea name="meta_description" id="meta_description" class="form-control" rows="3" maxlength="500">{{ old('meta_description', $product->meta_description) }}</textarea>
+                                    <small class="text-muted">For better Google visibility</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="search_keywords" class="form-label">Search Keywords</label>
+                                    <input type="text" name="search_keywords[]" id="search_keywords" class="form-control" value="{{ old('search_keywords', $product->search_keywords ? implode(', ', $product->search_keywords) : '') }}" data-role="tagsinput">
+                                    <small class="text-muted">Extra SEO keywords</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="canonical_url" class="form-label">Canonical URL</label>
+                                    <input type="url" name="canonical_url" id="canonical_url" class="form-control" value="{{ old('canonical_url', $product->canonical_url) }}">
+                                    <small class="text-muted">For cross-posted products</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Settings Section -->
+                        <div class="card border-secondary mb-4">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">🧱 Advanced Settings</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <label for="compatible_with" class="form-label">Compatible With</label>
+                                    <input type="text" name="compatible_with" id="compatible_with" class="form-control" value="{{ old('compatible_with', $product->compatible_with) }}">
+                                    <small class="text-muted">e.g., Laravel 11, WordPress 6.5</small>
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label for="files_included" class="form-label">Files Included</label>
                                     <input type="text" name="files_included[]" id="files_included" class="form-control" value="{{ old('files_included', $product->files_included ? implode(', ', $product->files_included) : '') }}" data-role="tagsinput">
+                                    <small class="text-muted">e.g., PHP Files, HTML, CSS, JS, Documentation</small>
                                 </div>
 
                                 <div class="form-group mb-3">
                                     <label for="requirements" class="form-label">Requirements</label>
                                     <textarea name="requirements" id="requirements" class="form-control" rows="3">{{ old('requirements', $product->requirements) }}</textarea>
+                                    <small class="text-muted">PHP version, hosting requirements, dependencies</small>
                                 </div>
 
                                 <div class="form-group mb-3">
@@ -233,18 +354,71 @@
                             </div>
                         </div>
 
-                        <!-- Approval & Status -->
-                        <div class="card border-danger mb-4">
-                            <div class="card-header bg-danger text-white">
-                                <h5 class="mb-0">Approval & Status</h5>
+                        <!-- Seller & Collaboration Section -->
+                        <div class="card border-dark mb-4">
+                            <div class="card-header bg-dark text-white">
+                                <h5 class="mb-0">👥 Seller & Collaboration</h5>
                             </div>
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group mb-3">
+                                            <label for="author_name" class="form-label">Author Name</label>
+                                            <input type="text" name="author_name" id="author_name" class="form-control" value="{{ old('author_name', $product->author_name) }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
+                                            <label for="team_name" class="form-label">Team / Agency Name</label>
+                                            <input type="text" name="team_name" id="team_name" class="form-control" value="{{ old('team_name', $product->team_name) }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="co_authors" class="form-label">Co-Authors</label>
+                                    <input type="text" name="co_authors[]" id="co_authors" class="form-control" value="{{ old('co_authors', $product->co_authors ? implode(', ', $product->co_authors) : '') }}" data-role="tagsinput">
+                                    <small class="text-muted">Add collaborators (profit split system)</small>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label for="support_email" class="form-label">Support Email</label>
+                                    <input type="email" name="support_email" id="support_email" class="form-control" value="{{ old('support_email', $product->support_email) }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Terms and Status Section -->
+                        <div class="card border-danger mb-4">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">⚙️ Terms & Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="license_agreement" id="license_agreement" class="form-check-input" value="1" {{ old('license_agreement', $product->license_agreement) ? 'checked' : '' }}>
+                                        <label for="license_agreement" class="form-check-label">
+                                            License Agreement <span class="text-danger">*</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" name="terms_of_upload" id="terms_of_upload" class="form-check-input" value="1" {{ old('terms_of_upload', $product->terms_of_upload) ? 'checked' : '' }}>
+                                        <label for="terms_of_upload" class="form-check-label">
+                                            Terms of Upload <span class="text-danger">*</span>
+                                        </label>
+                                        <small class="text-muted">I confirm ownership and copyright</small>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group mb-3">
                                             <label for="is_approved" class="form-label">Approval Status</label>
                                             <select name="is_approved" id="is_approved" class="form-select">
-                                                <option value="0" {{ old('is_approved', $product->is_approved) ? 'selected' : '' }}>Pending</option>
+                                                <option value="0" {{ old('is_approved', $product->is_approved) ? '' : 'selected' }}>Pending</option>
                                                 <option value="1" {{ old('is_approved', $product->is_approved) ? 'selected' : '' }}>Approved</option>
                                             </select>
                                         </div>

@@ -120,32 +120,32 @@ class Product extends Model implements HasMedia
         'refund_days' => 'integer',
     ];
 
-    public function user(): BelongsTo
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function category(): BelongsTo
+    public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function subcategory(): BelongsTo
+    public function subcategory()
     {
         return $this->belongsTo(Category::class, 'subcategory_id');
     }
 
-    public function project(): BelongsTo
+    public function project()
     {
         return $this->belongsTo(\App\Models\SpmProject::class, 'project_id');
     }
 
-    public function licenses(): HasMany
+    public function licenses()
     {
         return $this->hasMany(\App\Models\License::class);
     }
 
-    public function tags(): BelongsToMany
+    public function tags()
     {
         return $this->belongsToMany(Tag::class, 'product_tags');
     }
