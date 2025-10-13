@@ -54,7 +54,7 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', (string) env('LOG_STACK', 'daily,auth,payments,api')),
             'ignore_exceptions' => false,
         ],
 
@@ -70,6 +70,63 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 14),
+            'replace_placeholders' => true,
+        ],
+
+        // Custom channels for MarketFusion
+        'auth' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/auth.log'),
+            'level' => 'info',
+            'days' => 30,
+            'replace_placeholders' => true,
+        ],
+
+        'payments' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/payments.log'),
+            'level' => 'info',
+            'days' => 90,
+            'replace_placeholders' => true,
+        ],
+
+        'orders' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/orders.log'),
+            'level' => 'info',
+            'days' => 60,
+            'replace_placeholders' => true,
+        ],
+
+        'disputes' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/disputes.log'),
+            'level' => 'info',
+            'days' => 90,
+            'replace_placeholders' => true,
+        ],
+
+        'api' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/api.log'),
+            'level' => env('API_LOG_LEVEL', 'info'),
+            'days' => 14,
+            'replace_placeholders' => true,
+        ],
+
+        'chat' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/chat.log'),
+            'level' => 'debug',
+            'days' => 7,
+            'replace_placeholders' => true,
+        ],
+
+        'webhooks' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/webhooks.log'),
+            'level' => 'debug',
+            'days' => 30,
             'replace_placeholders' => true,
         ],
 
