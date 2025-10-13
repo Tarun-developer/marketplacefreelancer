@@ -18,9 +18,10 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        // If user has no roles, redirect to onboarding
+        // If user has no roles, assign default "user" role and show common dashboard
         if ($user->roles->count() === 0) {
-            return redirect()->route('onboarding');
+            $user->assignRole('user');
+            $user->update(['current_role' => null]); // No current role for default users
         }
 
         // Always show common dashboard for role selection

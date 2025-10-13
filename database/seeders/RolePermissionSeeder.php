@@ -47,5 +47,8 @@ class RolePermissionSeeder extends Seeder
 
         $support = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'support']);
         $support->givePermissionTo(['view dashboard', 'manage support', 'manage disputes']);
+
+        $userRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'user']);
+        $userRole->givePermissionTo(['view dashboard']);
     }
 }
