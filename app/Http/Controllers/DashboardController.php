@@ -10,15 +10,15 @@ class DashboardController extends Controller
     {
         $user = $request->user();
         
-        if ($user->hasRole('SuperAdmin|Admin')) {
+        if ($user->hasRole('super_admin|admin')) {
             return view('dashboards.admin');
-        } elseif ($user->hasRole('Vendor')) {
+        } elseif ($user->hasRole('vendor')) {
             return view('dashboards.vendor');
-        } elseif ($user->hasRole('Freelancer')) {
+        } elseif ($user->hasRole('freelancer')) {
             return view('dashboards.freelancer');
-        } elseif ($user->hasRole('Client')) {
+        } elseif ($user->hasRole('client')) {
             return view('dashboards.client');
-        } elseif ($user->hasRole('Support')) {
+        } elseif ($user->hasRole('support')) {
             return view('dashboards.support');
         }
 

@@ -33,10 +33,10 @@ Route::post('/register', function (Illuminate\Http\Request $request) {
         'name' => $request->name,
         'email' => $request->email,
         'password' => Hash::make($request->password),
-        'role' => 'Client', // Default role
+        'role' => 'client', // Default role
     ]);
 
-    $user->assignRole('Client');
+    $user->assignRole('client');
 
     auth()->login($user);
 

@@ -31,22 +31,22 @@ class RolePermissionSeeder extends Seeder
         }
 
         // Create roles and assign permissions
-        $superAdmin = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'SuperAdmin']);
+        $superAdmin = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_admin']);
         $superAdmin->givePermissionTo(\Spatie\Permission\Models\Permission::all());
 
-        $admin = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Admin']);
+        $admin = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'admin']);
         $admin->givePermissionTo(['view dashboard', 'manage users', 'manage products', 'manage services', 'manage jobs', 'manage orders', 'manage payments', 'manage disputes', 'manage support', 'view reports']);
 
-        $vendor = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Vendor']);
+        $vendor = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'vendor']);
         $vendor->givePermissionTo(['view dashboard', 'manage products', 'manage orders', 'manage payments']);
 
-        $freelancer = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Freelancer']);
+        $freelancer = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'freelancer']);
         $freelancer->givePermissionTo(['view dashboard', 'manage services', 'manage jobs', 'manage orders']);
 
-        $client = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Client']);
+        $client = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'client']);
         $client->givePermissionTo(['view dashboard', 'manage jobs', 'manage orders']);
 
-        $support = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'Support']);
+        $support = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'support']);
         $support->givePermissionTo(['view dashboard', 'manage support', 'manage disputes']);
     }
 }
