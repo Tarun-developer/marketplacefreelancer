@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Route;
 // Client routes
 Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->group(function () {
     // Dashboard
-    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'clientDashboard'])->name('dashboard');
+    Route::get('dashboard', function () {
+        return app(\App\Http\Controllers\DashboardController::class)->clientDashboard(auth()->user());
+    })->name('dashboard');
 
     // Jobs Management
     Route::resource('jobs', ClientJobController::class);

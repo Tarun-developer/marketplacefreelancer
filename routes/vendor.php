@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Route;
 // Vendor routes
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
     // Dashboard
-    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'vendorDashboard'])->name('dashboard');
+    Route::get('dashboard', function () {
+        return app(\App\Http\Controllers\DashboardController::class)->vendorDashboard(auth()->user());
+    })->name('dashboard');
 
     // Products Management
     Route::resource('products', VendorProductController::class);

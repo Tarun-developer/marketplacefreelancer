@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Route;
 // Support routes
 Route::middleware(['auth', 'role:support'])->prefix('support')->name('support.')->group(function () {
     // Dashboard
-    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'supportDashboard'])->name('dashboard');
+    Route::get('dashboard', function () {
+        return app(\App\Http\Controllers\DashboardController::class)->supportDashboard(auth()->user());
+    })->name('dashboard');
 
     // Tickets Management
     Route::resource('tickets', SupportTicketController::class);

@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Route;
 // Freelancer routes
 Route::middleware(['auth', 'role:freelancer'])->prefix('freelancer')->name('freelancer.')->group(function () {
     // Dashboard
-    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'freelancerDashboard'])->name('dashboard');
+    Route::get('dashboard', function () {
+        return app(\App\Http\Controllers\DashboardController::class)->freelancerDashboard(auth()->user());
+    })->name('dashboard');
 
     // Jobs Management
     Route::resource('jobs', FreelancerJobController::class)->only(['index', 'show']);
