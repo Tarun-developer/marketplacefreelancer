@@ -18,9 +18,9 @@
                 <a href="{{ url('/') }}" class="text-muted text-decoration-none me-4">Home</a>
                 @auth
                     <a href="{{ route('dashboard') }}" class="text-muted text-decoration-none me-4">Dashboard</a>
-                    @if(auth()->user()->hasRole('SuperAdmin|Admin'))
-                        <a href="{{ route('admin.users.index') }}" class="text-muted text-decoration-none me-4">Admin</a>
-                    @endif
+                     @if(auth()->user()->hasRole('SuperAdmin|Admin'))
+                         <a href="{{ route('admin.dashboard') }}" class="text-muted text-decoration-none me-4">Admin Dashboard</a>
+                     @endif
                 @else
                     <a href="{{ route('login') }}" class="text-muted text-decoration-none me-4">Login</a>
                     <a href="{{ route('register') }}" class="text-muted text-decoration-none">Sign Up</a>

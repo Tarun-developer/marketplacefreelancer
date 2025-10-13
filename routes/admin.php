@@ -16,7 +16,9 @@ use Illuminate\Support\Facades\Route;
 // Admin routes
 Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
-    Route::get('dashboard', [App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', function () {
+        return app(\App\Http\Controllers\DashboardController::class)->adminDashboard();
+    })->name('dashboard');
 
     // Users Management
     Route::resource('users', AdminUserController::class);
