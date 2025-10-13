@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
+use App\Models\Setting;
 
 class SettingsController extends Controller
 {
@@ -243,16 +244,15 @@ class SettingsController extends Controller
             'allow_free_roles' => 'boolean',
         ]);
 
-        // Save to cache for demo (in production, save to database)
-        $settings = [
-            'client_role_cost' => $request->client_role_cost,
-            'freelancer_role_cost' => $request->freelancer_role_cost,
-            'vendor_role_cost' => $request->vendor_role_cost,
-            'require_approval_for_roles' => $request->boolean('require_approval_for_roles'),
-            'allow_free_roles' => $request->boolean('allow_free_roles'),
-        ];
+        // Save to database
+        Setting::set('client_role_cost', $request->client_role_cost, 'float', 'roles');
+        Setting::set('freelancer_role_cost', $request->freelancer_role_cost, 'float', 'roles');
+        Setting::set('vendor_role_cost', $request->vendor_role_cost, 'float', 'roles');
+        Setting::set('require_approval_for_roles', $request->boolean('require_approval_for_roles'), 'boolean', 'roles');
+        Setting::set('allow_free_roles', $request->boolean('allow_free_roles'), 'boolean', 'roles');
 
-        Cache::put('role_settings', $settings, now()->addDays(30));
+        // Clear cache
+        Cache::forget('role_settings');
 
         return redirect()->route('admin.settings.index')->with('success', 'Role settings updated successfully.');
     }
