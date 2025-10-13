@@ -83,9 +83,19 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(\App\Modules\Wallet\Models\WalletTransaction::class);
     }
 
+    public function ordersAsBuyer()
+    {
+        return $this->hasMany(\App\Modules\Orders\Models\Order::class, 'buyer_id');
+    }
+
+    public function ordersAsSeller()
+    {
+        return $this->hasMany(\App\Modules\Orders\Models\Order::class, 'seller_id');
+    }
+
     public function orders()
     {
-        return $this->hasMany(\App\Modules\Orders\Models\Order::class);
+        return $this->ordersAsBuyer()->union($this->ordersAsSeller());
     }
 
     public function services()
@@ -95,12 +105,12 @@ class User extends Authenticatable implements HasMedia
 
     public function jobs()
     {
-        return $this->hasMany(\App\Modules\Jobs\Models\Job::class);
+        return $this->hasMany(\App\Modules\Jobs\Models\Job::class, 'client_id');
     }
 
     public function bids()
     {
-        return $this->hasMany(\App\Modules\Jobs\Models\Bid::class);
+        return $this->hasMany(\App\Modules\Jobs\Models\Bid::class, 'freelancer_id');
     }
 
     public function products()

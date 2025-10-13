@@ -72,12 +72,12 @@ class DashboardController extends Controller
     {
         $stats = [
             'total_products' => $user->products()->count(),
-            'total_sales' => $user->orders()->where('status', 'completed')->sum('amount'),
-            'pending_orders' => $user->orders()->where('status', 'pending')->count(),
+            'total_sales' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
+            'pending_orders' => $user->ordersAsSeller()->where('status', 'pending')->count(),
             'approved_products' => $user->products()->where('is_approved', true)->count(),
         ];
 
-        $recent_orders = Order::where('seller_id', $user->id)
+        $recent_orders = $user->ordersAsSeller()
             ->with('buyer')
             ->latest()
             ->take(5)
@@ -90,13 +90,13 @@ class DashboardController extends Controller
     {
         $stats = [
             'active_gigs' => $user->services()->where('status', 'active')->count(),
-            'completed_jobs' => $user->orders()->where('status', 'completed')->count(),
-            'total_earnings' => $user->orders()->where('status', 'completed')->sum('amount'),
+            'completed_jobs' => $user->ordersAsSeller()->where('status', 'completed')->count(),
+            'total_earnings' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
             'pending_bids' => $user->bids()->where('status', 'pending')->count(),
         ];
 
         $active_jobs = Job::whereHas('bids', function ($query) use ($user) {
-            $query->where('user_id', $user->id)->where('status', 'accepted');
+            $query->where('freelancer_id', $user->id)->where('status', 'accepted');
         })->with('client')->latest()->take(5)->get();
 
         return view('dashboards.freelancer', compact('stats', 'active_jobs'));
@@ -106,12 +106,12 @@ class DashboardController extends Controller
     {
         $stats = [
             'posted_jobs' => $user->jobs()->count(),
-            'active_orders' => $user->orders()->whereIn('status', ['pending', 'processing'])->count(),
-            'completed_orders' => $user->orders()->where('status', 'completed')->count(),
-            'total_spent' => $user->orders()->where('status', 'completed')->sum('amount'),
+            'active_orders' => $user->ordersAsBuyer()->whereIn('status', ['pending', 'processing'])->count(),
+            'completed_orders' => $user->ordersAsBuyer()->where('status', 'completed')->count(),
+            'total_spent' => $user->ordersAsBuyer()->where('status', 'completed')->sum('amount'),
         ];
 
-        $recent_orders = Order::where('buyer_id', $user->id)
+        $recent_orders = $user->ordersAsBuyer()
             ->with('seller')
             ->latest()
             ->take(5)
