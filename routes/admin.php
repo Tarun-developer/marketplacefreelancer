@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminServiceController;
 use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\Admin\AdminSpmController;
 use App\Http\Controllers\Admin\AdminSubscriptionController;
 use App\Http\Controllers\Admin\AdminSupportTicketController;
 use App\Http\Controllers\Admin\AdminTransactionController;
@@ -63,11 +64,14 @@ Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->
     Route::post('reviews/{review}/flag', [AdminReviewController::class, 'flag'])->name('reviews.flag');
     Route::post('reviews/{review}/unflag', [AdminReviewController::class, 'unflag'])->name('reviews.unflag');
 
-    // Subscriptions Management
-    Route::resource('subscriptions', AdminSubscriptionController::class)->only(['index', 'show']);
-    Route::post('subscriptions/{subscription}/cancel', [AdminSubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
-    Route::post('subscriptions/{subscription}/extend', [AdminSubscriptionController::class, 'extend'])->name('subscriptions.extend');
-    Route::resource('subscription-plans', AdminSubscriptionController::class)->except(['show']);
+     // Subscriptions Management
+     Route::resource('subscriptions', AdminSubscriptionController::class)->only(['index', 'show']);
+     Route::post('subscriptions/{subscription}/cancel', [AdminSubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+     Route::post('subscriptions/{subscription}/extend', [AdminSubscriptionController::class, 'extend'])->name('subscriptions.extend');
+     Route::resource('subscription-plans', AdminSubscriptionController::class)->except(['show']);
+
+     // SPM Management
+     Route::resource('spm', AdminSpmController::class)->except(['create', 'store']);
 
     // Settings Management
     Route::prefix('settings')->name('settings.')->group(function () {
@@ -80,6 +84,7 @@ Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->
         Route::post('/roles', [App\Http\Controllers\SettingsController::class, 'updateRoles'])->name('roles');
         Route::post('/clear-cache', [App\Http\Controllers\Admin\AdminSettingsController::class, 'clearCache'])->name('clear-cache');
         Route::post('/clear-view-cache', [App\Http\Controllers\Admin\AdminSettingsController::class, 'clearViewCache'])->name('clear-view-cache');
-        Route::post('/clear-route-cache', [App\Http\Controllers\Admin\AdminSettingsController::class, 'clearRouteCache'])->name('clear-route-cache');
-    });
-});
+         Route::post('/clear-route-cache', [App\Http\Controllers\Admin\AdminSettingsController::class, 'clearRouteCache'])->name('clear-route-cache');
+         Route::post('/spm', [App\Http\Controllers\SettingsController::class, 'updateSpm'])->name('spm');
+     });
+ });

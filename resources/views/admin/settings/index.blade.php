@@ -37,6 +37,11 @@
                 <i class="bi bi-plug me-2"></i>Integrations
             </button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="spm-tab" data-bs-toggle="tab" data-bs-target="#spm" type="button" role="tab" aria-controls="spm" aria-selected="false">
+                <i class="bi bi-kanban me-2"></i>SPM Settings
+            </button>
+        </li>
     </ul>
 
     <div class="tab-content" id="settingsTabsContent">
@@ -363,6 +368,130 @@
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Update Integration Settings</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- SPM Settings -->
+        <div class="tab-pane fade" id="spm" role="tabpanel" aria-labelledby="spm-tab">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Smart Project Manager (SPM) Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('admin.settings.spm') }}" method="POST">
+                        @csrf
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <strong>About SPM:</strong> Smart Project Manager is a premium addon feature that allows users to manage their freelance projects with advanced tools like task management, time tracking, milestones, and more.
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <h6>Subscription Plans Management</h6>
+                                <p class="text-muted small">Manage SPM subscription plans and pricing from the <a href="{{ route('admin.subscriptions.index') }}" class="text-decoration-none">Subscriptions Management</a> page.</p>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="spm_enabled" id="spm_enabled" {{ old('spm_enabled', \App\Models\Setting::get('spm_enabled', true)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="spm_enabled">
+                                        Enable SPM Feature for Users
+                                    </label>
+                                </div>
+                                <small class="text-muted">Allow users to purchase and access SPM features</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="spm_free_trial" id="spm_free_trial" {{ old('spm_free_trial', \App\Models\Setting::get('spm_free_trial', true)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="spm_free_trial">
+                                        Enable Free Trial
+                                    </label>
+                                </div>
+                                <small class="text-muted">Allow users to try SPM Free plan</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="spm_trial_days" class="form-label">Free Trial Days</label>
+                                <input type="number" name="spm_trial_days" id="spm_trial_days" class="form-control" min="0" max="90" value="{{ old('spm_trial_days', \App\Models\Setting::get('spm_trial_days', 14)) }}">
+                                <small class="text-muted">Number of days for free trial (0 to disable)</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="spm_commission_rate" class="form-label">SPM Transaction Commission (%)</label>
+                                <input type="number" name="spm_commission_rate" id="spm_commission_rate" class="form-control" step="0.01" min="0" max="100" value="{{ old('spm_commission_rate', \App\Models\Setting::get('spm_commission_rate', 0)) }}">
+                                <small class="text-muted">Commission on payments made through SPM</small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="spm_require_approval" id="spm_require_approval" {{ old('spm_require_approval', \App\Models\Setting::get('spm_require_approval', false)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="spm_require_approval">
+                                        Require Admin Approval for New Subscriptions
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="spm_auto_renew" id="spm_auto_renew" {{ old('spm_auto_renew', \App\Models\Setting::get('spm_auto_renew', true)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="spm_auto_renew">
+                                        Enable Auto-Renewal by Default
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="my-3">
+                                <h6>Feature Limits (Default for Free Plan)</h6>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="spm_max_projects_free" class="form-label">Max Projects (Free Plan)</label>
+                                <input type="number" name="spm_max_projects_free" id="spm_max_projects_free" class="form-control" min="1" value="{{ old('spm_max_projects_free', \App\Models\Setting::get('spm_max_projects_free', 1)) }}">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="spm_max_tasks_free" class="form-label">Max Tasks per Project (Free)</label>
+                                <input type="number" name="spm_max_tasks_free" id="spm_max_tasks_free" class="form-control" min="1" value="{{ old('spm_max_tasks_free', \App\Models\Setting::get('spm_max_tasks_free', 10)) }}">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="spm_storage_free" class="form-label">Storage Limit (MB - Free)</label>
+                                <input type="number" name="spm_storage_free" id="spm_storage_free" class="form-control" min="1" value="{{ old('spm_storage_free', \App\Models\Setting::get('spm_storage_free', 100)) }}">
+                            </div>
+
+                            <div class="col-12">
+                                <hr class="my-3">
+                                <h6>Email Notifications</h6>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="spm_notify_subscription" id="spm_notify_subscription" {{ old('spm_notify_subscription', \App\Models\Setting::get('spm_notify_subscription', true)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="spm_notify_subscription">
+                                        Notify Admin on New Subscriptions
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="spm_notify_expiry" id="spm_notify_expiry" {{ old('spm_notify_expiry', \App\Models\Setting::get('spm_notify_expiry', true)) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="spm_notify_expiry">
+                                        Notify Users Before Expiry (7 days)
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Update SPM Settings</button>
                             </div>
                         </div>
                     </form>

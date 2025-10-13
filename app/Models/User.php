@@ -32,6 +32,9 @@ class User extends Authenticatable implements HasMedia
          'current_role',
          'is_active',
          'email_verified_at',
+         'has_spm_access',
+         'spm_access_expires_at',
+         'spm_plan',
      ];
 
     /**
@@ -55,6 +58,8 @@ class User extends Authenticatable implements HasMedia
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'has_spm_access' => 'boolean',
+            'spm_access_expires_at' => 'datetime',
         ];
     }
 
@@ -156,5 +161,87 @@ class User extends Authenticatable implements HasMedia
             ->width(300)
             ->height(300)
             ->sharpen(10);
+    }
+
+    /**
+     * Check if user has active SPM access
+     */
+    public function hasSpmAccess(): bool
+    {
+        if (!$this->has_spm_access) {
+            return false;
+        }
+
+        // If no expiry date, access is permanent (admin grant)
+        if (!$this->spm_access_expires_at) {
+            return true;
+        }
+
+        // Check if not expired
+        return $this->spm_access_expires_at->isFuture();
+    }
+
+    /**
+     * Get active SPM subscription
+     */
+    public function activeSpmSubscription()
+    {
+        return $this->subscriptions()
+            ->whereHas('plan', function ($query) {
+                $query->where('plan_type', 'spm');
+            })
+            ->where('status', 'active')
+            ->where('ends_at', '>', now())
+            ->first();
+    }
+
+    /**
+     * Get SPM plan limits
+     */
+    public function getSpmLimits(): array
+    {
+        $subscription = $this->activeSpmSubscription();
+
+        if (!$subscription || !$subscription->plan) {
+            return [
+                'max_projects' => 0,
+                'max_tasks_per_project' => 0,
+                'storage_gb' => 0,
+                'has_reports' => false,
+                'has_api' => false,
+            ];
+        }
+
+        return [
+            'max_projects' => $subscription->plan->spm_max_projects,
+            'max_tasks_per_project' => $subscription->plan->spm_max_tasks_per_project,
+            'storage_gb' => $subscription->plan->spm_storage_gb,
+            'has_reports' => $subscription->plan->spm_has_reports,
+            'has_api' => $subscription->plan->spm_has_api,
+        ];
+    }
+
+    /**
+     * Grant SPM access
+     */
+    public function grantSpmAccess(string $plan = 'free', ?\DateTime $expiresAt = null): void
+    {
+        $this->update([
+            'has_spm_access' => true,
+            'spm_plan' => $plan,
+            'spm_access_expires_at' => $expiresAt,
+        ]);
+    }
+
+    /**
+     * Revoke SPM access
+     */
+    public function revokeSpmAccess(): void
+    {
+        $this->update([
+            'has_spm_access' => false,
+            'spm_plan' => null,
+            'spm_access_expires_at' => null,
+        ]);
     }
 }

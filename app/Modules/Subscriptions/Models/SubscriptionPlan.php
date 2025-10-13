@@ -23,6 +23,12 @@ class SubscriptionPlan extends Model
         'max_services',
         'priority_support',
         'featured_listings',
+        'plan_type',
+        'spm_max_projects',
+        'spm_max_tasks_per_project',
+        'spm_storage_gb',
+        'spm_has_reports',
+        'spm_has_api',
     ];
 
     protected $casts = [
@@ -34,6 +40,11 @@ class SubscriptionPlan extends Model
         'max_services' => 'integer',
         'priority_support' => 'boolean',
         'featured_listings' => 'boolean',
+        'spm_max_projects' => 'integer',
+        'spm_max_tasks_per_project' => 'integer',
+        'spm_storage_gb' => 'decimal:2',
+        'spm_has_reports' => 'boolean',
+        'spm_has_api' => 'boolean',
     ];
 
     public function subscriptions(): HasMany

@@ -31,6 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+     // SPM routes
+     Route::prefix('spm')->name('spm.')->middleware(['auth'])->group(function () {
+         Route::resource('/', App\Http\Controllers\SpmController::class)->parameters(['' => 'project']);
+         Route::get('/subscriptions', [App\Http\Controllers\SpmSubscriptionController::class, 'index'])->name('subscriptions.index');
+         Route::get('/subscriptions/checkout/{planId}', [App\Http\Controllers\SpmSubscriptionController::class, 'checkout'])->name('subscriptions.checkout');
+         Route::post('/subscriptions/purchase/{planId}', [App\Http\Controllers\SpmSubscriptionController::class, 'purchase'])->name('subscriptions.purchase');
+         Route::post('/subscriptions/cancel', [App\Http\Controllers\SpmSubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+         Route::post('/subscriptions/change-plan/{planId}', [App\Http\Controllers\SpmSubscriptionController::class, 'changePlan'])->name('subscriptions.change-plan');
+     });
 });
 
 // Include role-based route files

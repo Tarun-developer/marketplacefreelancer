@@ -36,19 +36,28 @@ class VendorProductController extends Controller
 
     public function show(Product $product)
     {
-        $this->authorize('view', $product);
+        // Check if the product belongs to the authenticated user
+        if ($product->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
         return view('vendor.products.show', compact('product'));
     }
 
     public function edit(Product $product)
     {
-        $this->authorize('update', $product);
+        // Check if the product belongs to the authenticated user
+        if ($product->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
         return view('vendor.products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
     {
-        $this->authorize('update', $product);
+        // Check if the product belongs to the authenticated user
+        if ($product->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -64,7 +73,10 @@ class VendorProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $this->authorize('delete', $product);
+        // Check if the product belongs to the authenticated user
+        if ($product->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
         $product->delete();
 
         return redirect()->route('vendor.products.index')

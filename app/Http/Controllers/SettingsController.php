@@ -342,4 +342,40 @@ class SettingsController extends Controller
                 return redirect()->route($role . '.dashboard')->with('success', 'Role purchased and assigned successfully!');
         }
     }
+
+    public function updateSpm(Request $request)
+    {
+        $request->validate([
+            'spm_enabled' => 'boolean',
+            'spm_free_trial' => 'boolean',
+            'spm_trial_days' => 'required|integer|min:0|max:90',
+            'spm_commission_rate' => 'required|numeric|min:0|max:100',
+            'spm_require_approval' => 'boolean',
+            'spm_auto_renew' => 'boolean',
+            'spm_max_projects_free' => 'required|integer|min:1',
+            'spm_max_tasks_free' => 'required|integer|min:1',
+            'spm_storage_free' => 'required|integer|min:1',
+            'spm_notify_subscription' => 'boolean',
+            'spm_notify_expiry' => 'boolean',
+        ]);
+
+        // Save SPM settings
+        Setting::set('spm_enabled', $request->boolean('spm_enabled'), 'boolean', 'spm');
+        Setting::set('spm_free_trial', $request->boolean('spm_free_trial'), 'boolean', 'spm');
+        Setting::set('spm_trial_days', $request->spm_trial_days, 'integer', 'spm');
+        Setting::set('spm_commission_rate', $request->spm_commission_rate, 'float', 'spm');
+        Setting::set('spm_require_approval', $request->boolean('spm_require_approval'), 'boolean', 'spm');
+        Setting::set('spm_auto_renew', $request->boolean('spm_auto_renew'), 'boolean', 'spm');
+        Setting::set('spm_max_projects_free', $request->spm_max_projects_free, 'integer', 'spm');
+        Setting::set('spm_max_tasks_free', $request->spm_max_tasks_free, 'integer', 'spm');
+        Setting::set('spm_storage_free', $request->spm_storage_free, 'integer', 'spm');
+        Setting::set('spm_notify_subscription', $request->boolean('spm_notify_subscription'), 'boolean', 'spm');
+        Setting::set('spm_notify_expiry', $request->boolean('spm_notify_expiry'), 'boolean', 'spm');
+
+        // Clear cache
+        Cache::forget('spm_settings');
+        Artisan::call('config:clear');
+
+        return redirect()->route('admin.settings.index')->with('success', 'SPM settings updated successfully.');
+    }
 }
