@@ -21,7 +21,7 @@ class ProductApiController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        $products = $query->paginate(10);
+        $products = $query->with('media')->paginate(10);
         return response()->json($products);
     }
 
@@ -32,16 +32,34 @@ class ProductApiController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
-            'file_path' => 'required|string',
+            'preview_images' => 'array',
+            'preview_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'files' => 'array',
+            'files.*' => 'file|max:10240',
         ]);
 
-        $product = Product::create($request->all());
-        return response()->json($product, 201);
+        $product = Product::create($request->only('name', 'description', 'price', 'category_id'));
+
+        // Handle preview images
+        if ($request->hasFile('preview_images')) {
+            foreach ($request->file('preview_images') as $image) {
+                $product->addMedia($image)->toMediaCollection('preview');
+            }
+        }
+
+        // Handle files
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $product->addMedia($file)->toMediaCollection('files');
+            }
+        }
+
+        return response()->json($product->load('media'), 201);
     }
 
     public function show(Product $product)
     {
-        $product->load('category');
+        $product->load('category', 'media');
         return response()->json($product);
     }
 
@@ -52,11 +70,31 @@ class ProductApiController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
-            'file_path' => 'required|string',
+            'preview_images' => 'array',
+            'preview_images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'files' => 'array',
+            'files.*' => 'file|max:10240',
         ]);
 
-        $product->update($request->all());
-        return response()->json($product);
+        $product->update($request->only('name', 'description', 'price', 'category_id'));
+
+        // Handle preview images
+        if ($request->hasFile('preview_images')) {
+            $product->clearMediaCollection('preview');
+            foreach ($request->file('preview_images') as $image) {
+                $product->addMedia($image)->toMediaCollection('preview');
+            }
+        }
+
+        // Handle files
+        if ($request->hasFile('files')) {
+            $product->clearMediaCollection('files');
+            foreach ($request->file('files') as $file) {
+                $product->addMedia($file)->toMediaCollection('files');
+            }
+        }
+
+        return response()->json($product->load('media'));
     }
 
     public function destroy(Product $product)

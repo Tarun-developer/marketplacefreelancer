@@ -40,7 +40,7 @@ class UserApiController extends Controller
 
     public function show(User $user)
     {
-        $user->load('profile');
+        $user->load('profile', 'media');
         return response()->json($user);
     }
 
@@ -67,7 +67,7 @@ class UserApiController extends Controller
     public function profile(Request $request)
     {
         $user = $request->user();
-        $user->load('profile');
+        $user->load('profile', 'media');
         return response()->json($user);
     }
 
@@ -80,12 +80,19 @@ class UserApiController extends Controller
             'skills' => 'nullable|array',
             'location' => 'nullable|string',
             'portfolio_url' => 'nullable|url',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         $profile = $user->profile ?: new Profile(['user_id' => $user->id]);
         $profile->fill($request->only('bio', 'skills', 'location', 'portfolio_url'));
         $profile->save();
 
-        return response()->json($profile);
+        // Handle avatar upload
+        if ($request->hasFile('avatar')) {
+            $user->clearMediaCollection('avatar');
+            $user->addMedia($request->file('avatar'))->toMediaCollection('avatar');
+        }
+
+        return response()->json($user->load('profile', 'media'));
     }
 }
