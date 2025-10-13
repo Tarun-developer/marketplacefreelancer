@@ -140,9 +140,9 @@ class SettingsController extends Controller
     public function setRole(Request $request)
     {
         try {
-            $request->validate([
-                'role' => 'required|in:client,freelancer,vendor,multi',
-            ]);
+             $request->validate([
+                 'role' => 'required|in:client,freelancer,vendor,customer,multi',
+             ]);
 
             $user = auth()->user();
 
@@ -158,19 +158,22 @@ class SettingsController extends Controller
                 }
                 $user->update(['current_role' => $request->role]);
 
-                switch ($request->role) {
-                    case 'client':
-                        $redirect = route('client.dashboard');
-                        break;
-                    case 'freelancer':
-                        $redirect = route('freelancer.dashboard');
-                        break;
-                    case 'vendor':
-                        $redirect = route('vendor.dashboard');
-                        break;
-                    default:
-                        $redirect = route('dashboard');
-                }
+                 switch ($request->role) {
+                     case 'client':
+                         $redirect = route('client.dashboard');
+                         break;
+                     case 'freelancer':
+                         $redirect = route('freelancer.dashboard');
+                         break;
+                     case 'vendor':
+                         $redirect = route('vendor.dashboard');
+                         break;
+                     case 'customer':
+                         $redirect = route('dashboard');
+                         break;
+                     default:
+                         $redirect = route('dashboard');
+                 }
             }
 
             return response()->json([
@@ -205,27 +208,30 @@ class SettingsController extends Controller
             // Update current role (for dashboard view only, not assigning new role)
             $user->update(['current_role' => $request->role]);
 
-            // Get redirect URL based on role
-            switch ($request->role) {
-                case 'client':
-                    $redirect = route('client.dashboard');
-                    break;
-                case 'freelancer':
-                    $redirect = route('freelancer.dashboard');
-                    break;
-                case 'vendor':
-                    $redirect = route('vendor.dashboard');
-                    break;
-                case 'admin':
-                case 'super_admin':
-                    $redirect = route('admin.dashboard');
-                    break;
-                case 'support':
-                    $redirect = route('support.dashboard');
-                    break;
-                default:
-                    $redirect = route('dashboard');
-            }
+             // Get redirect URL based on role
+             switch ($request->role) {
+                 case 'client':
+                     $redirect = route('client.dashboard');
+                     break;
+                 case 'freelancer':
+                     $redirect = route('freelancer.dashboard');
+                     break;
+                 case 'vendor':
+                     $redirect = route('vendor.dashboard');
+                     break;
+                 case 'customer':
+                     $redirect = route('dashboard');
+                     break;
+                 case 'admin':
+                 case 'super_admin':
+                     $redirect = route('admin.dashboard');
+                     break;
+                 case 'support':
+                     $redirect = route('support.dashboard');
+                     break;
+                 default:
+                     $redirect = route('dashboard');
+             }
 
             return response()->json([
                 'success' => true,
@@ -275,11 +281,12 @@ class SettingsController extends Controller
             return redirect()->route('dashboard')->with('info', 'You already have this role. You can switch to it from the dashboard.');
         }
 
-        $costs = [
-            'client' => config('settings.client_role_cost', 0),
-            'freelancer' => config('settings.freelancer_role_cost', 0),
-            'vendor' => config('settings.vendor_role_cost', 0),
-        ];
+         $costs = [
+             'client' => config('settings.client_role_cost', 0),
+             'freelancer' => config('settings.freelancer_role_cost', 0),
+             'vendor' => config('settings.vendor_role_cost', 0),
+             'customer' => 0, // Customer role is free
+         ];
 
         $cost = $costs[$role] ?? 0;
 
@@ -288,7 +295,13 @@ class SettingsController extends Controller
             $user->assignRole($role);
             $user->update(['current_role' => $role]);
 
-            return redirect()->route($role . '.dashboard')->with('success', 'Role assigned successfully!');
+            // Redirect based on role
+            switch ($role) {
+                case 'customer':
+                    return redirect()->route('dashboard')->with('success', 'Role assigned successfully!');
+                default:
+                    return redirect()->route($role . '.dashboard')->with('success', 'Role assigned successfully!');
+            }
         }
 
         return view('checkout', compact('role', 'cost'));
@@ -321,6 +334,12 @@ class SettingsController extends Controller
         $user->assignRole($role);
         $user->update(['current_role' => $role]);
 
-        return redirect()->route($role . '.dashboard')->with('success', 'Role purchased and assigned successfully!');
+        // Redirect based on role
+        switch ($role) {
+            case 'customer':
+                return redirect()->route('dashboard')->with('success', 'Role purchased and assigned successfully!');
+            default:
+                return redirect()->route($role . '.dashboard')->with('success', 'Role purchased and assigned successfully!');
+        }
     }
 }

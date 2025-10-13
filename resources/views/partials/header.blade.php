@@ -29,29 +29,32 @@
 
             <!-- User Menu & Mobile Menu Button -->
              <div class="d-flex align-items-center">
-                 @auth
-                     <!-- User Dropdown -->
-                     <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
-                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                <span class="fw-medium">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
-                            </div>
-                            <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
-                            <li><a class="dropdown-item" href="#">Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                             <li>
-                                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                                     @csrf
-                                     <button type="submit" class="dropdown-item">Logout</button>
-                                 </form>
-                             </li>
-                         </ul>
-                     </div>
-                 @endauth
+                  @auth
+                      <!-- Role Switcher (if user has multiple roles) -->
+                      @include('partials.role-switcher')
+
+                      <!-- User Dropdown -->
+                      <div class="dropdown">
+                         <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
+                             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                 <span class="fw-medium">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                             </div>
+                             <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
+                         </button>
+                         <ul class="dropdown-menu">
+                             <li><a class="dropdown-item" href="{{ route('dashboard') }}">Dashboard</a></li>
+                             <li><a class="dropdown-item" href="#">Profile</a></li>
+                             <li><a class="dropdown-item" href="#">Settings</a></li>
+                             <li><hr class="dropdown-divider"></li>
+                              <li>
+                                  <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                      @csrf
+                                      <button type="submit" class="dropdown-item">Logout</button>
+                                  </form>
+                              </li>
+                          </ul>
+                      </div>
+                  @endauth
 
                  <!-- Mobile menu button -->
                  <button class="btn btn-outline-secondary d-md-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#mobile-menu">

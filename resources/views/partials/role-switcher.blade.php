@@ -3,32 +3,35 @@
     $userRoles = $user->roles->pluck('name')->toArray();
     $currentRole = $user->current_role;
 
-    $roleIcons = [
-        'client' => 'bi-person-badge',
-        'freelancer' => 'bi-briefcase',
-        'vendor' => 'bi-shop',
-        'admin' => 'bi-shield-check',
-        'super_admin' => 'bi-shield-fill-check',
-        'support' => 'bi-headset',
-    ];
+     $roleIcons = [
+         'client' => 'bi-person-badge',
+         'freelancer' => 'bi-briefcase',
+         'vendor' => 'bi-shop',
+         'customer' => 'bi-person',
+         'admin' => 'bi-shield-check',
+         'super_admin' => 'bi-shield-fill-check',
+         'support' => 'bi-headset',
+     ];
 
-    $roleLabels = [
-        'client' => 'Client',
-        'freelancer' => 'Freelancer',
-        'vendor' => 'Vendor',
-        'admin' => 'Admin',
-        'super_admin' => 'Super Admin',
-        'support' => 'Support',
-    ];
+     $roleLabels = [
+         'client' => 'Client',
+         'freelancer' => 'Freelancer',
+         'vendor' => 'Vendor',
+         'customer' => 'Customer',
+         'admin' => 'Admin',
+         'super_admin' => 'Super Admin',
+         'support' => 'Support',
+     ];
 
-    $roleColors = [
-        'client' => 'primary',
-        'freelancer' => 'success',
-        'vendor' => 'info',
-        'admin' => 'danger',
-        'super_admin' => 'danger',
-        'support' => 'warning',
-    ];
+     $roleColors = [
+         'client' => 'primary',
+         'freelancer' => 'success',
+         'vendor' => 'info',
+         'customer' => 'secondary',
+         'admin' => 'danger',
+         'super_admin' => 'danger',
+         'support' => 'warning',
+     ];
 @endphp
 
 @if(count($userRoles) > 1)

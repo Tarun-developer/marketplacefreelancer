@@ -18,12 +18,12 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        // If user has no roles, assign default "user" role and show common dashboard
-        if ($user->roles->count() === 0) {
-            $user->assignRole('user');
-            $user->update(['current_role' => null]); // No current role for default users
-            return $this->commonDashboard($user);
-        }
+         // If user has no roles, assign default "customer" role and show common dashboard
+         if ($user->roles->count() === 0) {
+             $user->assignRole('customer');
+             $user->update(['current_role' => 'customer']);
+             return $this->commonDashboard($user);
+         }
 
         // Force show common dashboard if requested via query parameter
         if ($request->query('view') === 'all') {
@@ -58,11 +58,43 @@ class DashboardController extends Controller
         return $this->commonDashboard($user);
     }
 
-    public function selectRole(Request $request)
-    {
-        // Force show common dashboard for role selection (ignores current_role)
-        return $this->commonDashboard($request->user());
-    }
+     public function selectRole(Request $request)
+     {
+         $user = $request->user();
+         $userRoles = $user->roles->pluck('name')->toArray();
+
+         // Available roles for purchase
+         $availableRoles = [
+             'client' => [
+                 'name' => 'Client',
+                 'description' => 'Post jobs and hire freelancers',
+                 'icon' => 'bi-person-badge',
+                 'color' => 'primary',
+                 'cost' => config('settings.client_role_cost', 0),
+             ],
+             'freelancer' => [
+                 'name' => 'Freelancer',
+                 'description' => 'Offer services and find work',
+                 'icon' => 'bi-briefcase',
+                 'color' => 'success',
+                 'cost' => config('settings.freelancer_role_cost', 0),
+             ],
+             'vendor' => [
+                 'name' => 'Vendor',
+                 'description' => 'Sell products and manage inventory',
+                 'icon' => 'bi-shop',
+                 'color' => 'info',
+                 'cost' => config('settings.vendor_role_cost', 0),
+             ],
+         ];
+
+         // Filter out roles the user already has
+         $rolesToShow = array_filter($availableRoles, function($role, $key) use ($userRoles) {
+             return !in_array($key, $userRoles);
+         }, ARRAY_FILTER_USE_BOTH);
+
+         return view('dashboards.select-role', compact('rolesToShow', 'user'));
+     }
 
     public function commonDashboard($user = null)
     {

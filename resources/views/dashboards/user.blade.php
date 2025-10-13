@@ -13,38 +13,60 @@
 
     <!-- Quick Role Access Cards -->
     <div class="row g-4 mb-4">
-        @foreach($userRoles as $role)
-            @php
-                $roleConfig = [
-                    'client' => [
-                        'icon' => 'bi-person-badge',
-                        'color' => 'primary',
-                        'label' => 'Client Dashboard',
-                        'description' => 'Manage your jobs and orders',
-                        'route' => 'client.dashboard'
-                    ],
-                    'freelancer' => [
-                        'icon' => 'bi-briefcase',
-                        'color' => 'success',
-                        'label' => 'Freelancer Dashboard',
-                        'description' => 'View your gigs and proposals',
-                        'route' => 'freelancer.dashboard'
-                    ],
-                    'vendor' => [
-                        'icon' => 'bi-shop',
-                        'color' => 'info',
-                        'label' => 'Vendor Dashboard',
-                        'description' => 'Manage your products and sales',
-                        'route' => 'vendor.dashboard'
-                    ]
-                ];
-                $config = $roleConfig[$role] ?? null;
-            @endphp
+        @php
+            $allRoles = [
+                'client' => [
+                    'icon' => 'bi-person-badge',
+                    'color' => 'primary',
+                    'label' => 'Client Dashboard',
+                    'description' => 'Manage your jobs and orders',
+                    'route' => 'client.dashboard',
+                    'hasRole' => in_array('client', $userRoles)
+                ],
+                'freelancer' => [
+                    'icon' => 'bi-briefcase',
+                    'color' => 'success',
+                    'label' => 'Freelancer Dashboard',
+                    'description' => 'View your gigs and proposals',
+                    'route' => 'freelancer.dashboard',
+                    'hasRole' => in_array('freelancer', $userRoles)
+                ],
+                'vendor' => [
+                    'icon' => 'bi-shop',
+                    'color' => 'info',
+                    'label' => 'Vendor Dashboard',
+                    'description' => 'Manage your products and sales',
+                    'route' => 'vendor.dashboard',
+                    'hasRole' => in_array('vendor', $userRoles)
+                ]
+            ];
+        @endphp
 
-            @if($config)
+        @foreach($allRoles as $roleKey => $config)
             <div class="col-md-4">
-                <a href="{{ route($config['route']) }}" class="text-decoration-none">
-                    <div class="card border-{{ $config['color'] }} h-100 hover-card">
+                @if($config['hasRole'])
+                    <a href="{{ route($config['route']) }}" class="text-decoration-none">
+                        <div class="card border-{{ $config['color'] }} h-100 hover-card">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-circle bg-{{ $config['color'] }} bg-opacity-10 p-3 me-3">
+                                        <i class="bi {{ $config['icon'] }} fs-3 text-{{ $config['color'] }}"></i>
+                                    </div>
+                                    <div>
+                                        <h5 class="mb-0">{{ $config['label'] }}</h5>
+                                        <small class="text-muted">{{ $config['description'] }}</small>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="btn btn-sm btn-outline-{{ $config['color'] }}">
+                                        Go to Dashboard <i class="bi bi-arrow-right"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                @else
+                    <div class="card border-{{ $config['color'] }} border-2 h-100">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
                                 <div class="rounded-circle bg-{{ $config['color'] }} bg-opacity-10 p-3 me-3">
@@ -56,15 +78,14 @@
                                 </div>
                             </div>
                             <div class="text-end">
-                                <span class="btn btn-sm btn-outline-{{ $config['color'] }}">
-                                    Go to Dashboard <i class="bi bi-arrow-right"></i>
-                                </span>
+                                <a href="{{ route('checkout', $roleKey) }}" class="btn btn-sm btn-{{ $config['color'] }}">
+                                    <i class="bi bi-lock me-1"></i>Unlock Role
+                                </a>
                             </div>
                         </div>
                     </div>
-                </a>
+                @endif
             </div>
-            @endif
         @endforeach
     </div>
 

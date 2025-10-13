@@ -42,13 +42,16 @@ class RolePermissionSeeder extends Seeder
         $freelancer = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'freelancer']);
         $freelancer->givePermissionTo(['view dashboard', 'manage services', 'manage jobs', 'manage orders']);
 
-        $client = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'client']);
-        $client->givePermissionTo(['view dashboard', 'manage jobs', 'manage orders']);
+         $client = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'client']);
+         $client->givePermissionTo(['view dashboard', 'manage jobs', 'manage orders']);
 
-        $support = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'support']);
-        $support->givePermissionTo(['view dashboard', 'manage support', 'manage disputes']);
+         $customer = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'customer']);
+         $customer->givePermissionTo(['view dashboard']);
 
-        $userRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'user']);
-        $userRole->givePermissionTo(['view dashboard']);
+         $support = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'support']);
+         $support->givePermissionTo(['view dashboard', 'manage support', 'manage disputes']);
+
+         $userRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'user']);
+         $userRole->givePermissionTo(['view dashboard']);
     }
 }

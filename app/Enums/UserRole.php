@@ -2,15 +2,16 @@
 
 namespace App\Enums;
 
-enum UserRole: string
-{
-    case SUPER_ADMIN = 'super_admin';
-    case ADMIN = 'admin';
-    case MANAGER = 'manager';
-    case VENDOR = 'vendor';
-    case FREELANCER = 'freelancer';
-    case CLIENT = 'client';
-    case SUPPORT = 'support';
+ enum UserRole: string
+ {
+     case SUPER_ADMIN = 'super_admin';
+     case ADMIN = 'admin';
+     case MANAGER = 'manager';
+     case VENDOR = 'vendor';
+     case FREELANCER = 'freelancer';
+     case CLIENT = 'client';
+     case CUSTOMER = 'customer';
+     case SUPPORT = 'support';
 
     /**
      * Get all role values
@@ -23,18 +24,19 @@ enum UserRole: string
     /**
      * Get role label
      */
-    public function label(): string
-    {
-        return match ($this) {
-            self::SUPER_ADMIN => 'Super Administrator',
-            self::ADMIN => 'Administrator',
-            self::MANAGER => 'Manager',
-            self::VENDOR => 'Vendor',
-            self::FREELANCER => 'Freelancer',
-            self::CLIENT => 'Client',
-            self::SUPPORT => 'Support Staff',
-        };
-    }
+     public function label(): string
+     {
+         return match ($this) {
+             self::SUPER_ADMIN => 'Super Administrator',
+             self::ADMIN => 'Administrator',
+             self::MANAGER => 'Manager',
+             self::VENDOR => 'Vendor',
+             self::FREELANCER => 'Freelancer',
+             self::CLIENT => 'Client',
+             self::CUSTOMER => 'Customer',
+             self::SUPPORT => 'Support Staff',
+         };
+     }
 
     /**
      * Check if role has admin privileges
@@ -44,11 +46,19 @@ enum UserRole: string
         return in_array($this, [self::SUPER_ADMIN, self::ADMIN, self::MANAGER]);
     }
 
-    /**
-     * Check if role can sell
-     */
-    public function canSell(): bool
-    {
-        return in_array($this, [self::VENDOR, self::FREELANCER]);
-    }
+     /**
+      * Check if role can sell
+      */
+     public function canSell(): bool
+     {
+         return in_array($this, [self::VENDOR, self::FREELANCER]);
+     }
+
+     /**
+      * Check if role is a buyer/customer type
+      */
+     public function isBuyer(): bool
+     {
+         return in_array($this, [self::CLIENT, self::CUSTOMER]);
+     }
 }
