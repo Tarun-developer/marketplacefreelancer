@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Products\Models\Product;
+use App\Modules\Products\Models\ProductVersion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class VendorProductController extends Controller
 {
@@ -87,6 +89,8 @@ class VendorProductController extends Controller
         if ($product->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
+
+        $product->load(['versions', 'currentVersion', 'category']);
         return view('vendor.products.show', compact('product'));
     }
 
@@ -96,7 +100,11 @@ class VendorProductController extends Controller
         if ($product->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
-        return view('vendor.products.edit', compact('product'));
+
+        $product->load(['versions', 'currentVersion', 'category']);
+        $versions = $product->versions()->paginate(10);
+
+        return view('vendor.products.edit', compact('product', 'versions'));
     }
 
     public function update(Request $request, Product $product)
@@ -164,6 +172,63 @@ class VendorProductController extends Controller
 
         return redirect()->route('vendor.products.index')
             ->with('success', 'Product deleted successfully');
+    }
+
+    /**
+     * Create a new version for the product
+     */
+    public function createVersion(Request $request, Product $product)
+    {
+        // Check if the product belongs to the authenticated user
+        if ($product->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'version_number' => 'required|string|max:50',
+            'changelog' => 'required|string',
+            'release_date' => 'required|date',
+            'main_file' => 'required|file|mimes:zip,rar|max:102400', // 100MB max
+        ]);
+
+        $file = $request->file('main_file');
+        $filePath = $file->store('product-files', 'public');
+
+        $versionData = [
+            'version_number' => $request->version_number,
+            'changelog' => $request->changelog,
+            'release_date' => $request->release_date,
+            'file_path' => $filePath,
+            'file_size' => $file->getSize(),
+            'file_hashes' => [
+                'md5' => md5_file($file->getRealPath()),
+                'sha256' => hash_file('sha256', $file->getRealPath()),
+            ],
+        ];
+
+        $product->createNewVersion($versionData);
+
+        return redirect()->route('vendor.products.edit', $product)
+            ->with('success', 'New version created successfully');
+    }
+
+    /**
+     * Update product status (Admin only)
+     */
+    public function updateStatus(Request $request, Product $product)
+    {
+        // Only admin can update status
+        if (!auth()->user()->hasRole('admin')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'status' => 'required|in:active,inactive,suspended',
+        ]);
+
+        $product->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Product status updated successfully');
     }
 
     public function analytics()

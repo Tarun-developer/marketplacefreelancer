@@ -145,12 +145,34 @@ class Product extends Model implements HasMedia
 
     public function versions()
     {
-        return $this->hasMany(ProductVersion::class);
+        return $this->hasMany(ProductVersion::class)->orderBy('version_number', 'desc');
     }
 
     public function currentVersion()
     {
-        return $this->hasOne(ProductVersion::class)->latestOfMany();
+        return $this->hasOne(ProductVersion::class)->where('is_active', true)->latestOfMany('version_number');
+    }
+
+    public function activeVersions()
+    {
+        return $this->hasMany(ProductVersion::class)->where('is_active', true)->orderBy('version_number', 'desc');
+    }
+
+    /**
+     * Get the latest version number
+     */
+    public function getLatestVersionNumber()
+    {
+        $latest = $this->versions()->first();
+        return $latest ? $latest->version_number : '1.0.0';
+    }
+
+    /**
+     * Create a new version
+     */
+    public function createNewVersion($versionData)
+    {
+        return ProductVersion::createVersion($this->id, $versionData);
     }
 
     public function registerMediaCollections(): void

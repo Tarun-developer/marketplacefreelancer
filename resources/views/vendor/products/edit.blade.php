@@ -332,6 +332,80 @@
                             </div>
                         </div>
 
+                        <!-- Version Management Section -->
+                        <div class="card border-info mb-4">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">🔄 Version Management</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Current Version: {{ $product->currentVersion->version_number ?? 'No versions yet' }}</h6>
+                                        @if($product->currentVersion)
+                                            <p><strong>Released:</strong> {{ $product->currentVersion->release_date->format('M d, Y') }}</p>
+                                            <p><strong>File Size:</strong> {{ number_format($product->currentVersion->file_size / 1024 / 1024, 2) }} MB</p>
+                                            <p><strong>Downloads:</strong> {{ $product->currentVersion->download_count }}</p>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Create New Version</h6>
+                                        <form action="{{ route('vendor.products.create-version', $product) }}" method="POST" enctype="multipart/form-data" class="mb-3">
+                                            @csrf
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input type="text" name="version_number" class="form-control form-control-sm mb-2" placeholder="Version (e.g., 1.1.0)" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="date" name="release_date" class="form-control form-control-sm mb-2" required>
+                                                </div>
+                                            </div>
+                                            <textarea name="changelog" class="form-control form-control-sm mb-2" rows="3" placeholder="What's new in this version?" required></textarea>
+                                            <input type="file" name="main_file" class="form-control form-control-sm mb-2" accept=".zip,.rar" required>
+                                            <button type="submit" class="btn btn-sm btn-success">Create Version</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                @if($product->versions->count() > 0)
+                                    <h6 class="mt-4">Version History</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Version</th>
+                                                    <th>Release Date</th>
+                                                    <th>File Size</th>
+                                                    <th>Downloads</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($product->versions as $version)
+                                                    <tr>
+                                                        <td>{{ $version->version_number }}</td>
+                                                        <td>{{ $version->release_date->format('M d, Y') }}</td>
+                                                        <td>{{ number_format($version->file_size / 1024 / 1024, 2) }} MB</td>
+                                                        <td>{{ $version->download_count }}</td>
+                                                        <td>
+                                                            @if($version->is_active)
+                                                                <span class="badge bg-success">Active</span>
+                                                            @else
+                                                                <span class="badge bg-secondary">Inactive</span>
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-outline-info" onclick="showChangelog('{{ $version->version_number }}', '{{ $version->changelog }}')">View Changelog</button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
                         <!-- Terms and Status Section -->
                         <div class="card border-danger mb-4">
                             <div class="card-header bg-danger text-white">
@@ -356,17 +430,29 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group mb-3">
-                                    <label for="status" class="form-label">Product Status <span class="text-danger">*</span></label>
-                                    <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
-                                        <option value="active" {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="inactive" {{ old('status', $product->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                        <option value="suspended" {{ old('status', $product->status) == 'suspended' ? 'selected' : '' }}>Suspended</option>
-                                    </select>
-                                    @error('status')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
+                                @if(auth()->user()->hasRole('admin'))
+                                    <div class="form-group mb-3">
+                                        <label for="status" class="form-label">Product Status (Admin Only) <span class="text-danger">*</span></label>
+                                        <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
+                                            <option value="active" {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                            <option value="inactive" {{ old('status', $product->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                            <option value="suspended" {{ old('status', $product->status) == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                                        </select>
+                                        @error('status')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                @else
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Product Status</label>
+                                        <p class="form-control-plaintext">
+                                            <span class="badge bg-{{ $product->status == 'active' ? 'success' : 'warning' }}">
+                                                {{ ucfirst($product->status) }}
+                                            </span>
+                                            <small class="text-muted d-block">Status can only be changed by administrators</small>
+                                        </p>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -381,10 +467,33 @@
     </div>
 </div>
 
+<!-- Changelog Modal -->
+<div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changelogModalLabel">Version Changelog</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 id="modalVersionTitle">Version</h6>
+                <div id="modalChangelogContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
     // Initialize tags input
     $('input[data-role="tagsinput"]').tagsinput();
+
+    // Function to show changelog modal
+    function showChangelog(version, changelog) {
+        document.getElementById('modalVersionTitle').textContent = 'Version ' + version;
+        document.getElementById('modalChangelogContent').innerHTML = changelog.replace(/\n/g, '<br>');
+        new bootstrap.Modal(document.getElementById('changelogModal')).show();
+    }
 </script>
 @endpush
 @endsection

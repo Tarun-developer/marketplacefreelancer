@@ -139,13 +139,18 @@
                             <h5 class="mb-0">🧾 Product Release & Versioning</h5>
                         </div>
                         <div class="card-body">
+                            @if($product->currentVersion)
+                                <div class="alert alert-info">
+                                    <h6>Current Active Version: {{ $product->currentVersion->version_number }}</h6>
+                                    <p><strong>Released:</strong> {{ $product->currentVersion->release_date->format('M d, Y') }}</p>
+                                    <p><strong>File Size:</strong> {{ number_format($product->currentVersion->file_size / 1024 / 1024, 2) }} MB</p>
+                                    <p><strong>Downloads:</strong> {{ $product->currentVersion->download_count }}</p>
+                                </div>
+                            @endif
+
                             <div class="row">
                                 <div class="col-md-6">
                                     <table class="table table-sm">
-                                        <tr>
-                                            <th>Release Date</th>
-                                            <td>{{ $product->release_date ? $product->release_date->format('M d, Y') : 'Not set' }}</td>
-                                        </tr>
                                         <tr>
                                             <th>Feature Updates</th>
                                             <td>
@@ -156,10 +161,6 @@
                                                 @endif
                                             </td>
                                         </tr>
-                                    </table>
-                                </div>
-                                <div class="col-md-6">
-                                    <table class="table table-sm">
                                         <tr>
                                             <th>Item Support</th>
                                             <td>
@@ -170,19 +171,63 @@
                                                 @endif
                                             </td>
                                         </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
                                         <tr>
                                             <th>Support Email</th>
                                             <td>{{ $product->support_email ?? 'Not provided' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total Versions</th>
+                                            <td>{{ $product->versions->count() }}</td>
                                         </tr>
                                     </table>
                                 </div>
                             </div>
 
-                            @if($product->changelog)
-                                <h6>Changelog</h6>
-                                <div class="border p-3 bg-light">
-                                    {!! nl2br(e($product->changelog)) !!}
+                            @if($product->versions->count() > 0)
+                                <h6 class="mt-4">Version History</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Version</th>
+                                                <th>Release Date</th>
+                                                <th>File Size</th>
+                                                <th>Downloads</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($product->versions->take(5) as $version)
+                                                <tr>
+                                                    <td>{{ $version->version_number }}</td>
+                                                    <td>{{ $version->release_date->format('M d, Y') }}</td>
+                                                    <td>{{ number_format($version->file_size / 1024 / 1024, 2) }} MB</td>
+                                                    <td>{{ $version->download_count }}</td>
+                                                    <td>
+                                                        @if($version->is_active)
+                                                            <span class="badge bg-success">Active</span>
+                                                        @else
+                                                            <span class="badge bg-secondary">Inactive</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-info" onclick="showChangelog('{{ $version->version_number }}', '{{ $version->changelog }}')">View Changelog</button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
                                 </div>
+                                @if($product->versions->count() > 5)
+                                    <p class="text-center mt-2">
+                                        <a href="{{ route('vendor.products.edit', $product) }}" class="btn btn-sm btn-outline-primary">View All Versions</a>
+                                    </p>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -273,4 +318,31 @@
         </div>
     </div>
 </div>
+
+<!-- Changelog Modal -->
+<div class="modal fade" id="changelogModal" tabindex="-1" aria-labelledby="changelogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changelogModalLabel">Version Changelog</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6 id="modalVersionTitle">Version</h6>
+                <div id="modalChangelogContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+    // Function to show changelog modal
+    function showChangelog(version, changelog) {
+        document.getElementById('modalVersionTitle').textContent = 'Version ' + version;
+        document.getElementById('modalChangelogContent').innerHTML = changelog.replace(/\n/g, '<br>');
+        new bootstrap.Modal(document.getElementById('changelogModal')).show();
+    }
+</script>
+@endpush
 @endsection

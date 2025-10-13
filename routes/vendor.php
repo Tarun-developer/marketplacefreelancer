@@ -11,8 +11,9 @@ Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->g
         return app(\App\Http\Controllers\DashboardController::class)->vendorDashboard(auth()->user());
     })->name('dashboard');
 
-    // Products Management
-    Route::resource('products', VendorProductController::class);
+     // Products Management
+     Route::resource('products', VendorProductController::class);
+     Route::post('products/{product}/create-version', [VendorProductController::class, 'createVersion'])->name('products.create-version');
 
     // Orders Management
     Route::resource('orders', VendorOrderController::class)->only(['index', 'show']);
