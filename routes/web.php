@@ -7,6 +7,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Authentication routes (using Laravel Breeze or similar)
+require __DIR__.'/auth.php';
+
 Route::middleware(['auth', 'role:SuperAdmin|Admin'])->group(function () {
     Route::resource('users', \App\Modules\Users\Controllers\UserController::class);
 });
