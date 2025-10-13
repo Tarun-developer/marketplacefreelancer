@@ -19,8 +19,10 @@ Route::middleware(['auth'])->group(function () {
 
 // Admin Routes
 // Onboarding routes
-Route::get('onboarding', [SettingsController::class, 'showOnboarding'])->name('onboarding');
-Route::post('onboarding/set-role', [SettingsController::class, 'setRole'])->name('onboarding.set-role');
+Route::middleware('auth')->group(function () {
+    Route::get('onboarding', [SettingsController::class, 'showOnboarding'])->name('onboarding');
+    Route::post('onboarding/set-role', [SettingsController::class, 'setRole'])->name('onboarding.set-role');
+});
 
 // Include role-based route files
 require __DIR__.'/admin.php';

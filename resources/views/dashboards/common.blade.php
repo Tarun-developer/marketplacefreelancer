@@ -133,11 +133,12 @@ document.querySelectorAll('.select-role').forEach(button => {
                 body: JSON.stringify({ role: role })
             })
             .then(response => response.json())
+            .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     window.location.href = data.redirect;
                 } else {
-                    alert('Error setting role. Please try again.');
+                    alert('Error setting role: ' + (data.error || 'Please try again.'));
                     this.innerHTML = '<i class="bi bi-arrow-right me-2"></i>Enter as ' + roleName;
                     this.disabled = false;
                 }

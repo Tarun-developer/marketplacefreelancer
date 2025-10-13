@@ -138,40 +138,47 @@ class SettingsController extends Controller
 
     public function setRole(Request $request)
     {
-        $request->validate([
-            'role' => 'required|in:client,freelancer,vendor,multi',
-        ]);
+        try {
+            $request->validate([
+                'role' => 'required|in:client,freelancer,vendor,multi',
+            ]);
 
-        $user = auth()->user();
+            $user = auth()->user();
 
-        if ($request->role === 'multi') {
-            // Assign multiple roles
-            $user->syncRoles(['client', 'freelancer', 'vendor']);
-            $user->update(['current_role' => 'client']); // Default to client
-            $redirect = route('dashboard'); // Go to common dashboard
-        } else {
-            // Assign single role
-            $user->syncRoles([$request->role]);
-            $user->update(['current_role' => $request->role]);
+            if ($request->role === 'multi') {
+                // Assign multiple roles
+                $user->syncRoles(['client', 'freelancer', 'vendor']);
+                $user->update(['current_role' => 'client']); // Default to client
+                $redirect = route('dashboard'); // Go to common dashboard
+            } else {
+                // Assign single role
+                $user->syncRoles([$request->role]);
+                $user->update(['current_role' => $request->role]);
 
-            switch ($request->role) {
-                case 'client':
-                    $redirect = route('client.dashboard');
-                    break;
-                case 'freelancer':
-                    $redirect = route('freelancer.dashboard');
-                    break;
-                case 'vendor':
-                    $redirect = route('vendor.dashboard');
-                    break;
-                default:
-                    $redirect = route('dashboard');
+                switch ($request->role) {
+                    case 'client':
+                        $redirect = route('client.dashboard');
+                        break;
+                    case 'freelancer':
+                        $redirect = route('freelancer.dashboard');
+                        break;
+                    case 'vendor':
+                        $redirect = route('vendor.dashboard');
+                        break;
+                    default:
+                        $redirect = route('dashboard');
+                }
             }
-        }
 
-        return response()->json([
-            'success' => true,
-            'redirect' => $redirect
-        ]);
+            return response()->json([
+                'success' => true,
+                'redirect' => $redirect
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

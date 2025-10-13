@@ -63,7 +63,7 @@ class DashboardController extends Controller
         return view('dashboards.common', compact('stats'));
     }
 
-    private function adminDashboard()
+    public function adminDashboard()
     {
         $stats = [
             'total_users' => User::count(),
@@ -98,7 +98,7 @@ class DashboardController extends Controller
         return view('dashboards.admin', compact('stats', 'recent_orders', 'recent_users'));
     }
 
-    private function vendorDashboard($user)
+    public function vendorDashboard($user)
     {
         $stats = [
             'total_products' => $user->products()->count(),
@@ -116,7 +116,7 @@ class DashboardController extends Controller
         return view('dashboards.vendor', compact('stats', 'recent_orders'));
     }
 
-    private function freelancerDashboard($user)
+    public function freelancerDashboard($user)
     {
         $stats = [
             'active_gigs' => $user->services()->where('status', 'active')->count(),
@@ -132,7 +132,7 @@ class DashboardController extends Controller
         return view('dashboards.freelancer', compact('stats', 'active_jobs'));
     }
 
-    private function clientDashboard($user)
+    public function clientDashboard($user)
     {
         $stats = [
             'posted_jobs' => $user->jobs()->count(),
@@ -150,7 +150,7 @@ class DashboardController extends Controller
         return view('dashboards.client', compact('stats', 'recent_orders'));
     }
 
-    private function supportDashboard($user)
+    public function supportDashboard($user)
     {
         $stats = [
             'open_tickets' => SupportTicket::where('status', 'open')->count(),
