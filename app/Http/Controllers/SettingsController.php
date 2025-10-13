@@ -245,4 +245,45 @@ class SettingsController extends Controller
 
         return redirect()->route('admin.settings.index')->with('success', 'Role settings updated successfully.');
     }
+
+    public function checkout($role)
+    {
+        $costs = [
+            'client' => config('settings.client_role_cost', 0),
+            'freelancer' => config('settings.freelancer_role_cost', 0),
+            'vendor' => config('settings.vendor_role_cost', 0),
+        ];
+
+        $cost = $costs[$role] ?? 0;
+
+        if ($cost == 0) {
+            // Free role - redirect to set role
+            return $this->setRole(request()->merge(['role' => $role]));
+        }
+
+        return view('checkout', compact('role', 'cost'));
+    }
+
+    public function processPayment(Request $request, $role)
+    {
+        $request->validate([
+            'payment_method' => 'required|in:stripe,paypal',
+            'terms' => 'accepted',
+        ]);
+
+        // Simulate payment processing
+        $cost = config('settings.' . $role . '_role_cost', 0);
+
+        if ($cost > 0) {
+            // Here you would process the actual payment
+            // For demo, we'll just assign the role
+        }
+
+        // Assign the role
+        $user = auth()->user();
+        $user->assignRole($role);
+        $user->update(['current_role' => $role]);
+
+        return redirect()->route($role . '.dashboard')->with('success', 'Role assigned successfully!');
+    }
 }

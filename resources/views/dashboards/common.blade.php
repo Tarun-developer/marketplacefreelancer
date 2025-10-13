@@ -225,19 +225,10 @@ document.querySelectorAll('.select-role').forEach(button => {
 
         if (isFree) {
             // Free role - direct assignment
-            if (confirm(`Are you sure you want to select the ${roleName} role? You can always switch later.`)) {
-                processRoleSelection(role, cost, isFree);
-            }
+            processRoleSelection(role, cost, isFree);
         } else {
-            // Paid role - show payment modal
-            document.getElementById('modalRoleName').textContent = roleName;
-            document.getElementById('paymentRole').value = role;
-            document.getElementById('paymentCost').value = cost;
-            document.getElementById('amount').value = `$${cost}`;
-
-            // Show payment modal
-            const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
-            modal.show();
+            // Paid role - redirect to checkout
+            window.location.href = `{{ url('checkout') }}/${role}`;
         }
     });
 });

@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
     Route::get('onboarding', [SettingsController::class, 'showOnboarding'])->name('onboarding');
     Route::post('onboarding/set-role', [SettingsController::class, 'setRole'])->name('onboarding.set-role');
     Route::post('switch-role', [SettingsController::class, 'switchRole'])->name('switch-role');
+    Route::get('checkout/{role}', [SettingsController::class, 'checkout'])->name('checkout');
+    Route::post('checkout/{role}', [SettingsController::class, 'processPayment'])->name('checkout.process');
 });
 
 // Include role-based route files
