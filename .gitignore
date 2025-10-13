@@ -1,0 +1,76 @@
+# Laravel & PHP
+*.log
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.phpunit.cache
+/vendor
+/auth.json
+composer.phar
+
+# Node & Frontend
+/node_modules
+/public/build
+/public/hot
+/public/storage
+package-lock.json
+yarn.lock
+
+# Storage & Cache
+/storage/*.key
+/storage/pail
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+/storage/framework/cache/*
+!/storage/framework/cache/.gitkeep
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitkeep
+/storage/framework/views/*
+!/storage/framework/views/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
+
+# IDE & Editors
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+.DS_Store
+Thumbs.db
+
+# System Files
+*.swp
+*~
+.*.sw[a-z]
+*.tmp
+*.cache
+
+# Claude Code temp files
+claude-*-cwd
+.*.zod/
+
+# Development
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+/.vagrant
+.phpunit.cache
+
+# Server specific files
+*.sock.lock
+*.pl
+*.php~
+/cache/*
+/aap_locks/*
+/node-compile-cache/*
+/node-jiti/*
+/v8-compile-cache-*/
+bmac_*
+*.time
+e188497a08589e197aae16e8a3b059c3
+rustix_test_can_compile
+*.sh
