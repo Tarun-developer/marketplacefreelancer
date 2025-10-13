@@ -23,12 +23,7 @@ class DashboardController extends Controller
             return redirect()->route('onboarding');
         }
 
-        // If user has current_role set, redirect to specific dashboard
-        if ($user->current_role) {
-            return $this->redirectToRoleDashboard($user);
-        }
-
-        // If user has roles but no current_role, show common dashboard
+        // Always show common dashboard for role selection
         return $this->commonDashboard($user);
     }
 
