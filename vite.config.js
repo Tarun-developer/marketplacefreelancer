@@ -8,6 +8,10 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
         }),
+        {
+            name: 'alpine',
+            entry: 'node_modules/alpinejs/dist/cdn.min.js',
+        },
         tailwindcss(),
     ],
 });

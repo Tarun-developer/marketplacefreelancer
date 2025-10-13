@@ -7,7 +7,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-gray-50">
-    <div class="min-h-screen flex items-center justify-center">
+    @include('partials.header')
+
+    <div class="min-h-screen flex items-center justify-center py-12">
         <div class="max-w-md w-full space-y-8">
             <div>
                 <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
