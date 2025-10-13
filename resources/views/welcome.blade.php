@@ -533,7 +533,7 @@
 
             <div class="text-center mt-5" data-aos="fade-up">
                 <a href="#" class="btn btn-primary-gradient btn-lg">
-                    <i class="bi bi-grid me-2"></i>Browse All Products
+                    <i class="bi bi-grid me-2"></i><a href="{{ route('products.index') }}" class="text-decoration-none">Browse All Products</a>
                 </a>
             </div>
         </div>
@@ -719,7 +719,7 @@
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-decoration-none">Find Freelancers</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none">Post a Job</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none">Digital Products</a></li>
+                        <li class="mb-2"><a href="{{ route('products.index') }}" class="text-decoration-none">Digital Products</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none">How It Works</a></li>
                     </ul>
                 </div>
@@ -728,7 +728,7 @@
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-decoration-none">Find Jobs</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none">Create Profile</a></li>
-                        <li class="mb-2"><a href="#" class="text-decoration-none">Sell Products</a></li>
+                        <li class="mb-2"><a href="{{ route('vendor.products.index') }}" class="text-decoration-none">Sell Products</a></li>
                         <li class="mb-2"><a href="#" class="text-decoration-none">Success Stories</a></li>
                     </ul>
                 </div>

@@ -25,10 +25,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            RolePermissionSeeder::class,
-            SubscriptionPlanSeeder::class,
-        ]);
+         $this->call([
+             RolePermissionSeeder::class,
+             SubscriptionPlanSeeder::class,
+             CategorySeeder::class,
+             ProductSeeder::class,
+         ]);
 
          // Seed users with different roles
          for ($i = 0; $i < 10; $i++) {
