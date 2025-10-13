@@ -22,6 +22,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('onboarding', [SettingsController::class, 'showOnboarding'])->name('onboarding');
     Route::post('onboarding/set-role', [SettingsController::class, 'setRole'])->name('onboarding.set-role');
+    Route::post('switch-role', [SettingsController::class, 'switchRole'])->name('switch-role');
 });
 
 // Include role-based route files

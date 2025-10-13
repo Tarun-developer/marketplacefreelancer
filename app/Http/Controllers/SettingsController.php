@@ -181,4 +181,58 @@ class SettingsController extends Controller
             ], 500);
         }
     }
+
+    public function switchRole(Request $request)
+    {
+        try {
+            $request->validate([
+                'role' => 'required|string',
+            ]);
+
+            $user = auth()->user();
+
+            // Check if user has the role
+            if (!$user->hasRole($request->role)) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'You do not have this role assigned.'
+                ], 403);
+            }
+
+            // Update current role
+            $user->update(['current_role' => $request->role]);
+
+            // Get redirect URL based on role
+            switch ($request->role) {
+                case 'client':
+                    $redirect = route('client.dashboard');
+                    break;
+                case 'freelancer':
+                    $redirect = route('freelancer.dashboard');
+                    break;
+                case 'vendor':
+                    $redirect = route('vendor.dashboard');
+                    break;
+                case 'admin':
+                case 'super_admin':
+                    $redirect = route('admin.dashboard');
+                    break;
+                case 'support':
+                    $redirect = route('support.dashboard');
+                    break;
+                default:
+                    $redirect = route('dashboard');
+            }
+
+            return response()->json([
+                'success' => true,
+                'redirect' => $redirect
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

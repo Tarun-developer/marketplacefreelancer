@@ -28,10 +28,29 @@
             </nav>
 
             <!-- User Menu & Mobile Menu Button -->
-            <div class="d-flex align-items-center">
-                @auth
-                    <!-- User Dropdown -->
-                    <div class="dropdown">
+             <div class="d-flex align-items-center">
+                 @auth
+                     <!-- Role Switcher (for users with multiple roles) -->
+                     @if(auth()->user()->roles->count() > 1)
+                         <div class="dropdown me-3">
+                             <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                 <i class="bi bi-diagram-3 me-2"></i>{{ ucfirst(auth()->user()->current_role ?? 'Select Role') }}
+                             </button>
+                             <ul class="dropdown-menu">
+                                 @foreach(auth()->user()->roles as $role)
+                                     <li>
+                                         <a class="dropdown-item switch-role" href="#" data-role="{{ $role->name }}">
+                                             <i class="bi bi-{{ $role->name === 'client' ? 'person-check' : ($role->name === 'freelancer' ? 'tools' : ($role->name === 'vendor' ? 'shop' : 'gear')) }} me-2"></i>
+                                             {{ ucfirst($role->name) }}
+                                         </a>
+                                     </li>
+                                 @endforeach
+                             </ul>
+                         </div>
+                     @endif
+
+                     <!-- User Dropdown -->
+                     <div class="dropdown">
                         <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown">
                             <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
                                 <span class="fw-medium">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
@@ -43,18 +62,51 @@
                             <li><a class="dropdown-item" href="#">Profile</a></li>
                             <li><a class="dropdown-item" href="#">Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">Logout</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}" class="btn btn-primary me-2">Login</a>
-                    <a href="{{ route('register') }}" class="btn btn-outline-primary">Sign Up</a>
-                @endauth
+                             <li>
+                                 <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                                     @csrf
+                                     <button type="submit" class="dropdown-item">Logout</button>
+                                 </form>
+                             </li>
+                         </ul>
+                     </div>
+                 @endauth
+
+                 <!-- Role Switcher Script -->
+                 @auth
+                     @if(auth()->user()->roles->count() > 1)
+                         <script>
+                             document.querySelectorAll('.switch-role').forEach(link => {
+                                 link.addEventListener('click', function(e) {
+                                     e.preventDefault();
+                                     const role = this.getAttribute('data-role');
+
+                                     if (confirm(`Switch to ${role} role?`)) {
+                                         fetch('{{ route("switch-role") }}', {
+                                             method: 'POST',
+                                             headers: {
+                                                 'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                                 'Content-Type': 'application/json',
+                                             },
+                                             body: JSON.stringify({ role: role })
+                                         })
+                                         .then(response => response.json())
+                                         .then(data => {
+                                             if (data.success) {
+                                                 window.location.href = data.redirect;
+                                             } else {
+                                                 alert('Error switching role: ' + (data.error || 'Please try again.'));
+                                             }
+                                         })
+                                         .catch(error => {
+                                             alert('Error switching role. Please try again.');
+                                         });
+                                     }
+                                 });
+                             });
+                         </script>
+                     @endif
+                 @endauth
 
                  <!-- Mobile menu button -->
                  <button class="btn btn-outline-secondary d-md-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#mobile-menu">
