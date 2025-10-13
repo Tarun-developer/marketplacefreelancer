@@ -21,6 +21,7 @@ class SupportApiController extends Controller
         }
 
         $tickets = $query->paginate(10);
+
         return response()->json($tickets);
     }
 
@@ -34,6 +35,7 @@ class SupportApiController extends Controller
         ]);
 
         $ticket = $request->user()->supportTickets()->create($request->all());
+
         return response()->json($ticket, 201);
     }
 
@@ -42,6 +44,7 @@ class SupportApiController extends Controller
         $this->authorize('view', $ticket);
 
         $ticket->load('user');
+
         return response()->json($ticket);
     }
 
@@ -54,6 +57,7 @@ class SupportApiController extends Controller
         ]);
 
         $ticket->update($request->only('status'));
+
         return response()->json($ticket);
     }
 
@@ -62,6 +66,7 @@ class SupportApiController extends Controller
         $this->authorize('delete', $ticket);
 
         $ticket->delete();
+
         return response()->json(null, 204);
     }
 }

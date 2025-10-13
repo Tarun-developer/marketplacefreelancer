@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('wallet_transactions', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('wallet_id')->constrained()->onDelete('cascade');
-             $table->decimal('amount', 15, 2);
-             $table->string('currency', 3)->default('USD');
-             $table->enum('type', ['credit', 'debit'])->default('credit');
-             $table->text('description')->nullable();
-             $table->unsignedBigInteger('reference_id')->nullable();
-             $table->string('reference_type')->nullable();
-             $table->timestamps();
+        Schema::create('wallet_transactions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('wallet_id')->constrained()->onDelete('cascade');
+            $table->decimal('amount', 15, 2);
+            $table->string('currency', 3)->default('USD');
+            $table->enum('type', ['credit', 'debit'])->default('credit');
+            $table->text('description')->nullable();
+            $table->unsignedBigInteger('reference_id')->nullable();
+            $table->string('reference_type')->nullable();
+            $table->timestamps();
 
-             $table->index(['reference_type', 'reference_id']);
-         });
+            $table->index(['reference_type', 'reference_id']);
+        });
     }
 
     /**

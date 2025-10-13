@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Disputes\Models\Dispute;
 use App\Models\User;
+use App\Modules\Disputes\Models\Dispute;
 use App\Modules\Orders\Models\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

@@ -14,6 +14,7 @@ class UserApiController extends Controller
     public function index()
     {
         $users = User::with('profile')->paginate(10);
+
         return response()->json($users);
     }
 
@@ -41,6 +42,7 @@ class UserApiController extends Controller
     public function show(User $user)
     {
         $user->load('profile', 'media');
+
         return response()->json($user);
     }
 
@@ -61,6 +63,7 @@ class UserApiController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
         return response()->json(null, 204);
     }
 
@@ -68,6 +71,7 @@ class UserApiController extends Controller
     {
         $user = $request->user();
         $user->load('profile', 'media');
+
         return response()->json($user);
     }
 

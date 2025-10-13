@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Support\Models\SupportTicket;
 use App\Models\User;
+use App\Modules\Support\Models\SupportTicket;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SupportTicketFactory extends Factory

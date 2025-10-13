@@ -12,6 +12,12 @@ class AdminDisputeController extends Controller
     {
         $query = Dispute::with(['user', 'order']);
 
+        if ($request->filled('search')) {
+            $query->whereHas('order', function ($q) use ($request) {
+                $q->where('id', 'like', '%'.$request->search.'%');
+            });
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -24,6 +30,7 @@ class AdminDisputeController extends Controller
     public function show(Dispute $dispute)
     {
         $dispute->load(['user', 'order', 'messages']);
+
         return view('admin.disputes.show', compact('dispute'));
     }
 

@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('offers', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('service_id')->constrained()->onDelete('cascade');
-             $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
-             $table->foreignId('freelancer_id')->constrained('users')->onDelete('cascade');
-             $table->text('description');
-             $table->decimal('price', 10, 2);
-             $table->string('currency', 3)->default('USD');
-             $table->integer('delivery_time');
-             $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
-             $table->timestamp('expires_at');
-             $table->timestamps();
-         });
+        Schema::create('offers', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('service_id')->constrained()->onDelete('cascade');
+            $table->foreignId('client_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('freelancer_id')->constrained('users')->onDelete('cascade');
+            $table->text('description');
+            $table->decimal('price', 10, 2);
+            $table->string('currency', 3)->default('USD');
+            $table->integer('delivery_time');
+            $table->enum('status', ['pending', 'accepted', 'rejected'])->default('pending');
+            $table->timestamp('expires_at');
+            $table->timestamps();
+        });
     }
 
     /**

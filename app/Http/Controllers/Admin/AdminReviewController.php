@@ -12,6 +12,12 @@ class AdminReviewController extends Controller
     {
         $query = Review::with(['user', 'reviewable']);
 
+        if ($request->filled('search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->search.'%');
+            });
+        }
+
         if ($request->filled('rating')) {
             $query->where('rating', $request->rating);
         }
@@ -28,6 +34,7 @@ class AdminReviewController extends Controller
     public function show(Review $review)
     {
         $review->load(['user', 'reviewable']);
+
         return view('admin.reviews.show', compact('review'));
     }
 

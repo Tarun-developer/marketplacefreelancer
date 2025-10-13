@@ -25,11 +25,11 @@ class UserApiTest extends TestCase
         $response = $this->getJson('/api/users');
 
         $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'data' => [
-                         '*' => ['id', 'name', 'email']
-                     ]
-                 ]);
+            ->assertJsonStructure([
+                'data' => [
+                    '*' => ['id', 'name', 'email'],
+                ],
+            ]);
     }
 
     public function test_can_create_user()
@@ -47,7 +47,7 @@ class UserApiTest extends TestCase
         $response = $this->postJson('/api/users', $userData);
 
         $response->assertStatus(201)
-                 ->assertJsonFragment(['name' => 'Test User']);
+            ->assertJsonFragment(['name' => 'Test User']);
     }
 
     public function test_can_update_user()
@@ -61,7 +61,7 @@ class UserApiTest extends TestCase
         $response = $this->putJson("/api/users/{$otherUser->id}", $updateData);
 
         $response->assertStatus(200)
-                 ->assertJsonFragment(['name' => 'Updated Name']);
+            ->assertJsonFragment(['name' => 'Updated Name']);
     }
 
     public function test_can_delete_user()

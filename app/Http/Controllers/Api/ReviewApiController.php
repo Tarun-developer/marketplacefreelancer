@@ -21,6 +21,7 @@ class ReviewApiController extends Controller
         }
 
         $reviews = $query->paginate(10);
+
         return response()->json($reviews);
     }
 
@@ -33,12 +34,14 @@ class ReviewApiController extends Controller
         ]);
 
         $review = $request->user()->reviews()->create($request->all());
+
         return response()->json($review, 201);
     }
 
     public function show(Review $review)
     {
         $review->load('user', 'order');
+
         return response()->json($review);
     }
 
@@ -52,6 +55,7 @@ class ReviewApiController extends Controller
         ]);
 
         $review->update($request->all());
+
         return response()->json($review);
     }
 
@@ -60,6 +64,7 @@ class ReviewApiController extends Controller
         $this->authorize('delete', $review);
 
         $review->delete();
+
         return response()->json(null, 204);
     }
 }

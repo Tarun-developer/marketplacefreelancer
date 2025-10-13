@@ -25,18 +25,52 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         // Create roles
-         foreach (UserRole::cases() as $role) {
-             Role::firstOrCreate(['name' => $role->value]);
+        $this->call([
+            RolePermissionSeeder::class,
+            SubscriptionPlanSeeder::class,
+        ]);
+
+         // Seed users with different roles
+         for ($i = 0; $i < 10; $i++) {
+             $user = \App\Models\User::firstOrCreate(
+                 ['email' => 'client' . ($i + 1) . '@example.com'],
+                 [
+                     'name' => 'Client ' . ($i + 1),
+                     'password' => bcrypt('password'),
+                     'role' => 'client',
+                     'is_active' => true,
+                 ]
+             );
+             $user->assignRole('client');
          }
 
-         // Create permissions (example)
-         Permission::firstOrCreate(['name' => 'edit-product']);
-         Permission::firstOrCreate(['name' => 'delete-product']);
-         Permission::firstOrCreate(['name' => 'manage-users']);
+         for ($i = 0; $i < 5; $i++) {
+             $user = \App\Models\User::firstOrCreate(
+                 ['email' => 'freelancer' . ($i + 1) . '@example.com'],
+                 [
+                     'name' => 'Freelancer ' . ($i + 1),
+                     'password' => bcrypt('password'),
+                     'role' => 'freelancer',
+                     'is_active' => true,
+                 ]
+             );
+             $user->assignRole('freelancer');
+         }
 
-         // Create admin user
-         $admin = User::firstOrCreate(
+         for ($i = 0; $i < 3; $i++) {
+             $user = \App\Models\User::firstOrCreate(
+                 ['email' => 'vendor' . ($i + 1) . '@example.com'],
+                 [
+                     'name' => 'Vendor ' . ($i + 1),
+                     'password' => bcrypt('password'),
+                     'role' => 'vendor',
+                     'is_active' => true,
+                 ]
+             );
+             $user->assignRole('vendor');
+         }
+
+         $admin = \App\Models\User::firstOrCreate(
              ['email' => 'admin@marketfusion.com'],
              [
                  'name' => 'Super Admin',
@@ -45,10 +79,20 @@ class DatabaseSeeder extends Seeder
                  'is_active' => true,
              ]
          );
-         $admin->assignRole(UserRole::SUPER_ADMIN->value);
+         $admin->assignRole('super_admin');
 
-         // Create test user
-         $user = User::firstOrCreate(
+         $admin2 = \App\Models\User::firstOrCreate(
+             ['email' => 'admin2@marketfusion.com'],
+             [
+                 'name' => 'Admin User',
+                 'password' => bcrypt('password'),
+                 'role' => 'admin',
+                 'is_active' => true,
+             ]
+         );
+         $admin2->assignRole('admin');
+
+         $testUser = \App\Models\User::firstOrCreate(
              ['email' => 'test@example.com'],
              [
                  'name' => 'Test User',
@@ -57,21 +101,21 @@ class DatabaseSeeder extends Seeder
                  'is_active' => true,
              ]
          );
-         $user->assignRole(UserRole::CLIENT->value);
+         $testUser->assignRole('client');
 
-         // Create profiles and KYC for users
+         // Create profiles for admin and test user
          $admin->profile()->create([
              'bio' => 'Super Administrator',
              'is_verified' => true,
          ]);
 
-         $user->profile()->create([
+         $testUser->profile()->create([
              'bio' => 'Test Client',
          ]);
 
          // Create categories
          $categories = [];
-         for ($i = 0; $i < 5; $i++) {
+         for ($i = 0; $i < 10; $i++) {
              $categories[] = Category::firstOrCreate(
                  ['slug' => 'category-' . ($i + 1)],
                  [
@@ -85,7 +129,7 @@ class DatabaseSeeder extends Seeder
 
          // Create tags
          $tags = [];
-         for ($i = 0; $i < 10; $i++) {
+         for ($i = 0; $i < 20; $i++) {
              $tags[] = Tag::firstOrCreate(
                  ['slug' => 'tag-' . ($i + 1)],
                  [
@@ -95,12 +139,12 @@ class DatabaseSeeder extends Seeder
              );
          }
 
-         // Create products
+         // Seed products
          for ($i = 0; $i < 20; $i++) {
              $product = Product::firstOrCreate(
                  ['slug' => 'product-' . ($i + 1)],
                  [
-                     'user_id' => $user->id,
+                     'user_id' => $testUser->id,
                      'category_id' => $categories[array_rand($categories)]->id,
                      'name' => 'Product ' . ($i + 1),
                      'description' => 'Description for product ' . ($i + 1),
@@ -108,21 +152,21 @@ class DatabaseSeeder extends Seeder
                      'currency' => 'USD',
                      'license_type' => 'single',
                      'file_path' => '/files/product-' . ($i + 1) . '.zip',
-                     'preview_images' => ['/images/product-' . ($i + 1) . '.jpg'],
+                     'preview_images' => json_encode(['/images/product-' . ($i + 1) . '.jpg']),
                      'is_approved' => true,
-                     'status' => 'active',
+
                  ]
              );
              $randomTags = collect($tags)->random(3);
              $product->tags()->syncWithoutDetaching($randomTags->pluck('id'));
          }
 
-         // Create services
+         // Seed services
          for ($i = 0; $i < 15; $i++) {
              Service::firstOrCreate(
                  ['slug' => 'service-' . ($i + 1)],
                  [
-                     'user_id' => $user->id,
+                     'user_id' => $testUser->id,
                      'title' => 'Service ' . ($i + 1),
                      'description' => 'Description for service ' . ($i + 1),
                      'category' => 'General',
@@ -130,9 +174,9 @@ class DatabaseSeeder extends Seeder
                      'currency' => 'USD',
                      'delivery_time' => rand(1, 30),
                      'revisions' => 1,
-                     'images' => ['/images/service-' . ($i + 1) . '.jpg'],
+                      'images' => json_encode(['/images/service-' . ($i + 1) . '.jpg']),
                      'is_active' => true,
-                     'status' => 'active',
+
                  ]
              );
          }
@@ -143,7 +187,7 @@ class DatabaseSeeder extends Seeder
                  ['description' => 'Offer description ' . ($i + 1)],
                  [
                      'service_id' => Service::inRandomOrder()->first()->id,
-                     'client_id' => $user->id,
+                     'client_id' => $testUser->id,
                      'freelancer_id' => $admin->id,
                      'price' => rand(10, 500),
                      'currency' => 'USD',
@@ -159,7 +203,7 @@ class DatabaseSeeder extends Seeder
              Job::firstOrCreate(
                  ['slug' => 'job-' . ($i + 1)],
                  [
-                     'client_id' => $user->id,
+                     'client_id' => $testUser->id,
                      'title' => 'Job ' . ($i + 1),
                      'description' => 'Description for job ' . ($i + 1),
                      'category' => 'General',
@@ -176,7 +220,7 @@ class DatabaseSeeder extends Seeder
 
          // Create bids
          Bid::firstOrCreate(
-             ['proposal' => 'Proposal for bid ' . ($i + 1)],
+             ['proposal' => 'Proposal for bid'],
              [
                  'job_id' => Job::inRandomOrder()->first()->id,
                  'freelancer_id' => $admin->id,
@@ -197,7 +241,7 @@ class DatabaseSeeder extends Seeder
              Transaction::firstOrCreate(
                  ['gateway_transaction_id' => 'txn_' . ($i + 1)],
                  [
-                     'user_id' => $user->id,
+                     'user_id' => $testUser->id,
                      'amount' => rand(10, 500),
                      'currency' => 'USD',
                      'gateway' => 'stripe',
@@ -205,11 +249,253 @@ class DatabaseSeeder extends Seeder
                      'type' => 'payment',
                      'description' => 'Payment for order ' . ($i + 1),
                  ]
-          );
+             );
+         }
 
-          // Seed subscription plans
-          $this->call(SubscriptionPlanSeeder::class);
-      }
-}
+         // Seed services
+         for ($i = 0; $i < 15; $i++) {
+             \App\Modules\Services\Models\Service::firstOrCreate(
+                 ['slug' => 'service-' . ($i + 1)],
+                 [
+                      'user_id' => $testUser->id,
+                     'title' => 'Service ' . ($i + 1),
+                     'description' => 'Description for service ' . ($i + 1),
+                     'category' => 'General',
+                     'price' => rand(10, 500),
+                     'currency' => 'USD',
+                     'delivery_time' => rand(1, 30),
+                     'revisions' => 1,
+                      'images' => json_encode(['/images/service-' . ($i + 1) . '.jpg']),
+                     'is_active' => true,
+
+                 ]
+             );
+         }
+
+         // Seed jobs
+         for ($i = 0; $i < 10; $i++) {
+             \App\Modules\Jobs\Models\Job::firstOrCreate(
+                 ['slug' => 'job-' . ($i + 1)],
+                 [
+                     'client_id' => $user->id,
+                     'title' => 'Job ' . ($i + 1),
+                     'description' => 'Description for job ' . ($i + 1),
+                     'category' => 'General',
+                     'budget_min' => rand(100, 500),
+                     'budget_max' => rand(500, 2000),
+                     'currency' => 'USD',
+                     'duration' => rand(1, 30),
+                     'skills_required' => ['skill1', 'skill2'],
+                     'status' => 'open',
+                     'expires_at' => now()->addDays(30),
+                 ]
+             );
+         }
+
+         // Seed tags
+         for ($i = 0; $i < 20; $i++) {
+             \App\Modules\Products\Models\Tag::firstOrCreate(
+                 ['slug' => 'tag-' . ($i + 1)],
+                 [
+                     'name' => 'Tag ' . ($i + 1),
+                     'color' => '#000000',
+                 ]
+             );
+         }
+
+         // Seed support tickets
+         for ($i = 0; $i < 10; $i++) {
+             \App\Modules\Support\Models\SupportTicket::firstOrCreate(
+                 ['subject' => 'Support Ticket ' . ($i + 1)],
+                 [
+                     'user_id' => $testUser->id,
+                     'category' => 'general',
+                     'priority' => 'medium',
+                     'message' => 'Description for support ticket ' . ($i + 1),
+                     'status' => 'open',
+                 ]
+             );
+         }
+
+          // Seed reviews
+          // Commented out for now
+          /*
+          for ($i = 0; $i < 20; $i++) {
+              \App\Modules\Reviews\Models\Review::firstOrCreate(
+                  ['comment' => 'Review ' . ($i + 1)],
+                  [
+                      'reviewer_id' => $testUser->id,
+                      'reviewee_id' => $admin->id,
+                      'order_id' => 1, // Use a fixed order_id
+                      'rating' => rand(1, 5),
+                      'type' => 'product',
+                  ]
+              );
+          }
+          */
+
+          // Seed transactions
+         for ($i = 0; $i < 15; $i++) {
+             \App\Modules\Payments\Models\Transaction::firstOrCreate(
+                 ['gateway_transaction_id' => 'txn_' . ($i + 1)],
+                 [
+                      'user_id' => $testUser->id,
+                     'amount' => rand(10, 500),
+                     'currency' => 'USD',
+                     'gateway' => 'stripe',
+                     'status' => 'completed',
+                     'type' => 'payment',
+                     'description' => 'Payment for order ' . ($i + 1),
+                 ]
+             );
+         }
+
+         // Seed orders
+         $orders = [];
+         for ($i = 0; $i < 10; $i++) {
+             $orders[] = \App\Modules\Orders\Models\Order::create(
+                 [
+                     'buyer_id' => $testUser->id,
+                     'seller_id' => $admin->id,
+                     'orderable_type' => 'App\Modules\Products\Models\Product',
+                     'orderable_id' => 1, // Use a fixed product_id
+                     'amount' => rand(10, 500),
+                     'currency' => 'USD',
+                     'status' => 'completed',
+                     'payment_status' => 'paid',
+                 ]
+             );
+         }
+
+          // Seed reviews
+          // Commented out for now
+          /*
+          for ($i = 0; $i < 10; $i++) {
+              \App\Modules\Reviews\Models\Review::create(
+                  [
+                      'reviewer_id' => $testUser->id,
+                      'reviewee_id' => $admin->id,
+                      'order_id' => $orders[$i % 10]->id, // Use different order_ids
+                      'rating' => rand(1, 5),
+                      'type' => 'product',
+                  ]
+              );
+          }
+          */
+
+          // Seed reviews
+          // Commented out for now
+          /*
+          for ($i = 0; $i < 20; $i++) {
+              \App\Modules\Reviews\Models\Review::firstOrCreate(
+                  ['comment' => 'Review ' . ($i + 1)],
+                  [
+                      'reviewer_id' => $testUser->id,
+                      'reviewee_id' => $admin->id,
+                      'order_id' => 1, // Use a fixed order_id
+                      'rating' => rand(1, 5),
+                      'type' => 'product',
+                  ]
+              );
+          }
+          */
+
+         // Seed disputes
+         for ($i = 0; $i < 5; $i++) {
+             \App\Modules\Disputes\Models\Dispute::firstOrCreate(
+                 ['description' => 'Dispute ' . ($i + 1)],
+                 [
+                     'order_id' => $orders[$i % 10]->id,
+                     'raised_by' => $testUser->id,
+                     'reason' => 'delivery',
+                     'description' => 'Reason for dispute ' . ($i + 1),
+                     'status' => 'open',
+                 ]
+             );
+         }
+
+         // Seed conversations
+         for ($i = 0; $i < 10; $i++) {
+             \App\Modules\Chat\Models\Conversation::firstOrCreate(
+                 ['title' => 'Conversation ' . ($i + 1)],
+                 [
+                     'type' => 'direct',
+
+                 ]
+             );
+         }
+
+         // Seed messages
+         for ($i = 0; $i < 50; $i++) {
+             \App\Modules\Chat\Models\Message::firstOrCreate(
+                 ['message' => 'Message ' . ($i + 1)],
+                 [
+                     'conversation_id' => \App\Modules\Chat\Models\Conversation::inRandomOrder()->first()->id,
+                     'user_id' => $testUser->id,
+                     'is_read' => false,
+                 ]
+             );
+         }
+
+          // Seed disputes
+          for ($i = 0; $i < 5; $i++) {
+              \App\Modules\Disputes\Models\Dispute::firstOrCreate(
+                  ['description' => 'Dispute ' . ($i + 1)],
+                  [
+                      'order_id' => $orders[$i % 10]->id,
+                      'raised_by' => $testUser->id,
+                      'reason' => 'delivery',
+                      'description' => 'Reason for dispute ' . ($i + 1),
+                      'status' => 'open',
+                  ]
+              );
+          }
+
+         // Seed conversations
+         for ($i = 0; $i < 10; $i++) {
+             \App\Modules\Chat\Models\Conversation::firstOrCreate(
+                 ['title' => 'Conversation ' . ($i + 1)],
+                 [
+                     'type' => 'direct',
+
+                 ]
+             );
+         }
+
+         // Seed messages
+         for ($i = 0; $i < 50; $i++) {
+             \App\Modules\Chat\Models\Message::firstOrCreate(
+                 ['message' => 'Message ' . ($i + 1)],
+                 [
+                     'conversation_id' => \App\Modules\Chat\Models\Conversation::inRandomOrder()->first()->id,
+                      'user_id' => $testUser->id,
+                     'is_read' => false,
+                 ]
+             );
+         }
+
+         // Seed wallets
+         \App\Models\User::all()->each(function ($user) {
+             \App\Modules\Wallet\Models\Wallet::firstOrCreate(
+                 ['user_id' => $user->id],
+                 [
+                     'balance' => 0.00,
+                     'currency' => 'USD',
+                 ]
+             );
+         });
+
+         // Seed wallet transactions
+         for ($i = 0; $i < 30; $i++) {
+             \App\Modules\Wallet\Models\WalletTransaction::create(
+                 [
+                     'wallet_id' => \App\Modules\Wallet\Models\Wallet::inRandomOrder()->first()->id,
+                     'amount' => rand(10, 500),
+                     'currency' => 'USD',
+                     'type' => 'credit',
+                     'description' => 'Wallet transaction ' . ($i + 1),
+                 ]
+             );
+         }
      }
-}
+ }

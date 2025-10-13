@@ -11,24 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('products', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-             $table->foreignId('category_id')->constrained()->onDelete('cascade');
-             $table->string('name');
-             $table->string('slug')->unique();
-             $table->text('description');
-             $table->decimal('price', 10, 2);
-             $table->string('currency', 3)->default('USD');
-             $table->enum('license_type', ['single', 'multiple'])->default('single');
-             $table->string('file_path');
-             $table->json('preview_images')->nullable();
-             $table->boolean('is_approved')->default(false);
-             $table->boolean('is_featured')->default(false);
-             $table->integer('download_count')->default(0);
-             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
-             $table->timestamps();
-         });
+        Schema::create('products', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->decimal('price', 10, 2);
+            $table->string('currency', 3)->default('USD');
+            $table->enum('license_type', ['single', 'multiple'])->default('single');
+            $table->string('file_path');
+            $table->json('preview_images')->nullable();
+            $table->boolean('is_approved')->default(false);
+            $table->boolean('is_featured')->default(false);
+            $table->integer('download_count')->default(0);
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
+            $table->timestamps();
+        });
     }
 
     /**

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Products\Models\Product;
 use App\Modules\Products\Models\Category;
+use App\Modules\Products\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductApiController extends Controller
@@ -18,10 +18,11 @@ class ProductApiController extends Controller
         }
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%'.$request->search.'%');
         }
 
         $products = $query->with('media')->paginate(10);
+
         return response()->json($products);
     }
 
@@ -60,6 +61,7 @@ class ProductApiController extends Controller
     public function show(Product $product)
     {
         $product->load('category', 'media');
+
         return response()->json($product);
     }
 
@@ -100,12 +102,14 @@ class ProductApiController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
+
         return response()->json(null, 204);
     }
 
     public function categories()
     {
         $categories = Category::all();
+
         return response()->json($categories);
     }
 }

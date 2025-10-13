@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Products\Models\Product;
 use App\Models\User;
-use App\Modules\Products\Models\Category;
+use App\Modules\Products\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -20,6 +19,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->sentence(3);
+
         return [
             'user_id' => User::factory(),
             'category_id' => \Database\Factories\CategoryFactory::new(),

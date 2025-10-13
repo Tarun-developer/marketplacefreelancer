@@ -4,48 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MarketFusion - Freelance & Digital Marketplace</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-light">
     @include('partials.header')
 
     <!-- Hero Section -->
-    <section class="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white py-24 overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-10"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="text-center">
-                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
-                    One Platform, <span class="text-yellow-300">Endless Opportunities</span>
-                </h1>
-                <p class="text-xl md:text-2xl mb-10 text-gray-100 max-w-3xl mx-auto">
-                    Connect with talented freelancers, hire for jobs, and discover premium digital products all in one marketplace
-                </p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-12">
-                    @auth
-                        <a href="{{ route('dashboard') }}" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-lg">
-                            Go to Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('register') }}" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-lg">
-                            Get Started Free
-                        </a>
-                        <a href="{{ route('login') }}" class="bg-transparent border-2 border-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-indigo-600 transition">
-                            Sign In
-                        </a>
-                    @endauth
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mt-16">
-                    <div>
-                        <div class="text-4xl font-bold mb-2">{{ \App\Models\User::count() }}+</div>
-                        <div class="text-gray-200">Active Users</div>
+    <section class="bg-primary text-white py-5" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 80vh; display: flex; align-items: center;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h1 class="display-1 fw-bold mb-4">
+                        One Platform, <span class="text-warning">Endless Opportunities</span>
+                    </h1>
+                    <p class="lead mb-4 text-light">
+                        Connect with talented freelancers, hire for jobs, and discover premium digital products all in one marketplace
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 mb-5">
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="btn btn-light btn-lg fw-bold">
+                                Go to Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('register') }}" class="btn btn-light btn-lg fw-bold">
+                                Get Started Free
+                            </a>
+                            <a href="{{ route('login') }}" class="btn btn-outline-light btn-lg fw-bold">
+                                Sign In
+                            </a>
+                        @endauth
                     </div>
-                    <div>
-                        <div class="text-4xl font-bold mb-2">{{ \App\Modules\Services\Models\Service::where('status', 'active')->count() }}+</div>
-                        <div class="text-gray-200">Active Services</div>
-                    </div>
-                    <div>
-                        <div class="text-4xl font-bold mb-2">{{ \App\Modules\Products\Models\Product::where('is_approved', true)->count() }}+</div>
-                        <div class="text-gray-200">Digital Products</div>
+                    <div class="row text-center mt-5">
+                        <div class="col-md-4">
+                            <div class="h2 fw-bold mb-2">{{ \App\Models\User::count() }}+</div>
+                            <div class="text-light">Active Users</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="h2 fw-bold mb-2">{{ \App\Modules\Services\Models\Service::where('status', 'active')->count() }}+</div>
+                            <div class="text-light">Active Services</div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="h2 fw-bold mb-2">{{ \App\Modules\Products\Models\Product::where('is_approved', true)->count() }}+</div>
+                            <div class="text-light">Digital Products</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -53,97 +58,126 @@
     </section>
 
     <!-- Features Section -->
-    <section class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12">Why Choose MarketFusion?</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center p-6 bg-gray-50 rounded-lg">
-                    <div class="text-4xl text-indigo-600 mb-4">🚀</div>
-                    <h3 class="text-xl font-semibold mb-2">Fast & Secure</h3>
-                    <p>Lightning-fast transactions with top-notch security</p>
+    <section class="py-5 bg-white">
+        <div class="container">
+            <h2 class="h1 fw-bold text-center mb-5">Why Choose MarketFusion?</h2>
+            <div class="row g-4">
+                <div class="col-md-4 text-center">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="display-4 text-primary mb-3">🚀</div>
+                            <h5 class="card-title">Fast & Secure</h5>
+                            <p class="card-text">Lightning-fast transactions with top-notch security</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-center p-6 bg-gray-50 rounded-lg">
-                    <div class="text-4xl text-indigo-600 mb-4">💼</div>
-                    <h3 class="text-xl font-semibold mb-2">Diverse Services</h3>
-                    <p>From freelancing gigs to digital products</p>
+                <div class="col-md-4 text-center">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="display-4 text-primary mb-3">💼</div>
+                            <h5 class="card-title">Diverse Services</h5>
+                            <p class="card-text">From freelancing gigs to digital products</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="text-center p-6 bg-gray-50 rounded-lg">
-                    <div class="text-4xl text-indigo-600 mb-4">🌍</div>
-                    <h3 class="text-xl font-semibold mb-2">Global Reach</h3>
-                    <p>Connect with clients and sellers worldwide</p>
+                <div class="col-md-4 text-center">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="display-4 text-primary mb-3">🌍</div>
+                            <h5 class="card-title">Global Reach</h5>
+                            <p class="card-text">Connect with clients and sellers worldwide</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Categories Section -->
-    <section class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold text-center mb-12">Popular Categories</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <div class="text-3xl mb-3">💻</div>
-                    <h3 class="font-semibold">Web Development</h3>
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="h1 fw-bold text-center mb-5">Popular Categories</h2>
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="card h-100 text-center shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <div class="display-5 mb-3">💻</div>
+                            <h5 class="card-title">Web Development</h5>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <div class="text-3xl mb-3">🎨</div>
-                    <h3 class="font-semibold">Design</h3>
+                <div class="col-md-3">
+                    <div class="card h-100 text-center shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <div class="display-5 mb-3">🎨</div>
+                            <h5 class="card-title">Design</h5>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <div class="text-3xl mb-3">📱</div>
-                    <h3 class="font-semibold">Mobile Apps</h3>
+                <div class="col-md-3">
+                    <div class="card h-100 text-center shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <div class="display-5 mb-3">📱</div>
+                            <h5 class="card-title">Mobile Apps</h5>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                    <div class="text-3xl mb-3">📊</div>
-                    <h3 class="font-semibold">Marketing</h3>
+                <div class="col-md-3">
+                    <div class="card h-100 text-center shadow-sm hover-shadow">
+                        <div class="card-body">
+                            <div class="display-5 mb-3">📊</div>
+                            <h5 class="card-title">Marketing</h5>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 bg-indigo-600 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold mb-6">Ready to Get Started?</h2>
-            <p class="text-xl mb-8">Join thousands of freelancers and businesses already using MarketFusion</p>
-            <a href="#" class="bg-white text-indigo-600 px-8 py-3 rounded-md font-semibold hover:bg-gray-100">Join Now</a>
+    <section class="py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="h1 fw-bold mb-4">Ready to Get Started?</h2>
+            <p class="lead mb-4">Join thousands of freelancers and businesses already using MarketFusion</p>
+            <a href="{{ route('register') }}" class="btn btn-light btn-lg fw-bold">Join Now</a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">MarketFusion</h3>
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5 class="fw-bold mb-3">MarketFusion</h5>
                     <p>Your one-stop marketplace for freelance services and digital products.</p>
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Services</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-indigo-400">Find Freelancers</a></li>
-                        <li><a href="#" class="hover:text-indigo-400">Post a Job</a></li>
-                        <li><a href="#" class="hover:text-indigo-400">Digital Products</a></li>
+                <div class="col-md-3">
+                    <h6 class="fw-semibold mb-3">Services</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Find Freelancers</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Post a Job</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Digital Products</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-indigo-400">Help Center</a></li>
-                        <li><a href="#" class="hover:text-indigo-400">Contact Us</a></li>
-                        <li><a href="#" class="hover:text-indigo-400">Terms of Service</a></li>
+                <div class="col-md-3">
+                    <h6 class="fw-semibold mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light text-decoration-none">Help Center</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-light text-decoration-none">Terms of Service</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-4">Connect</h4>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-2xl hover:text-indigo-400">📘</a>
-                        <a href="#" class="text-2xl hover:text-indigo-400">🐦</a>
-                        <a href="#" class="text-2xl hover:text-indigo-400">💼</a>
+                <div class="col-md-3">
+                    <h6 class="fw-semibold mb-3">Connect</h6>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white fs-4">📘</a>
+                        <a href="#" class="text-white fs-4">🐦</a>
+                        <a href="#" class="text-white fs-4">💼</a>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+            <hr class="my-4">
+            <div class="text-center">
                 <p>&copy; 2025 MarketFusion. All rights reserved.</p>
             </div>
         </div>

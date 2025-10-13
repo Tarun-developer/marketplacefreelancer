@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/login', function () {
     return view('auth.login');
@@ -45,5 +45,6 @@ Route::post('/register', function (Illuminate\Http\Request $request) {
 
 Route::post('/logout', function () {
     auth()->logout();
+
     return redirect('/');
 })->name('logout')->middleware('auth');

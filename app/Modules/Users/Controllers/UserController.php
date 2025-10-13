@@ -4,8 +4,6 @@ namespace App\Modules\Users\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Modules\Users\Models\Profile;
-use App\Modules\Users\Models\Kyc;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -15,6 +13,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('profile', 'kyc')->paginate(10);
+
         return view('users.index', compact('users'));
     }
 
@@ -47,6 +46,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $user->load('profile', 'kyc');
+
         return view('users.show', compact('user'));
     }
 
@@ -72,6 +72,7 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
+
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }

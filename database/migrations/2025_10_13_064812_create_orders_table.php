@@ -11,22 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('orders', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('buyer_id')->constrained('users')->onDelete('cascade');
-             $table->foreignId('seller_id')->constrained('users')->onDelete('cascade');
-             $table->string('orderable_type');
-             $table->unsignedBigInteger('orderable_id');
-             $table->decimal('amount', 10, 2);
-             $table->string('currency', 3)->default('USD');
-             $table->enum('status', ['pending', 'in_progress', 'completed', 'cancelled'])->default('pending');
-             $table->enum('payment_status', ['pending', 'paid', 'refunded'])->default('pending');
-             $table->timestamp('delivered_at')->nullable();
-             $table->timestamp('completed_at')->nullable();
-             $table->timestamps();
+        Schema::create('orders', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('buyer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('seller_id')->constrained('users')->onDelete('cascade');
+            $table->string('orderable_type');
+            $table->unsignedBigInteger('orderable_id');
+            $table->decimal('amount', 10, 2);
+            $table->string('currency', 3)->default('USD');
+            $table->enum('status', ['pending', 'in_progress', 'completed', 'cancelled'])->default('pending');
+            $table->enum('payment_status', ['pending', 'paid', 'refunded'])->default('pending');
+            $table->timestamp('delivered_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->timestamps();
 
-             $table->index(['orderable_type', 'orderable_id']);
-         });
+            $table->index(['orderable_type', 'orderable_id']);
+        });
     }
 
     /**

@@ -11,20 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('profiles', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-             $table->text('bio')->nullable();
-             $table->json('skills')->nullable();
-             $table->string('location')->nullable();
-             $table->string('portfolio_url')->nullable();
-             $table->string('avatar')->nullable();
-             $table->string('badge')->nullable();
-             $table->boolean('is_verified')->default(false);
-             $table->enum('kyc_status', ['pending', 'approved', 'rejected'])->default('pending');
-             $table->json('kyc_documents')->nullable();
-             $table->timestamps();
-         });
+        Schema::create('profiles', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->text('bio')->nullable();
+            $table->json('skills')->nullable();
+            $table->string('location')->nullable();
+            $table->string('portfolio_url')->nullable();
+            $table->string('avatar')->nullable();
+            $table->string('badge')->nullable();
+            $table->boolean('is_verified')->default(false);
+            $table->enum('kyc_status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->json('kyc_documents')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

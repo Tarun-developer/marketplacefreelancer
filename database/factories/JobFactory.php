@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Jobs\Models\Job;
 use App\Models\User;
+use App\Modules\Jobs\Models\Job;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -19,6 +19,7 @@ class JobFactory extends Factory
     public function definition(): array
     {
         $title = $this->faker->unique()->sentence(5);
+
         return [
             'client_id' => User::factory(),
             'title' => $title,

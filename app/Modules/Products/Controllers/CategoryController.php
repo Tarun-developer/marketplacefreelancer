@@ -11,6 +11,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::paginate(10);
+
         return view('categories.index', compact('categories'));
     }
 
@@ -28,6 +29,7 @@ class CategoryController extends Controller
         ]);
 
         Category::create($request->all());
+
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
 
@@ -40,17 +42,19 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
+            'slug' => 'required|string|max:255|unique:categories,slug,'.$category->id,
             'description' => 'nullable|string',
         ]);
 
         $category->update($request->all());
+
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
+
         return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
     }
 }

@@ -12,6 +12,7 @@ class PaymentApiController extends Controller
     public function gateways()
     {
         $gateways = PaymentGateway::all();
+
         return response()->json($gateways);
     }
 
@@ -44,6 +45,7 @@ class PaymentApiController extends Controller
         }
 
         $transactions = $query->paginate(10);
+
         return response()->json($transactions);
     }
 }

@@ -17,10 +17,10 @@
             </div>
             <nav class="mt-4">
                 <a href="{{ route('dashboard') }}" class="block py-2 px-4 hover:bg-gray-700">Dashboard</a>
-                <a href="{{ route('users.index') }}" class="block py-2 px-4 hover:bg-gray-700">Users</a>
-                <a href="{{ route('products.index') }}" class="block py-2 px-4 hover:bg-gray-700">Products</a>
-                <a href="{{ route('categories.index') }}" class="block py-2 px-4 hover:bg-gray-700">Categories</a>
-                <a href="{{ route('settings.index') }}" class="block py-2 px-4 bg-gray-700">Settings</a>
+                <a href="{{ route('admin.users.index') }}" class="block py-2 px-4 hover:bg-gray-700">Users</a>
+                <a href="{{ route('admin.products.index') }}" class="block py-2 px-4 hover:bg-gray-700">Products</a>
+                <a href="{{ route('admin.categories.index') }}" class="block py-2 px-4 hover:bg-gray-700">Categories</a>
+                <a href="{{ route('admin.settings.index') }}" class="block py-2 px-4 bg-gray-700">Settings</a>
             </nav>
         </div>
 
@@ -35,7 +35,7 @@
             @endif
 
             <div class="bg-white rounded-lg shadow p-6">
-                <form method="POST" action="{{ route('settings.update') }}">
+                <form method="POST" action="{{ route('admin.settings.update') }}">
                     @csrf
 
                     <div class="mb-4">

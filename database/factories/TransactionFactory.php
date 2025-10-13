@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Modules\Payments\Models\Transaction;
 use App\Models\User;
 use App\Modules\Orders\Models\Order;
+use App\Modules\Payments\Models\Transaction;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TransactionFactory extends Factory

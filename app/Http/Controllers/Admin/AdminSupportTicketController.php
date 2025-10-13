@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Support\Models\SupportTicket;
 use App\Models\User;
+use App\Modules\Support\Models\SupportTicket;
 use Illuminate\Http\Request;
 
 class AdminSupportTicketController extends Controller
@@ -12,6 +12,10 @@ class AdminSupportTicketController extends Controller
     public function index(Request $request)
     {
         $query = SupportTicket::with('user');
+
+        if ($request->filled('search')) {
+            $query->where('subject', 'like', '%'.$request->search.'%');
+        }
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);

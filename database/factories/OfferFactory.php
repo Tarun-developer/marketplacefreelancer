@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Services\Models\Offer;
 use App\Models\User;
-use App\Modules\Services\Models\Service;
+use App\Modules\Services\Models\Offer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class OfferFactory extends Factory

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Subscriptions\Models\SubscriptionPlan;
 use App\Modules\Subscriptions\Models\Subscription;
+use App\Modules\Subscriptions\Models\SubscriptionPlan;
 use Illuminate\Http\Request;
 
 class SubscriptionApiController extends Controller
@@ -12,6 +12,7 @@ class SubscriptionApiController extends Controller
     public function plans()
     {
         $plans = SubscriptionPlan::where('is_active', true)->get();
+
         return response()->json($plans);
     }
 
@@ -43,6 +44,7 @@ class SubscriptionApiController extends Controller
     public function mySubscription(Request $request)
     {
         $subscription = $request->user()->subscriptions()->where('status', 'active')->first();
+
         return response()->json($subscription?->load('plan'));
     }
 

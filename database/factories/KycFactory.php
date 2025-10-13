@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Users\Models\Kyc;
 use App\Models\User;
+use App\Modules\Users\Models\Kyc;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class KycFactory extends Factory

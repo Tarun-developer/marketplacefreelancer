@@ -32,6 +32,6 @@ class SettingsController extends Controller
         ]);
 
         // In a real app, save to database or config
-        return redirect()->route('settings.index')->with('success', 'Settings updated successfully.');
+        return redirect()->route('admin.settings.index')->with('success', 'Settings updated successfully.');
     }
 }

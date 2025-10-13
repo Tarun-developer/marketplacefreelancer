@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
+use App\Modules\Disputes\Models\Dispute;
+use App\Modules\Jobs\Models\Bid;
+use App\Modules\Jobs\Models\Job;
+use App\Modules\Orders\Models\Order;
 use App\Modules\Products\Models\Product;
 use App\Modules\Services\Models\Service;
-use App\Modules\Jobs\Models\Job;
-use App\Modules\Jobs\Models\Bid;
-use App\Modules\Orders\Models\Order;
-use App\Modules\Disputes\Models\Dispute;
 use App\Modules\Support\Models\SupportTicket;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -66,7 +65,7 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('admin.dashboard', compact('stats', 'recent_orders', 'recent_users'));
+        return view('dashboards.admin', compact('stats', 'recent_orders', 'recent_users'));
     }
 
     private function vendorDashboard($user)
@@ -96,7 +95,7 @@ class DashboardController extends Controller
             'pending_bids' => $user->bids()->where('status', 'pending')->count(),
         ];
 
-        $active_jobs = Job::whereHas('bids', function($query) use ($user) {
+        $active_jobs = Job::whereHas('bids', function ($query) use ($user) {
             $query->where('user_id', $user->id)->where('status', 'accepted');
         })->with('client')->latest()->take(5)->get();
 

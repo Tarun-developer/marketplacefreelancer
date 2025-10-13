@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Services\Models\Service;
 use App\Models\User;
+use App\Modules\Services\Models\Service;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -19,6 +19,7 @@ class ServiceFactory extends Factory
     public function definition(): array
     {
         $title = $this->faker->unique()->sentence(4);
+
         return [
             'user_id' => User::factory(),
             'title' => $title,

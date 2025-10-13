@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('messages', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
-             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-             $table->text('message');
-             $table->enum('type', ['text', 'file'])->default('text');
-             $table->string('file_path')->nullable();
-             $table->boolean('is_read')->default(false);
-             $table->timestamps();
-         });
+        Schema::create('messages', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('conversation_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->text('message');
+            $table->enum('type', ['text', 'file'])->default('text');
+            $table->string('file_path')->nullable();
+            $table->boolean('is_read')->default(false);
+            $table->timestamps();
+        });
     }
 
     /**

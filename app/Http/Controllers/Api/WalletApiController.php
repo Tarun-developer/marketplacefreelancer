@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Wallet\Models\Wallet;
-use App\Modules\Wallet\Models\WalletTransaction;
 use Illuminate\Http\Request;
 
 class WalletApiController extends Controller
@@ -12,6 +11,7 @@ class WalletApiController extends Controller
     public function balance(Request $request)
     {
         $wallet = $request->user()->wallet;
+
         return response()->json(['balance' => $wallet ? $wallet->balance : 0]);
     }
 
@@ -24,6 +24,7 @@ class WalletApiController extends Controller
         }
 
         $transactions = $query->paginate(10);
+
         return response()->json($transactions);
     }
 
@@ -54,7 +55,7 @@ class WalletApiController extends Controller
 
         $wallet = $request->user()->wallet;
 
-        if (!$wallet || $wallet->balance < $request->amount) {
+        if (! $wallet || $wallet->balance < $request->amount) {
             return response()->json(['error' => 'Insufficient balance'], 400);
         }
 

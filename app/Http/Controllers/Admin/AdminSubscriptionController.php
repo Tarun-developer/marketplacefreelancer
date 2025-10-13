@@ -13,6 +13,12 @@ class AdminSubscriptionController extends Controller
     {
         $query = Subscription::with(['user', 'plan']);
 
+        if ($request->filled('search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->search.'%');
+            });
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -25,6 +31,7 @@ class AdminSubscriptionController extends Controller
     public function show(Subscription $subscription)
     {
         $subscription->load(['user', 'plan']);
+
         return view('admin.subscriptions.show', compact('subscription'));
     }
 
@@ -56,6 +63,7 @@ class AdminSubscriptionController extends Controller
     public function plans()
     {
         $plans = SubscriptionPlan::all();
+
         return view('admin.subscriptions.plans', compact('plans'));
     }
 

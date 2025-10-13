@@ -12,6 +12,12 @@ class AdminTransactionController extends Controller
     {
         $query = WalletTransaction::with(['user', 'wallet']);
 
+        if ($request->filled('search')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->search.'%');
+            });
+        }
+
         if ($request->filled('type')) {
             $query->where('type', $request->type);
         }
@@ -28,6 +34,7 @@ class AdminTransactionController extends Controller
     public function show(WalletTransaction $transaction)
     {
         $transaction->load(['user', 'wallet']);
+
         return view('admin.transactions.show', compact('transaction'));
     }
 

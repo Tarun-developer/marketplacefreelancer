@@ -11,12 +11,14 @@ class AdminServiceController extends Controller
     public function index()
     {
         $services = Service::with('user')->latest()->paginate(15);
+
         return view('admin.services.index', compact('services'));
     }
 
     public function show(Service $service)
     {
         $service->load(['user', 'offers']);
+
         return view('admin.services.show', compact('service'));
     }
 

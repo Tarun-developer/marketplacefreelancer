@@ -21,6 +21,7 @@ class DisputeApiController extends Controller
         }
 
         $disputes = $query->paginate(10);
+
         return response()->json($disputes);
     }
 
@@ -33,6 +34,7 @@ class DisputeApiController extends Controller
         ]);
 
         $dispute = $request->user()->disputes()->create($request->all());
+
         return response()->json($dispute, 201);
     }
 
@@ -41,6 +43,7 @@ class DisputeApiController extends Controller
         $this->authorize('view', $dispute);
 
         $dispute->load('user', 'order');
+
         return response()->json($dispute);
     }
 
@@ -53,6 +56,7 @@ class DisputeApiController extends Controller
         ]);
 
         $dispute->update($request->only('status'));
+
         return response()->json($dispute);
     }
 
@@ -61,6 +65,7 @@ class DisputeApiController extends Controller
         $this->authorize('delete', $dispute);
 
         $dispute->delete();
+
         return response()->json(null, 204);
     }
 }

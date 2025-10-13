@@ -12,6 +12,16 @@ class AdminOrderController extends Controller
     {
         $query = Order::with(['buyer', 'seller', 'orderable']);
 
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('buyer', function ($buyer) use ($request) {
+                    $buyer->where('name', 'like', '%'.$request->search.'%');
+                })->orWhereHas('seller', function ($seller) use ($request) {
+                    $seller->where('name', 'like', '%'.$request->search.'%');
+                });
+            });
+        }
+
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -21,13 +31,21 @@ class AdminOrderController extends Controller
         return view('admin.orders.index', compact('orders'));
     }
 
-    public function show(Order $order)
-    {
-        $order->load(['buyer', 'seller', 'orderable']);
-        return view('admin.orders.show', compact('order'));
-    }
+     public function show(Order $order)
+     {
+         $order->load(['buyer', 'seller', 'orderable']);
 
-    public function update(Request $request, Order $order)
+         return view('admin.orders.show', compact('order'));
+     }
+
+     public function edit(Order $order)
+     {
+         $order->load(['buyer', 'seller', 'orderable']);
+
+         return view('admin.orders.edit', compact('order'));
+     }
+
+     public function update(Request $request, Order $order)
     {
         $validated = $request->validate([
             'status' => 'required|in:pending,processing,completed,cancelled,refunded',

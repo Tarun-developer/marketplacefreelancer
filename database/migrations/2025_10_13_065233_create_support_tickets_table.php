@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('support_tickets', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-             $table->enum('category', ['billing', 'technical', 'order', 'general']);
-             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
-             $table->string('subject');
-             $table->text('message');
-             $table->enum('status', ['open', 'in_progress', 'resolved', 'closed'])->default('open');
-             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
-             $table->timestamp('closed_at')->nullable();
-             $table->timestamps();
-         });
+        Schema::create('support_tickets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->enum('category', ['billing', 'technical', 'order', 'general']);
+            $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
+            $table->string('subject');
+            $table->text('message');
+            $table->enum('status', ['open', 'in_progress', 'resolved', 'closed'])->default('open');
+            $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
+            $table->timestamp('closed_at')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**

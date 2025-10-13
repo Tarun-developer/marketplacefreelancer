@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Jobs\Models\Bid;
 use App\Models\User;
-use App\Modules\Jobs\Models\Job;
+use App\Modules\Jobs\Models\Bid;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BidFactory extends Factory

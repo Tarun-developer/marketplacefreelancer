@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingsController;
+use Illuminate\Support\Facades\Route;
 
 // Public Routes
 Route::get('/', function () {
@@ -27,8 +27,9 @@ Route::middleware(['auth', 'role:super_admin|admin'])->prefix('admin')->name('ad
     Route::post('products/{product}/approve', [\App\Modules\Products\Controllers\ProductController::class, 'approve'])->name('products.approve');
     Route::post('products/{product}/feature', [\App\Modules\Products\Controllers\ProductController::class, 'feature'])->name('products.feature');
 
-    // Categories Management
-    Route::resource('categories', \App\Modules\Products\Controllers\CategoryController::class);
+     // Categories Management
+     Route::resource('categories', \App\Modules\Products\Controllers\CategoryController::class);
+     Route::get('categories/{category}/subcategories', [\App\Modules\Products\Controllers\ProductController::class, 'getSubcategories'])->name('categories.subcategories');
 
     // Services Management
     Route::resource('services', \App\Http\Controllers\Admin\AdminServiceController::class)->except(['create', 'store']);
@@ -40,7 +41,7 @@ Route::middleware(['auth', 'role:super_admin|admin'])->prefix('admin')->name('ad
     Route::post('jobs/{job}/close', [\App\Http\Controllers\Admin\AdminJobController::class, 'close'])->name('jobs.close');
 
     // Orders Management
-    Route::resource('orders', \App\Http\Controllers\Admin\AdminOrderController::class)->only(['index', 'show', 'update', 'destroy']);
+     Route::resource('orders', \App\Http\Controllers\Admin\AdminOrderController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
     Route::post('orders/{order}/refund', [\App\Http\Controllers\Admin\AdminOrderController::class, 'refund'])->name('orders.refund');
 
     // Transactions Management
@@ -86,4 +87,23 @@ Route::middleware(['auth', 'role:super_admin|admin'])->prefix('admin')->name('ad
 // Vendor Routes
 Route::middleware(['auth', 'role:vendor'])->prefix('vendor')->name('vendor.')->group(function () {
     Route::resource('products', \App\Modules\Products\Controllers\Vendor\VendorProductController::class);
+    Route::resource('orders', \App\Http\Controllers\Vendor\VendorOrderController::class)->only(['index', 'show']);
+});
+
+// Freelancer Routes
+Route::middleware(['auth', 'role:freelancer'])->prefix('freelancer')->name('freelancer.')->group(function () {
+    Route::resource('jobs', \App\Http\Controllers\Freelancer\FreelancerJobController::class)->only(['index', 'show']);
+    Route::resource('proposals', \App\Http\Controllers\Freelancer\FreelancerProposalController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('services', \App\Http\Controllers\Freelancer\FreelancerServiceController::class);
+});
+
+// Client Routes
+Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->group(function () {
+    Route::resource('jobs', \App\Http\Controllers\Client\ClientJobController::class);
+    Route::resource('orders', \App\Http\Controllers\Client\ClientOrderController::class)->only(['index', 'show']);
+});
+
+// Support Routes
+Route::middleware(['auth', 'role:support'])->prefix('support')->name('support.')->group(function () {
+    Route::resource('tickets', \App\Http\Controllers\Support\SupportTicketController::class);
 });

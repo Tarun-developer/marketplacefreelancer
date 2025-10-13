@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use App\Modules\Chat\Models\Message;
 use App\Models\User;
 use App\Modules\Chat\Models\Conversation;
+use App\Modules\Chat\Models\Message;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MessageFactory extends Factory

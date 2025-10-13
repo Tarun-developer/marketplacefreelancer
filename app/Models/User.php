@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Modules\Users\Models\Kyc;
+use App\Modules\Users\Models\Profile;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,13 +13,11 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
-use App\Modules\Users\Models\Profile;
-use App\Modules\Users\Models\Kyc;
 
 class User extends Authenticatable implements HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens, HasRoles, InteractsWithMedia;
+    use HasApiTokens, HasFactory, HasRoles, InteractsWithMedia, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -134,7 +134,7 @@ class User extends Authenticatable implements HasMedia
             ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif']);
     }
 
-    public function registerMediaConversions(Media $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->width(150)

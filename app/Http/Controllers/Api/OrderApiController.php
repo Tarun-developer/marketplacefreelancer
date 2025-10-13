@@ -21,6 +21,7 @@ class OrderApiController extends Controller
         }
 
         $orders = $query->paginate(10);
+
         return response()->json($orders);
     }
 
@@ -33,6 +34,7 @@ class OrderApiController extends Controller
         ]);
 
         $order = $request->user()->orders()->create($request->all());
+
         return response()->json($order, 201);
     }
 
@@ -41,6 +43,7 @@ class OrderApiController extends Controller
         $this->authorize('view', $order);
 
         $order->load('user');
+
         return response()->json($order);
     }
 
@@ -53,6 +56,7 @@ class OrderApiController extends Controller
         ]);
 
         $order->update($request->only('status'));
+
         return response()->json($order);
     }
 
@@ -61,6 +65,7 @@ class OrderApiController extends Controller
         $this->authorize('delete', $order);
 
         $order->delete();
+
         return response()->json(null, 204);
     }
 }

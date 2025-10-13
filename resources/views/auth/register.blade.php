@@ -1,46 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - MarketFusion</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-50">
-    @include('partials.header')
+@extends('layouts.guest')
 
-    <div class="min-h-screen flex items-center justify-center py-12">
-        <div class="max-w-md w-full space-y-8">
-            <div>
-                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
+@section('title', 'Register - MarketFusion')
+
+@section('content')
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card shadow auth-card">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-center mb-4">Create your account</h2>
+                    <form method="POST" action="{{ route('register') }}">
+                        @csrf
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input id="name" name="name" type="text" class="form-control" required placeholder="Name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email address</label>
+                            <input id="email" name="email" type="email" class="form-control" required placeholder="Email address">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input id="password" name="password" type="password" class="form-control" required placeholder="Password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password_confirmation" class="form-label">Confirm Password</label>
+                            <input id="password_confirmation" name="password_confirmation" type="password" class="form-control" required placeholder="Confirm Password">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Sign up</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <form class="mt-8 space-y-6" method="POST" action="{{ route('register.post') }}">
-                @csrf
-                <div class="rounded-md shadow-sm -space-y-px">
-                    <div>
-                        <label for="name" class="sr-only">Name</label>
-                        <input id="name" name="name" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Name">
-                    </div>
-                    <div>
-                        <label for="email" class="sr-only">Email address</label>
-                        <input id="email" name="email" type="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email address">
-                    </div>
-                    <div>
-                        <label for="password" class="sr-only">Password</label>
-                        <input id="password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
-                    </div>
-                    <div>
-                        <label for="password_confirmation" class="sr-only">Confirm Password</label>
-                        <input id="password_confirmation" name="password_confirmation" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Confirm Password">
-                    </div>
-                </div>
-                <div>
-                    <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Sign up
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
-</body>
-</html>
+@endsection

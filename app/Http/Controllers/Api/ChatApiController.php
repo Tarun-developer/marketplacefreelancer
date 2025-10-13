@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Chat\Models\Conversation;
-use App\Modules\Chat\Models\Message;
 use Illuminate\Http\Request;
 
 class ChatApiController extends Controller
@@ -12,6 +11,7 @@ class ChatApiController extends Controller
     public function conversations(Request $request)
     {
         $conversations = $request->user()->conversations()->with('participants')->get();
+
         return response()->json($conversations);
     }
 
@@ -20,6 +20,7 @@ class ChatApiController extends Controller
         $this->authorize('view', $conversation);
 
         $conversation->load('messages', 'participants');
+
         return response()->json($conversation);
     }
 

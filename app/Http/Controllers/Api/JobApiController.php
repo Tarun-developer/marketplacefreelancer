@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Jobs\Models\Job;
-use App\Modules\Jobs\Models\Bid;
 use Illuminate\Http\Request;
 
 class JobApiController extends Controller
@@ -18,10 +17,11 @@ class JobApiController extends Controller
         }
 
         if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         $jobs = $query->paginate(10);
+
         return response()->json($jobs);
     }
 
@@ -35,12 +35,14 @@ class JobApiController extends Controller
         ]);
 
         $job = $request->user()->jobs()->create($request->all());
+
         return response()->json($job, 201);
     }
 
     public function show(Job $job)
     {
         $job->load('user', 'bids');
+
         return response()->json($job);
     }
 
@@ -56,6 +58,7 @@ class JobApiController extends Controller
         ]);
 
         $job->update($request->all());
+
         return response()->json($job);
     }
 
@@ -64,12 +67,14 @@ class JobApiController extends Controller
         $this->authorize('delete', $job);
 
         $job->delete();
+
         return response()->json(null, 204);
     }
 
     public function bids(Job $job)
     {
         $bids = $job->bids()->with('user')->get();
+
         return response()->json($bids);
     }
 

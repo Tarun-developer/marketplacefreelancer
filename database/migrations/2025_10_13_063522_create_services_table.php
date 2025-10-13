@@ -11,22 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('services', function (Blueprint $table) {
-             $table->id();
-             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-             $table->string('title');
-             $table->string('slug')->unique();
-             $table->text('description');
-             $table->string('category');
-             $table->decimal('price', 10, 2);
-             $table->string('currency', 3)->default('USD');
-             $table->integer('delivery_time');
-             $table->integer('revisions')->default(1);
-             $table->json('images')->nullable();
-             $table->boolean('is_active')->default(true);
-             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
-             $table->timestamps();
-         });
+        Schema::create('services', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('description');
+            $table->string('category');
+            $table->decimal('price', 10, 2);
+            $table->string('currency', 3)->default('USD');
+            $table->integer('delivery_time');
+            $table->integer('revisions')->default(1);
+            $table->json('images')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
+            $table->timestamps();
+        });
     }
 
     /**

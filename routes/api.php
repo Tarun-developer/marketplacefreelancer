@@ -1,19 +1,19 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserApiController;
-use App\Http\Controllers\Api\ProductApiController;
-use App\Http\Controllers\Api\ServiceApiController;
-use App\Http\Controllers\Api\JobApiController;
-use App\Http\Controllers\Api\OrderApiController;
 use App\Http\Controllers\Api\ChatApiController;
 use App\Http\Controllers\Api\DisputeApiController;
+use App\Http\Controllers\Api\JobApiController;
+use App\Http\Controllers\Api\OrderApiController;
 use App\Http\Controllers\Api\PaymentApiController;
-use App\Http\Controllers\Api\WalletApiController;
+use App\Http\Controllers\Api\ProductApiController;
 use App\Http\Controllers\Api\ReviewApiController;
-use App\Http\Controllers\Api\SupportApiController;
+use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\Api\SubscriptionApiController;
+use App\Http\Controllers\Api\SupportApiController;
+use App\Http\Controllers\Api\UserApiController;
+use App\Http\Controllers\Api\WalletApiController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

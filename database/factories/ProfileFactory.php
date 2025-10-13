@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Modules\Users\Models\Profile;
 use App\Models\User;
+use App\Modules\Users\Models\Profile;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ProfileFactory extends Factory

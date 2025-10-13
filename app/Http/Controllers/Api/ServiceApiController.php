@@ -17,10 +17,11 @@ class ServiceApiController extends Controller
         }
 
         if ($request->has('search')) {
-            $query->where('title', 'like', '%' . $request->search . '%');
+            $query->where('title', 'like', '%'.$request->search.'%');
         }
 
         $services = $query->paginate(10);
+
         return response()->json($services);
     }
 
@@ -34,12 +35,14 @@ class ServiceApiController extends Controller
         ]);
 
         $service = $request->user()->services()->create($request->all());
+
         return response()->json($service, 201);
     }
 
     public function show(Service $service)
     {
         $service->load('user');
+
         return response()->json($service);
     }
 
@@ -55,6 +58,7 @@ class ServiceApiController extends Controller
         ]);
 
         $service->update($request->all());
+
         return response()->json($service);
     }
 
@@ -63,6 +67,7 @@ class ServiceApiController extends Controller
         $this->authorize('delete', $service);
 
         $service->delete();
+
         return response()->json(null, 204);
     }
 }

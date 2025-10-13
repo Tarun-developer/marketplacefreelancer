@@ -3,8 +3,8 @@
 namespace App\Modules\Products\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Products\Models\Product;
 use App\Modules\Products\Models\Category;
+use App\Modules\Products\Models\Product;
 use Illuminate\Http\Request;
 
 class VendorProductController extends Controller
@@ -18,12 +18,14 @@ class VendorProductController extends Controller
         }
 
         $products = $query->with('category')->paginate(10);
+
         return view('vendor.products.index', compact('products'));
     }
 
     public function create()
     {
         $categories = Category::all();
+
         return view('vendor.products.create', compact('categories'));
     }
 
@@ -62,6 +64,7 @@ class VendorProductController extends Controller
     {
         $this->authorize('update', $product);
         $categories = Category::all();
+
         return view('vendor.products.edit', compact('product', 'categories'));
     }
 
@@ -77,6 +80,7 @@ class VendorProductController extends Controller
         ]);
 
         $product->update($request->only('name', 'description', 'price', 'category_id'));
+
         return redirect()->route('vendor.products.index')->with('success', 'Product updated successfully.');
     }
 
@@ -84,6 +88,7 @@ class VendorProductController extends Controller
     {
         $this->authorize('delete', $product);
         $product->delete();
+
         return redirect()->route('vendor.products.index')->with('success', 'Product deleted successfully.');
     }
 }
