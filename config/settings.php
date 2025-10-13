@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Cache;
-
-$cachedSettings = Cache::get('role_settings', []);
+$cachedSettings = cache()->get('role_settings', []);
 
 return [
     'client_role_cost' => $cachedSettings['client_role_cost'] ?? env('CLIENT_ROLE_COST', 0),
