@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes
@@ -15,16 +16,23 @@ require __DIR__.'/auth.php';
 // Authenticated Dashboard Route
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/select-role', [DashboardController::class, 'selectRole'])->name('dashboard.select-role');
 });
 
 // Admin Routes
-// Onboarding routes
+// Onboarding and Role Management routes
 Route::middleware('auth')->group(function () {
     Route::get('onboarding', [SettingsController::class, 'showOnboarding'])->name('onboarding');
     Route::post('onboarding/set-role', [SettingsController::class, 'setRole'])->name('onboarding.set-role');
-    Route::post('switch-role', [SettingsController::class, 'switchRole'])->name('switch-role');
+    Route::post('settings/switch-role', [SettingsController::class, 'switchRole'])->name('settings.switch-role');
     Route::get('checkout/{role}', [SettingsController::class, 'checkout'])->name('checkout');
     Route::post('checkout/{role}', [SettingsController::class, 'processPayment'])->name('checkout.process');
+
+    // Profile routes
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Include role-based route files

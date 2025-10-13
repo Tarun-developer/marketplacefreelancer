@@ -22,13 +22,24 @@ class DashboardController extends Controller
         if ($user->roles->count() === 0) {
             $user->assignRole('user');
             $user->update(['current_role' => null]); // No current role for default users
+            return $this->commonDashboard($user);
         }
 
-        // Always show common dashboard for role selection
+        // Force show common dashboard if requested via query parameter
+        if ($request->query('view') === 'all') {
+            return $this->commonDashboard($user);
+        }
+
+        // If user has a current role, redirect to that role's dashboard
+        if ($user->current_role) {
+            return redirect()->route($user->current_role . '.dashboard');
+        }
+
+        // Otherwise, show common dashboard for role selection
         return $this->commonDashboard($user);
     }
 
-    private function redirectToRoleDashboard($user)
+    public function redirectToRoleDashboard($user)
     {
         $currentRole = $user->current_role;
 
@@ -47,16 +58,75 @@ class DashboardController extends Controller
         return $this->commonDashboard($user);
     }
 
-    private function commonDashboard($user)
+    public function selectRole(Request $request)
     {
+        // Force show common dashboard for role selection (ignores current_role)
+        return $this->commonDashboard($request->user());
+    }
+
+    public function commonDashboard($user = null)
+    {
+        $user = $user ?? auth()->user();
+        $userRoles = $user->roles->pluck('name')->toArray();
+
+        // Gather stats for all roles the user has
         $stats = [
-            'total_users' => \App\Models\User::count(),
-            'total_services' => \App\Modules\Services\Models\Service::count(),
-            'total_products' => \App\Modules\Products\Models\Product::count(),
-            'total_jobs' => \App\Modules\Jobs\Models\Job::count(),
+            'client' => [],
+            'freelancer' => [],
+            'vendor' => [],
         ];
 
-        return view('dashboards.common', compact('stats'));
+        $recentActivity = [
+            'client_orders' => [],
+            'freelancer_jobs' => [],
+            'vendor_orders' => [],
+        ];
+
+        // Client stats
+        if (in_array('client', $userRoles)) {
+            $stats['client'] = [
+                'posted_jobs' => $user->jobs()->count(),
+                'active_orders' => $user->ordersAsBuyer()->whereIn('status', ['pending', 'processing'])->count(),
+                'completed_orders' => $user->ordersAsBuyer()->where('status', 'completed')->count(),
+                'total_spent' => $user->ordersAsBuyer()->where('status', 'completed')->sum('amount'),
+            ];
+
+            $recentActivity['client_orders'] = $user->ordersAsBuyer()
+                ->latest()
+                ->take(3)
+                ->get();
+        }
+
+        // Freelancer stats
+        if (in_array('freelancer', $userRoles)) {
+            $stats['freelancer'] = [
+                'active_gigs' => $user->services()->where('status', 'active')->count(),
+                'completed_jobs' => $user->ordersAsSeller()->where('status', 'completed')->count(),
+                'total_earnings' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
+                'pending_bids' => $user->bids()->where('status', 'pending')->count(),
+            ];
+
+            $recentActivity['freelancer_jobs'] = Job::whereHas('bids', function ($query) use ($user) {
+                $query->where('freelancer_id', $user->id)->where('status', 'accepted');
+            })->with('client')->latest()->take(3)->get();
+        }
+
+        // Vendor stats
+        if (in_array('vendor', $userRoles)) {
+            $stats['vendor'] = [
+                'total_products' => $user->products()->count(),
+                'total_sales' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
+                'pending_orders' => $user->ordersAsSeller()->where('status', 'pending')->count(),
+                'approved_products' => $user->products()->where('is_approved', true)->count(),
+            ];
+
+            $recentActivity['vendor_orders'] = $user->ordersAsSeller()
+                ->latest()
+                ->take(3)
+                ->get();
+        }
+
+        return view('dashboards.user', compact('stats', 'user', 'userRoles', 'recentActivity'));
     }
 
     public function adminDashboard()
@@ -94,8 +164,10 @@ class DashboardController extends Controller
         return view('dashboards.admin', compact('stats', 'recent_orders', 'recent_users'));
     }
 
-    public function vendorDashboard($user)
+    public function vendorDashboard($user = null)
     {
+        $user = $user ?? auth()->user();
+
         $stats = [
             'total_products' => $user->products()->count(),
             'total_sales' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
@@ -104,7 +176,7 @@ class DashboardController extends Controller
         ];
 
         $recent_orders = $user->ordersAsSeller()
-            ->with('buyer')
+            ->with(['buyer', 'orderable'])
             ->latest()
             ->take(5)
             ->get();
@@ -112,8 +184,10 @@ class DashboardController extends Controller
         return view('dashboards.vendor', compact('stats', 'recent_orders'));
     }
 
-    public function freelancerDashboard($user)
+    public function freelancerDashboard($user = null)
     {
+        $user = $user ?? auth()->user();
+
         $stats = [
             'active_gigs' => $user->services()->where('status', 'active')->count(),
             'completed_jobs' => $user->ordersAsSeller()->where('status', 'completed')->count(),
@@ -128,8 +202,10 @@ class DashboardController extends Controller
         return view('dashboards.freelancer', compact('stats', 'active_jobs'));
     }
 
-    public function clientDashboard($user)
+    public function clientDashboard($user = null)
     {
+        $user = $user ?? auth()->user();
+
         $stats = [
             'posted_jobs' => $user->jobs()->count(),
             'active_orders' => $user->ordersAsBuyer()->whereIn('status', ['pending', 'processing'])->count(),

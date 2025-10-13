@@ -55,7 +55,7 @@
                                 @if(!$isFree)
                                     <p class="text-warning fw-bold">Cost: ${{ $cost }}</p>
                                 @endif
-                                <button class="btn {{ $buttonClass }} select-role" data-role="{{ $role }}" data-cost="{{ $cost }}" data-free="{{ $isFree ? '1' : '0' }}">
+                                <button class="btn {{ $buttonClass }} select-role" data-role="{{ $role }}" data-cost="{{ $cost }}" data-free="{{ $isFree ? '1' : '0' }}" data-has-role="{{ $hasRole ? '1' : '0' }}">
                                     <i class="bi bi-arrow-right me-2"></i>{{ $buttonText }}
                                 </button>
                             </div>
@@ -221,7 +221,14 @@ document.querySelectorAll('.select-role').forEach(button => {
         const role = this.getAttribute('data-role');
         const cost = parseFloat(this.getAttribute('data-cost'));
         const isFree = this.getAttribute('data-free') === '1';
+        const hasRole = this.getAttribute('data-has-role') === '1';
         const roleName = role === 'multi' ? 'Multi-Role' : role.charAt(0).toUpperCase() + role.slice(1);
+
+        // If user already has this role, just switch to it (don't call setRole)
+        if (hasRole && role !== 'multi') {
+            switchToRole(role);
+            return;
+        }
 
         if (isFree) {
             // Free role - direct assignment
@@ -232,6 +239,29 @@ document.querySelectorAll('.select-role').forEach(button => {
         }
     });
 });
+
+function switchToRole(role) {
+    // Switch to an already-owned role (doesn't modify roles, just changes view)
+    fetch('{{ route("settings.switch-role") }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ role: role })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = data.redirect;
+        } else {
+            alert('Error switching role: ' + (data.error || 'Please try again.'));
+        }
+    })
+    .catch(error => {
+        alert('Error switching role. Please try again.');
+    });
+}
 
 function processRoleSelection(role, cost, isFree) {
     const button = document.querySelector(`[data-role="${role}"]`);

@@ -126,7 +126,7 @@
         <!-- Main Content -->
         <div id="main-content" class="main-content flex-fill">
             <!-- Top Bar -->
-            <header class="bg-white shadow-sm p-3">
+            <header class="bg-white shadow-sm p-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
                         <button class="btn btn-outline-secondary me-3 d-md-none" id="mobile-sidebar-toggle">
@@ -134,10 +134,34 @@
                         </button>
                         <h1 class="h4 mb-0">@yield('page-title', 'Dashboard')</h1>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-outline-secondary me-2" id="theme-toggle">🌙</button>
-                        <span class="me-2 text-muted">{{ auth()->user()->name }}</span>
-                        <span class="badge bg-primary">{{ ucfirst(auth()->user()->getRoleNames()->first() ?? 'User') }}</span>
+                    <div class="d-flex align-items-center gap-2">
+                        @include('partials.role-switcher')
+                        <button class="btn btn-outline-secondary btn-sm" id="theme-toggle" title="Toggle theme">
+                            <i class="bi bi-moon-stars"></i>
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center gap-2"
+                                    type="button"
+                                    id="userDropdown"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                <i class="bi bi-person-circle"></i>
+                                <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -195,7 +219,12 @@
         // Theme Toggle
         document.getElementById('theme-toggle').addEventListener('click', function() {
             document.body.classList.toggle('theme-dark');
-            this.textContent = document.body.classList.contains('theme-dark') ? '☀️' : '🌙';
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('theme-dark')) {
+                icon.className = 'bi bi-sun';
+            } else {
+                icon.className = 'bi bi-moon-stars';
+            }
         });
     </script>
     @yield('scripts')

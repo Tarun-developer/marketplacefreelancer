@@ -148,12 +148,14 @@ class SettingsController extends Controller
 
             if ($request->role === 'multi') {
                 // Assign multiple roles
-                $user->syncRoles(['client', 'freelancer', 'vendor']);
+                $user->assignRole(['client', 'freelancer', 'vendor']);
                 $user->update(['current_role' => 'client']); // Default to client
                 $redirect = route('dashboard'); // Go to common dashboard
             } else {
-                // Assign single role
-                $user->syncRoles([$request->role]);
+                // Assign single role (ADD to existing roles, don't replace)
+                if (!$user->hasRole($request->role)) {
+                    $user->assignRole($request->role);
+                }
                 $user->update(['current_role' => $request->role]);
 
                 switch ($request->role) {
@@ -192,12 +194,15 @@ class SettingsController extends Controller
 
             $user = auth()->user();
 
-            // Assign the role if not present
+            // Check if user has this role before switching
             if (!$user->hasRole($request->role)) {
-                $user->assignRole($request->role);
+                return response()->json([
+                    'success' => false,
+                    'error' => 'You do not have access to this role. Please purchase it first.'
+                ], 403);
             }
 
-            // Update current role
+            // Update current role (for dashboard view only, not assigning new role)
             $user->update(['current_role' => $request->role]);
 
             // Get redirect URL based on role
@@ -224,7 +229,8 @@ class SettingsController extends Controller
 
             return response()->json([
                 'success' => true,
-                'redirect' => $redirect
+                'redirect' => $redirect,
+                'message' => 'Switched to ' . $request->role . ' dashboard'
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -262,6 +268,13 @@ class SettingsController extends Controller
 
     public function checkout($role)
     {
+        $user = auth()->user();
+
+        // Check if user already has this role (one-time purchase)
+        if ($user->hasRole($role)) {
+            return redirect()->route('dashboard')->with('info', 'You already have this role. You can switch to it from the dashboard.');
+        }
+
         $costs = [
             'client' => config('settings.client_role_cost', 0),
             'freelancer' => config('settings.freelancer_role_cost', 0),
@@ -271,8 +284,11 @@ class SettingsController extends Controller
         $cost = $costs[$role] ?? 0;
 
         if ($cost == 0) {
-            // Free role - redirect to set role
-            return $this->setRole(request()->merge(['role' => $role]));
+            // Free role - assign directly
+            $user->assignRole($role);
+            $user->update(['current_role' => $role]);
+
+            return redirect()->route($role . '.dashboard')->with('success', 'Role assigned successfully!');
         }
 
         return view('checkout', compact('role', 'cost'));
@@ -285,19 +301,26 @@ class SettingsController extends Controller
             'terms' => 'accepted',
         ]);
 
+        $user = auth()->user();
+
+        // Check if user already has this role (prevent duplicate purchase)
+        if ($user->hasRole($role)) {
+            return redirect()->route('dashboard')->with('info', 'You already have this role.');
+        }
+
         // Simulate payment processing
         $cost = config('settings.' . $role . '_role_cost', 0);
 
         if ($cost > 0) {
             // Here you would process the actual payment
             // For demo, we'll just assign the role
+            // TODO: Integrate with Stripe/PayPal
         }
 
-        // Assign the role
-        $user = auth()->user();
+        // Assign the role (one-time only)
         $user->assignRole($role);
         $user->update(['current_role' => $role]);
 
-        return redirect()->route($role . '.dashboard')->with('success', 'Role assigned successfully!');
+        return redirect()->route($role . '.dashboard')->with('success', 'Role purchased and assigned successfully!');
     }
 }
