@@ -490,11 +490,11 @@
                 <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $index * 50 }}">
                     <div class="card product-card">
                         <div class="position-relative overflow-hidden">
-                            @if($product->getFirstMediaUrl('thumbnail'))
-                                <img src="{{ $product->getFirstMediaUrl('thumbnail') }}" class="card-img-top" alt="{{ $product->name }}">
-                            @else
-                                <img src="https://via.placeholder.com/400x300/667eea/ffffff?text={{ urlencode($product->name) }}" class="card-img-top" alt="{{ $product->name }}">
-                            @endif
+                             @if($product->thumbnail)
+                                 <img src="{{ asset('storage/' . $product->thumbnail) }}" class="card-img-top" alt="{{ $product->name }}">
+                             @else
+                                 <img src="https://via.placeholder.com/400x300/667eea/ffffff?text={{ urlencode($product->name) }}" class="card-img-top" alt="{{ $product->name }}">
+                             @endif
                             @if($product->is_featured)
                                 <span class="badge badge-featured position-absolute top-0 end-0 m-3">
                                     <i class="bi bi-star-fill me-1"></i>Featured
@@ -503,29 +503,38 @@
                         </div>
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-2">
-                                <div class="me-2">
-                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                        <span class="fw-medium small">{{ strtoupper(substr($product->user->name ?? 'U', 0, 1)) }}</span>
-                                    </div>
-                                </div>
-                                <small class="text-muted">{{ $product->user->name ?? 'Unknown' }}</small>
+                                 <div class="me-2">
+                                     <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                         <span class="fw-medium small">{{ strtoupper(substr($product->user->name ?? 'U', 0, 1)) }}</span>
+                                     </div>
+                                 </div>
+                                 <small class="text-muted">{{ $product->user->name ?? 'Unknown' }}</small>
                             </div>
                             <h5 class="card-title mb-2">{{ Str::limit($product->name, 50) }}</h5>
                             <p class="card-text text-muted small mb-3">{{ Str::limit($product->short_description, 80) }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="price-tag">${{ number_format($product->standard_price, 2) }}</div>
-                                <div>
-                                    <i class="bi bi-star-fill text-warning"></i>
-                                    <span class="fw-bold">4.8</span>
-                                    <span class="text-muted small">({{ rand(50, 500) }})</span>
-                                </div>
-                            </div>
+                             <div class="d-flex justify-content-between align-items-center">
+                                 <div class="price-tag">
+                                     @if($product->is_free)
+                                         <span class="text-success fw-bold">FREE</span>
+                                     @else
+                                         ${{ number_format($product->standard_price ?? $product->price, 2) }}
+                                         @if($product->professional_price || $product->ultimate_price)
+                                             <small class="text-muted">starting</small>
+                                         @endif
+                                     @endif
+                                 </div>
+                                 <div>
+                                     <i class="bi bi-star-fill text-warning"></i>
+                                     <span class="fw-bold">{{ number_format(rand(45, 50) / 10, 1) }}</span>
+                                     <span class="text-muted small">({{ rand(10, 100) }})</span>
+                                 </div>
+                             </div>
                         </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <a href="#" class="btn btn-primary w-100">
-                                <i class="bi bi-cart-plus me-2"></i>View Details
-                            </a>
-                        </div>
+                         <div class="card-footer bg-transparent border-top-0">
+                             <a href="{{ route('products.show', $product->slug) }}" class="btn btn-primary w-100">
+                                 <i class="bi bi-eye me-2"></i>View Details
+                             </a>
+                         </div>
                     </div>
                 </div>
                 @endforeach
