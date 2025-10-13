@@ -74,7 +74,20 @@ php artisan db:seed
 - **Testing**: PHPUnit tests for API endpoints
 - **Media Uploads**: Support for images and files via API
 
-#### 6. Frontend
+#### 6. Admin Dashboard
+- **Complete Admin Panel** with sidebar navigation
+- **CRUD Operations** for users, products, categories
+- **Settings Management**: Site configuration, commission rates, KYC/2FA toggles
+- **Role-based Access**: Only admins can access admin features
+
+#### 7. User Dashboards
+- **Vendor Dashboard**: Product management, orders, earnings
+- **Freelancer Dashboard**: Services, active jobs, earnings
+- **Client Dashboard**: Orders, posted jobs, favorites
+- **Support Dashboard**: Tickets, disputes, resolution tracking
+- **Role-specific Features**: Each dashboard tailored to user role
+
+#### 8. Frontend
 - **Tailwind CSS** for modern, responsive design
 - **Alpine.js** for interactive components
 - **Blade Templates** for server-side rendering
