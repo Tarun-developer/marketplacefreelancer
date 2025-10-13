@@ -28,8 +28,10 @@ Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->
     // Categories Management
     Route::resource('categories', AdminCategoryController::class);
 
-    // Products Management
-    Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);
+     // Products Management
+     Route::resource('products', \App\Http\Controllers\Admin\AdminProductController::class);
+     Route::post('products/{product}/approve', [\App\Http\Controllers\Admin\AdminProductController::class, 'approve'])->name('products.approve');
+     Route::post('products/{product}/reject', [\App\Http\Controllers\Admin\AdminProductController::class, 'reject'])->name('products.reject');
 
     // Services Management
     Route::resource('services', AdminServiceController::class);

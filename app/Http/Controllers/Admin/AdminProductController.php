@@ -12,7 +12,7 @@ class AdminProductController extends Controller
     public function index()
     {
         $products = Product::with(['user', 'category'])
-            ->select(['id', 'name', 'slug', 'price', 'standard_price', 'professional_price', 'ultimate_price', 'status', 'is_approved', 'created_at', 'category_id', 'product_type', 'version', 'sales_count', 'download_count', 'views_count', 'is_featured', 'thumbnail'])
+            ->select(['id', 'name', 'slug', 'price', 'standard_price', 'professional_price', 'ultimate_price', 'status', 'is_approved', 'created_at', 'category_id', 'product_type', 'version', 'sales_count', 'download_count', 'is_featured', 'thumbnail'])
             ->latest()
             ->paginate(20);
         return view('admin.products.index', compact('products'));

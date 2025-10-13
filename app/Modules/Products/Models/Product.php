@@ -82,6 +82,7 @@ class Product extends Model implements HasMedia
         'og_image',
         'sales_count',
         'download_count',
+        'views_count',
         'status',
         'is_approved',
     ];
@@ -115,6 +116,7 @@ class Product extends Model implements HasMedia
         'file_size' => 'integer',
         'estimated_delivery_time' => 'integer',
         'views_count' => 'integer',
+        'sales_count' => 'integer',
         'refund_days' => 'integer',
     ];
 
