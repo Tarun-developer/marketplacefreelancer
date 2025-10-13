@@ -30,20 +30,35 @@
             <!-- User Menu & Mobile Menu Button -->
              <div class="d-flex align-items-center">
                  @auth
-                     <!-- Role Switcher (for users with multiple roles) -->
-                     @if(auth()->user()->roles->count() > 1)
+                     <!-- Role Switcher -->
+                     @php
+                         $userRoles = auth()->user()->roles->pluck('name')->toArray();
+                         $allRoles = ['client', 'freelancer', 'vendor'];
+                         $currentRole = auth()->user()->current_role;
+                     @endphp
+
+                     @if(count($userRoles) > 0)
                          <div class="dropdown me-3">
                              <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                 <i class="bi bi-diagram-3 me-2"></i>{{ ucfirst(auth()->user()->current_role ?? 'Select Role') }}
+                                 <i class="bi bi-diagram-3 me-2"></i>{{ ucfirst($currentRole ?? 'Select Role') }}
                              </button>
                              <ul class="dropdown-menu">
-                                 @foreach(auth()->user()->roles as $role)
-                                     <li>
-                                         <a class="dropdown-item switch-role" href="#" data-role="{{ $role->name }}">
-                                             <i class="bi bi-{{ $role->name === 'client' ? 'person-check' : ($role->name === 'freelancer' ? 'tools' : ($role->name === 'vendor' ? 'shop' : 'gear')) }} me-2"></i>
-                                             {{ ucfirst($role->name) }}
-                                         </a>
-                                     </li>
+                                 @foreach($allRoles as $role)
+                                     @if(in_array($role, $userRoles))
+                                         <li>
+                                             <a class="dropdown-item switch-role" href="#" data-role="{{ $role }}">
+                                                 <i class="bi bi-{{ $role === 'client' ? 'person-check' : ($role === 'freelancer' ? 'tools' : 'shop') }} me-2"></i>
+                                                 Switch to {{ ucfirst($role) }}
+                                             </a>
+                                         </li>
+                                     @else
+                                         <li>
+                                             <a class="dropdown-item become-role" href="#" data-role="{{ $role }}">
+                                                 <i class="bi bi-plus-circle me-2"></i>
+                                                 Become {{ ucfirst($role) }}
+                                             </a>
+                                         </li>
+                                     @endif
                                  @endforeach
                              </ul>
                          </div>
@@ -74,14 +89,16 @@
 
                  <!-- Role Switcher Script -->
                  @auth
-                     @if(auth()->user()->roles->count() > 1)
+                     @if(count($userRoles ?? []) > 0)
                          <script>
-                             document.querySelectorAll('.switch-role').forEach(link => {
+                             document.querySelectorAll('.switch-role, .become-role').forEach(link => {
                                  link.addEventListener('click', function(e) {
                                      e.preventDefault();
                                      const role = this.getAttribute('data-role');
+                                     const isBecome = this.classList.contains('become-role');
+                                     const action = isBecome ? 'become' : 'switch to';
 
-                                     if (confirm(`Switch to ${role} role?`)) {
+                                     if (confirm(`Are you sure you want to ${action} ${role} role?`)) {
                                          fetch('{{ route("switch-role") }}', {
                                              method: 'POST',
                                              headers: {
@@ -95,11 +112,11 @@
                                              if (data.success) {
                                                  window.location.href = data.redirect;
                                              } else {
-                                                 alert('Error switching role: ' + (data.error || 'Please try again.'));
+                                                 alert('Error: ' + (data.error || 'Please try again.'));
                                              }
                                          })
                                          .catch(error => {
-                                             alert('Error switching role. Please try again.');
+                                             alert('Error. Please try again.');
                                          });
                                      }
                                  });

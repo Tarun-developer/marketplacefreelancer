@@ -191,12 +191,9 @@ class SettingsController extends Controller
 
             $user = auth()->user();
 
-            // Check if user has the role
+            // Assign the role if not present
             if (!$user->hasRole($request->role)) {
-                return response()->json([
-                    'success' => false,
-                    'error' => 'You do not have this role assigned.'
-                ], 403);
+                $user->assignRole($request->role);
             }
 
             // Update current role

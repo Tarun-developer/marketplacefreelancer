@@ -14,58 +14,47 @@
             </div>
 
             <div class="row g-4">
-                <!-- Client Role -->
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm role-card" data-role="client" style="cursor: pointer; transition: transform 0.3s ease;">
-                        <div class="card-body text-center p-4">
-                            <div class="mb-3">
-                                <i class="bi bi-person-check display-4 text-primary"></i>
+                @php
+                    $userRoles = auth()->user()->roles->pluck('name')->toArray();
+                    $allRoles = ['client', 'freelancer', 'vendor'];
+                @endphp
+
+                @foreach($allRoles as $role)
+                    @php
+                        $hasRole = in_array($role, $userRoles);
+                        $roleName = ucfirst($role);
+                        $icon = $role === 'client' ? 'person-check' : ($role === 'freelancer' ? 'tools' : 'shop');
+                        $color = $role === 'client' ? 'primary' : ($role === 'freelancer' ? 'success' : 'info');
+                        $buttonText = $hasRole ? "Enter as $roleName" : "Become $roleName";
+                        $buttonClass = $hasRole ? "btn-$color" : "btn-outline-$color";
+                    @endphp
+
+                    <div class="col-md-4">
+                        <div class="card h-100 shadow-sm role-card" data-role="{{ $role }}" style="cursor: pointer; transition: transform 0.3s ease;">
+                            <div class="card-body text-center p-4">
+                                <div class="mb-3">
+                                    <i class="bi bi-{{ $icon }} display-4 text-{{ $color }}"></i>
+                                </div>
+                                <h5 class="card-title fw-bold">I'm a {{ $roleName }}</h5>
+                                <p class="card-text text-muted">
+                                    @if($role === 'client')
+                                        Post jobs, hire freelancers, and get projects completed professionally.
+                                    @elseif($role === 'freelancer')
+                                        Offer your services, bid on projects, and build your freelance career.
+                                    @else
+                                        Sell digital products, templates, and creative assets to customers worldwide.
+                                    @endif
+                                </p>
+                                <button class="btn {{ $buttonClass }} select-role" data-role="{{ $role }}">
+                                    <i class="bi bi-arrow-right me-2"></i>{{ $buttonText }}
+                                </button>
                             </div>
-                            <h5 class="card-title fw-bold">I'm a Client</h5>
-                            <p class="card-text text-muted">Post jobs, hire freelancers, and get projects completed professionally.</p>
-                            <button class="btn btn-primary select-role" data-role="client">
-                                <i class="bi bi-arrow-right me-2"></i>Enter as Client
-                            </button>
                         </div>
                     </div>
-                </div>
+                @endforeach
 
-                <!-- Freelancer Role -->
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm role-card" data-role="freelancer" style="cursor: pointer; transition: transform 0.3s ease;">
-                        <div class="card-body text-center p-4">
-                            <div class="mb-3">
-                                <i class="bi bi-tools display-4 text-success"></i>
-                            </div>
-                            <h5 class="card-title fw-bold">I'm a Freelancer</h5>
-                            <p class="card-text text-muted">Offer your services, bid on projects, and build your freelance career.</p>
-                            <button class="btn btn-success select-role" data-role="freelancer">
-                                <i class="bi bi-arrow-right me-2"></i>Enter as Freelancer
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Vendor Role -->
-                <div class="col-md-4">
-                    <div class="card h-100 shadow-sm role-card" data-role="vendor" style="cursor: pointer; transition: transform 0.3s ease;">
-                        <div class="card-body text-center p-4">
-                            <div class="mb-3">
-                                <i class="bi bi-shop display-4 text-info"></i>
-                            </div>
-                            <h5 class="card-title fw-bold">I'm a Vendor</h5>
-                            <p class="card-text text-muted">Sell digital products, templates, and creative assets to customers worldwide.</p>
-                            <button class="btn btn-info select-role" data-role="vendor">
-                                <i class="bi bi-arrow-right me-2"></i>Enter as Vendor
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Multi-Role Option -->
-            <div class="row mt-4">
-                <div class="col-12">
+                <!-- Multi-Role Option -->
+                <div class="col-12 mt-4">
                     <div class="card border-warning">
                         <div class="card-body text-center p-4">
                             <div class="mb-3">
