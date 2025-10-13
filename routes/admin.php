@@ -77,7 +77,7 @@ Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->
         Route::post('/notifications', [App\Http\Controllers\Admin\AdminSettingsController::class, 'updateNotifications'])->name('notifications');
         Route::post('/maintenance', [App\Http\Controllers\Admin\AdminSettingsController::class, 'updateMaintenance'])->name('maintenance');
         Route::post('/integrations', [App\Http\Controllers\Admin\AdminSettingsController::class, 'updateIntegrations'])->name('integrations');
-        Route::post('/roles', [App\Http\Controllers\Admin\AdminSettingsController::class, 'updateRoles'])->name('roles');
+        Route::post('/roles', [App\Http\Controllers\SettingsController::class, 'updateRoles'])->name('roles');
         Route::post('/clear-cache', [App\Http\Controllers\Admin\AdminSettingsController::class, 'clearCache'])->name('clear-cache');
         Route::post('/clear-view-cache', [App\Http\Controllers\Admin\AdminSettingsController::class, 'clearViewCache'])->name('clear-view-cache');
         Route::post('/clear-route-cache', [App\Http\Controllers\Admin\AdminSettingsController::class, 'clearRouteCache'])->name('clear-route-cache');
