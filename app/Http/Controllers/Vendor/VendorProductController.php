@@ -10,7 +10,11 @@ class VendorProductController extends Controller
 {
     public function index()
     {
-        $products = auth()->user()->products()->with('category')->latest()->paginate(20);
+        $products = auth()->user()->products()
+            ->with('category')
+            ->select(['id', 'name', 'slug', 'price', 'standard_price', 'professional_price', 'ultimate_price', 'status', 'is_approved', 'created_at', 'category_id', 'product_type', 'version'])
+            ->latest()
+            ->paginate(20);
         return view('vendor.products.index', compact('products'));
     }
 
@@ -23,15 +27,52 @@ class VendorProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'short_description' => 'nullable|string|max:500',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'product_type' => 'required|in:script,plugin,template,graphic,course,service',
             'category_id' => 'required|exists:categories,id',
+            'tags' => 'nullable|array',
+            'demo_url' => 'nullable|url',
+            'documentation_url' => 'nullable|url',
+            'video_preview' => 'nullable|url',
+            'standard_price' => 'nullable|numeric|min:0',
+            'professional_price' => 'nullable|numeric|min:0',
+            'ultimate_price' => 'nullable|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'is_flash_sale' => 'boolean',
+            'is_free' => 'boolean',
+            'money_back_guarantee' => 'boolean',
+            'refund_days' => 'nullable|integer|min:0|max:365',
+            'version' => 'nullable|string|max:50',
+            'changelog' => 'nullable|string',
+            'feature_update_available' => 'boolean',
+            'item_support_available' => 'boolean',
+            'support_duration' => 'nullable|in:6_months,12_months,lifetime',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'search_keywords' => 'nullable|array',
+            'compatible_with' => 'nullable|string|max:255',
+            'files_included' => 'nullable|array',
+            'requirements' => 'nullable|string',
+            'author_name' => 'nullable|string|max:255',
+            'co_authors' => 'nullable|array',
+            'support_email' => 'nullable|email',
+            'team_name' => 'nullable|string|max:255',
+            'estimated_delivery_time' => 'nullable|integer|min:1|max:365',
             'status' => 'required|in:active,inactive',
         ]);
 
         $productData = array_merge($validated, [
             'slug' => \Str::slug($validated['name']),
-            'file_path' => 'placeholder', // This should be updated when file upload is implemented
+            'file_path' => 'placeholder',
+            'price' => $validated['standard_price'] ?? 0,
+            'currency' => 'USD',
+            'license_type' => 'single',
+            'is_approved' => false,
+            'is_featured' => false,
+            'download_count' => 0,
+            'sales_count' => 0,
+            'views_count' => 0,
         ]);
 
         $product = auth()->user()->products()->create($productData);
@@ -67,14 +108,44 @@ class VendorProductController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'short_description' => 'nullable|string|max:500',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'product_type' => 'required|in:script,plugin,template,graphic,course,service',
             'category_id' => 'required|exists:categories,id',
+            'tags' => 'nullable|array',
+            'demo_url' => 'nullable|url',
+            'documentation_url' => 'nullable|url',
+            'video_preview' => 'nullable|url',
+            'standard_price' => 'nullable|numeric|min:0',
+            'professional_price' => 'nullable|numeric|min:0',
+            'ultimate_price' => 'nullable|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
+            'is_flash_sale' => 'boolean',
+            'is_free' => 'boolean',
+            'money_back_guarantee' => 'boolean',
+            'refund_days' => 'nullable|integer|min:0|max:365',
+            'version' => 'nullable|string|max:50',
+            'changelog' => 'nullable|string',
+            'feature_update_available' => 'boolean',
+            'item_support_available' => 'boolean',
+            'support_duration' => 'nullable|in:6_months,12_months,lifetime',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
+            'search_keywords' => 'nullable|array',
+            'compatible_with' => 'nullable|string|max:255',
+            'files_included' => 'nullable|array',
+            'requirements' => 'nullable|string',
+            'author_name' => 'nullable|string|max:255',
+            'co_authors' => 'nullable|array',
+            'support_email' => 'nullable|email',
+            'team_name' => 'nullable|string|max:255',
+            'estimated_delivery_time' => 'nullable|integer|min:1|max:365',
             'status' => 'required|in:active,inactive,suspended',
         ]);
 
         $productData = array_merge($validated, [
             'slug' => \Str::slug($validated['name']),
+            'price' => $validated['standard_price'] ?? $product->price,
         ]);
 
         $product->update($productData);

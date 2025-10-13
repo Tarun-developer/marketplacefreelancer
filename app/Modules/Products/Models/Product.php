@@ -28,6 +28,13 @@ class Product extends Model implements HasMedia
         'framework_technology',
         'demo_url',
         'documentation_url',
+        'video_preview',
+        'thumbnail',
+        'screenshots',
+        'main_file',
+        'preview_image',
+        'file_type',
+        'file_size',
         'price',
         'currency',
         'license_type',
@@ -35,21 +42,35 @@ class Product extends Model implements HasMedia
         'preview_images',
         'standard_price',
         'professional_price',
-        'extended_price',
+        'ultimate_price',
         'discount_percentage',
         'is_flash_sale',
         'is_free',
+        'money_back_guarantee',
+        'refund_days',
+        'refund_terms',
         'version',
         'release_date',
         'changelog',
-        'has_feature_updates',
-        'auto_update_url',
-        'has_support',
+        'feature_update_available',
+        'item_support_available',
         'support_duration',
-        'support_link',
-        'has_refund_guarantee',
-        'refund_days',
-        'refund_terms',
+        'meta_title',
+        'meta_description',
+        'search_keywords',
+        'canonical_url',
+        'compatible_with',
+        'files_included',
+        'requirements',
+        'license_agreement',
+        'terms_of_upload',
+        'author_name',
+        'co_authors',
+        'support_email',
+        'team_name',
+        'project_id',
+        'estimated_delivery_time',
+        'views_count',
         'is_featured',
         'visibility',
         'publish_date',
@@ -67,14 +88,20 @@ class Product extends Model implements HasMedia
 
     protected $casts = [
         'tags' => 'array',
+        'screenshots' => 'array',
+        'search_keywords' => 'array',
+        'files_included' => 'array',
+        'co_authors' => 'array',
         'team_members' => 'array',
         'seo_keywords' => 'array',
         'preview_images' => 'array',
         'is_flash_sale' => 'boolean',
         'is_free' => 'boolean',
-        'has_feature_updates' => 'boolean',
-        'has_support' => 'boolean',
-        'has_refund_guarantee' => 'boolean',
+        'money_back_guarantee' => 'boolean',
+        'feature_update_available' => 'boolean',
+        'item_support_available' => 'boolean',
+        'license_agreement' => 'boolean',
+        'terms_of_upload' => 'boolean',
         'is_featured' => 'boolean',
         'is_approved' => 'boolean',
         'release_date' => 'date',
@@ -82,9 +109,13 @@ class Product extends Model implements HasMedia
         'price' => 'decimal:2',
         'standard_price' => 'decimal:2',
         'professional_price' => 'decimal:2',
-        'extended_price' => 'decimal:2',
+        'ultimate_price' => 'decimal:2',
         'discount_percentage' => 'decimal:2',
         'author_commission' => 'decimal:2',
+        'file_size' => 'integer',
+        'estimated_delivery_time' => 'integer',
+        'views_count' => 'integer',
+        'refund_days' => 'integer',
     ];
 
     public function user(): BelongsTo
@@ -100,6 +131,11 @@ class Product extends Model implements HasMedia
     public function subcategory(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'subcategory_id');
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\SpmProject::class, 'project_id');
     }
 
     public function tags(): BelongsToMany

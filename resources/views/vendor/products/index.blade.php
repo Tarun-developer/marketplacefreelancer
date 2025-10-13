@@ -34,14 +34,36 @@
                             <tbody>
                                 @forelse($products as $product)
                                     <tr>
-                                        <td>{{ $product->name }}</td>
-                                        <td>{{ $product->category->name ?? 'N/A' }}</td>
-                                        <td>${{ number_format($product->price, 2) }}</td>
                                         <td>
+                                            <div>
+                                                <strong>{{ $product->name }}</strong>
+                                                <br>
+                                                <small class="text-muted">{{ ucfirst($product->product_type) }} • v{{ $product->version }}</small>
+                                            </div>
+                                        </td>
+                                        <td>{{ $product->category->name ?? 'N/A' }}</td>
+                                        <td>
+                                            @if($product->standard_price)
+                                                <div>Standard: ${{ number_format($product->standard_price, 2) }}</div>
+                                            @endif
+                                            @if($product->professional_price)
+                                                <div>Pro: ${{ number_format($product->professional_price, 2) }}</div>
+                                            @endif
+                                            @if($product->ultimate_price)
+                                                <div>Ultimate: ${{ number_format($product->ultimate_price, 2) }}</div>
+                                            @endif
+                                            @if($product->is_free)
+                                                <span class="badge bg-success">FREE</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-{{ $product->status == 'active' ? 'success' : 'warning' }}">
+                                                {{ ucfirst($product->status) }}
+                                            </span>
                                             @if($product->is_approved)
-                                                <span class="badge bg-success">Approved</span>
+                                                <br><small class="text-success">✓ Approved</small>
                                             @else
-                                                <span class="badge bg-warning">Pending</span>
+                                                <br><small class="text-warning">⏳ Pending</small>
                                             @endif
                                         </td>
                                         <td>
