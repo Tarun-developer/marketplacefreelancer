@@ -8,6 +8,11 @@ use App\Http\Controllers\Api\ServiceApiController;
 use App\Http\Controllers\Api\JobApiController;
 use App\Http\Controllers\Api\OrderApiController;
 use App\Http\Controllers\Api\ChatApiController;
+use App\Http\Controllers\Api\DisputeApiController;
+use App\Http\Controllers\Api\PaymentApiController;
+use App\Http\Controllers\Api\WalletApiController;
+use App\Http\Controllers\Api\ReviewApiController;
+use App\Http\Controllers\Api\SupportApiController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -39,4 +44,24 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('conversations/{conversation}', [ChatApiController::class, 'conversation']);
     Route::post('conversations/{conversation}/message', [ChatApiController::class, 'sendMessage']);
     Route::post('conversations/start', [ChatApiController::class, 'startConversation']);
+
+    // Disputes
+    Route::apiResource('disputes', DisputeApiController::class);
+
+    // Payments
+    Route::get('payment-gateways', [PaymentApiController::class, 'gateways']);
+    Route::post('payments/process', [PaymentApiController::class, 'processPayment']);
+    Route::get('transactions', [PaymentApiController::class, 'transactions']);
+
+    // Wallet
+    Route::get('wallet/balance', [WalletApiController::class, 'balance']);
+    Route::get('wallet/transactions', [WalletApiController::class, 'transactions']);
+    Route::post('wallet/deposit', [WalletApiController::class, 'deposit']);
+    Route::post('wallet/withdraw', [WalletApiController::class, 'withdraw']);
+
+    // Reviews
+    Route::apiResource('reviews', ReviewApiController::class);
+
+    // Support
+    Route::apiResource('support-tickets', SupportApiController::class);
 });
