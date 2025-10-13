@@ -10,13 +10,44 @@
     @include('partials.header')
 
     <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 class="text-4xl md:text-6xl font-bold mb-6">One Platform, Endless Opportunities</h1>
-            <p class="text-xl md:text-2xl mb-8">Connect freelancers with clients and discover amazing digital products</p>
-            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <a href="#" class="bg-white text-indigo-600 px-8 py-3 rounded-md font-semibold hover:bg-gray-100">Find Freelancers</a>
-                <a href="#" class="bg-transparent border-2 border-white px-8 py-3 rounded-md font-semibold hover:bg-white hover:text-indigo-600">Sell Products</a>
+    <section class="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white py-24 overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-10"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 leading-tight">
+                    One Platform, <span class="text-yellow-300">Endless Opportunities</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-10 text-gray-100 max-w-3xl mx-auto">
+                    Connect with talented freelancers, hire for jobs, and discover premium digital products all in one marketplace
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+                    @auth
+                        <a href="{{ route('dashboard') }}" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                            Go to Dashboard
+                        </a>
+                    @else
+                        <a href="{{ route('register') }}" class="bg-white text-indigo-600 px-8 py-4 rounded-lg font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                            Get Started Free
+                        </a>
+                        <a href="{{ route('login') }}" class="bg-transparent border-2 border-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-white hover:text-indigo-600 transition">
+                            Sign In
+                        </a>
+                    @endauth
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mt-16">
+                    <div>
+                        <div class="text-4xl font-bold mb-2">{{ \App\Models\User::count() }}+</div>
+                        <div class="text-gray-200">Active Users</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">{{ \App\Modules\Services\Models\Service::where('status', 'active')->count() }}+</div>
+                        <div class="text-gray-200">Active Services</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-bold mb-2">{{ \App\Modules\Products\Models\Product::where('is_approved', true)->count() }}+</div>
+                        <div class="text-gray-200">Digital Products</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
