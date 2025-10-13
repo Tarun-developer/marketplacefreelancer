@@ -65,12 +65,15 @@
 
                             <div class="col-md-6">
                                 <div class="form-group mb-3">
-                                    <label for="status" class="form-label">Status</label>
-                                    <select name="status" id="status" class="form-select">
-                                        <option value="active" {{ $product->status == 'active' ? 'selected' : '' }}>Active</option>
-                                        <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
-                                        <option value="suspended" {{ $product->status == 'suspended' ? 'selected' : '' }}>Suspended</option>
+                                    <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
+                                        <option value="active" {{ old('status', $product->status) == 'active' ? 'selected' : '' }}>Active</option>
+                                        <option value="inactive" {{ old('status', $product->status) == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                                        <option value="suspended" {{ old('status', $product->status) == 'suspended' ? 'selected' : '' }}>Suspended</option>
                                     </select>
+                                    @error('status')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
                         </div>

@@ -80,6 +80,17 @@
                             </div>
                         </div>
 
+                        <div class="form-group mb-3">
+                            <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                            <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
+                                <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
+                                <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                            @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
                         <div class="form-group">
                             <button type="submit" class="btn btn-primary">Create Product</button>
                             <a href="{{ route('vendor.products.index') }}" class="btn btn-secondary">Cancel</a>

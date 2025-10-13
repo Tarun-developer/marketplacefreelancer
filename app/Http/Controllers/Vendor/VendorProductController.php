@@ -26,9 +26,15 @@ class VendorProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'category_id' => 'required|exists:categories,id',
+            'status' => 'required|in:active,inactive',
         ]);
 
-        $product = auth()->user()->products()->create($validated);
+        $productData = array_merge($validated, [
+            'slug' => \Str::slug($validated['name']),
+            'file_path' => 'placeholder', // This should be updated when file upload is implemented
+        ]);
+
+        $product = auth()->user()->products()->create($productData);
 
         return redirect()->route('vendor.products.index')
             ->with('success', 'Product created successfully');
@@ -63,9 +69,15 @@ class VendorProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'status' => 'required|in:active,inactive,suspended',
         ]);
 
-        $product->update($validated);
+        $productData = array_merge($validated, [
+            'slug' => \Str::slug($validated['name']),
+        ]);
+
+        $product->update($productData);
 
         return redirect()->route('vendor.products.index')
             ->with('success', 'Product updated successfully');

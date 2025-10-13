@@ -1,82 +1,79 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Products - MarketFusion</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-100">
-    @include('partials.header')
+@extends('layouts.vendor')
 
-    <div class="min-h-screen flex">
-        <!-- Sidebar -->
-        <div class="w-64 bg-gray-800 text-white">
-            <div class="p-4">
-                <h2 class="text-xl font-bold">Vendor Panel</h2>
-            </div>
-            <nav class="mt-4">
-                <a href="{{ route('dashboard') }}" class="block py-2 px-4 bg-gray-700">Dashboard</a>
-                <a href="{{ route('vendor.products.index') }}" class="block py-2 px-4 hover:bg-gray-700">My Products</a>
-                <a href="#" class="block py-2 px-4 hover:bg-gray-700">Orders</a>
-                <a href="#" class="block py-2 px-4 hover:bg-gray-700">Earnings</a>
-            </nav>
-        </div>
+@section('title', 'My Products')
 
-        <!-- Main Content -->
-        <div class="flex-1 p-6">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold">My Products</h1>
-                <a href="{{ route('vendor.products.create') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Add Product</a>
+@section('content')
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">My Products</h1>
+                <a href="{{ route('vendor.products.create') }}" class="btn btn-primary">Add New Product</a>
             </div>
 
             @if(session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
 
-            <div class="bg-white rounded-lg shadow overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($products as $product)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $product->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $product->category->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">${{ $product->price }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $product->is_approved ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
-                                        {{ $product->is_approved ? 'Approved' : 'Pending' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <a href="#" class="text-indigo-600 hover:text-indigo-900">View</a>
-                                    <a href="{{ route('vendor.products.edit', $product) }}" class="text-yellow-600 hover:text-yellow-900 ml-2">Edit</a>
-                                    <form action="{{ route('vendor.products.destroy', $product) }}" method="POST" class="inline ml-2">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure?')">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($products as $product)
+                                    <tr>
+                                        <td>{{ $product->name }}</td>
+                                        <td>{{ $product->category->name ?? 'N/A' }}</td>
+                                        <td>${{ number_format($product->price, 2) }}</td>
+                                        <td>
+                                            @if($product->is_approved)
+                                                <span class="badge bg-success">Approved</span>
+                                            @else
+                                                <span class="badge bg-warning">Pending</span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('vendor.products.show', $product) }}" class="btn btn-sm btn-outline-primary">View</a>
+                                            <a href="{{ route('vendor.products.edit', $product) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                            <form action="{{ route('vendor.products.destroy', $product) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this product?')">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <p class="text-muted mb-3">No products found.</p>
+                                            <a href="{{ route('vendor.products.create') }}" class="btn btn-primary">Create Your First Product</a>
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
 
-            <div class="mt-4">
-                {{ $products->links() }}
+                    @if($products->hasPages())
+                        <div class="d-flex justify-content-center">
+                            {{ $products->links() }}
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+@endsection
