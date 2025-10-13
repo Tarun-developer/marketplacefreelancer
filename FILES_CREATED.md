@@ -122,6 +122,14 @@ Location: `resources/views/`
      - AJAX role selection
      - Clear onboarding flow
 
+9. **dashboards/common.blade.php**
+   - Purpose: Common dashboard for role selection
+   - Features:
+     - Beautiful Bootstrap design
+     - Role cards with hover effects
+     - Real-time platform statistics
+     - AJAX role assignment
+
 ---
 
 ### Documentation (2 files)

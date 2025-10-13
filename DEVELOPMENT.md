@@ -110,7 +110,8 @@ The application uses a modular architecture where each feature is organized into
 - **User Roles**: 6 distinct roles with specific permissions
 - **Multi-Role Support**: Users can have multiple roles (e.g., freelancer + client)
 - **Role Switching**: UI to switch between roles and access corresponding dashboards
-- **Onboarding Flow**: First-time users select their primary role with clear options
+- **Common Dashboard**: Beautiful onboarding dashboard for role selection
+- **Onboarding Flow**: First-time users select their primary role with clear, visual options
 - **Logic**: Users can only access features based on their role and subscription
 
 #### Subscription Logic

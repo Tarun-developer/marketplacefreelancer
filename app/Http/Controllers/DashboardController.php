@@ -18,19 +18,49 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
+        // If user has no roles, redirect to onboarding
+        if ($user->roles->count() === 0) {
+            return redirect()->route('onboarding');
+        }
+
+        // If user has current_role set, redirect to specific dashboard
+        if ($user->current_role) {
+            return $this->redirectToRoleDashboard($user);
+        }
+
+        // If user has roles but no current_role, show common dashboard
+        return $this->commonDashboard($user);
+    }
+
+    private function redirectToRoleDashboard($user)
+    {
+        $currentRole = $user->current_role;
+
+        if ($currentRole === 'admin' || $currentRole === 'super_admin') {
             return $this->adminDashboard();
-        } elseif ($user->hasRole('vendor')) {
+        } elseif ($currentRole === 'vendor') {
             return $this->vendorDashboard($user);
-        } elseif ($user->hasRole('freelancer')) {
+        } elseif ($currentRole === 'freelancer') {
             return $this->freelancerDashboard($user);
-        } elseif ($user->hasRole('client')) {
+        } elseif ($currentRole === 'client') {
             return $this->clientDashboard($user);
-        } elseif ($user->hasRole('support')) {
+        } elseif ($currentRole === 'support') {
             return $this->supportDashboard($user);
         }
 
-        return redirect('/');
+        return $this->commonDashboard($user);
+    }
+
+    private function commonDashboard($user)
+    {
+        $stats = [
+            'total_users' => \App\Models\User::count(),
+            'total_services' => \App\Modules\Services\Models\Service::count(),
+            'total_products' => \App\Modules\Products\Models\Product::count(),
+            'total_jobs' => \App\Modules\Jobs\Models\Job::count(),
+        ];
+
+        return view('dashboards.common', compact('stats'));
     }
 
     private function adminDashboard()

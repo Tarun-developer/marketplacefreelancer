@@ -32,7 +32,7 @@ This document outlines all the improvements and new implementations added to the
 
 ## 2. New Implementations
 
-### 2.12 Multi-Role System & Onboarding (Implemented)
+### 2.12 Multi-Role System & Common Dashboard (Implemented)
 **Status**: Implemented in Version 3.0
 
 **Concept**:
@@ -40,6 +40,7 @@ This document outlines all the improvements and new implementations added to the
 - **Dynamic Role Switching**: UI component to switch between roles and access corresponding dashboards
 - **Role-Based Menus**: Sidebar and navigation adapt based on selected role
 - **Unified Profile**: One account with multiple role capabilities
+- **Common Dashboard**: Beautiful onboarding dashboard for role selection with Bootstrap styling
 - **Onboarding Flow**: First-time users select their primary role with clear, visual options
 
 **Implementation**:
@@ -543,6 +544,7 @@ resources/views/welcome.blade.php (Enhanced hero section)
 ✅ Modern UI with Bootstrap and theme support
 ✅ Alpine.js for interactivity
 ✅ Easy theme switching for customization
+✅ Common dashboard for role selection with beautiful Bootstrap design
 ✅ Onboarding flow for first-time users with clear role selection
 ✅ Multi-role support with dynamic dashboard switching
 

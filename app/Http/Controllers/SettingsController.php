@@ -146,12 +146,12 @@ class SettingsController extends Controller
 
         if ($request->role === 'multi') {
             // Assign multiple roles
-            $user->assignRole(['client', 'freelancer', 'vendor']);
+            $user->syncRoles(['client', 'freelancer', 'vendor']);
             $user->update(['current_role' => 'client']); // Default to client
-            $redirect = route('client.dashboard');
+            $redirect = route('dashboard'); // Go to common dashboard
         } else {
             // Assign single role
-            $user->assignRole($request->role);
+            $user->syncRoles([$request->role]);
             $user->update(['current_role' => $request->role]);
 
             switch ($request->role) {
