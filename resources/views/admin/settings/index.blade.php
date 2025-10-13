@@ -28,6 +28,11 @@
             </button>
         </li>
         <li class="nav-item" role="presentation">
+            <button class="nav-link" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab" aria-controls="roles" aria-selected="false">
+                <i class="bi bi-people me-2"></i>Roles
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
             <button class="nav-link" id="integrations-tab" data-bs-toggle="tab" data-bs-target="#integrations" type="button" role="tab" aria-controls="integrations" aria-selected="false">
                 <i class="bi bi-plug me-2"></i>Integrations
             </button>
@@ -268,6 +273,53 @@
                             </div>
                             <div class="col-12">
                                 <button type="submit" class="btn btn-primary">Update Maintenance Settings</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Management Settings -->
+        <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="roles-tab">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Role Management Settings</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ route('admin.settings.roles') }}" method="POST">
+                        @csrf
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="client_role_cost" class="form-label">Client Role Cost ($)</label>
+                                <input type="number" name="client_role_cost" id="client_role_cost" class="form-control" step="0.01" min="0" value="{{ old('client_role_cost', 0.00) }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="freelancer_role_cost" class="form-label">Freelancer Role Cost ($)</label>
+                                <input type="number" name="freelancer_role_cost" id="freelancer_role_cost" class="form-control" step="0.01" min="0" value="{{ old('freelancer_role_cost', 0.00) }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vendor_role_cost" class="form-label">Vendor Role Cost ($)</label>
+                                <input type="number" name="vendor_role_cost" id="vendor_role_cost" class="form-control" step="0.01" min="0" value="{{ old('vendor_role_cost', 0.00) }}">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="require_approval_for_roles" id="require_approval_for_roles" {{ old('require_approval_for_roles', false) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="require_approval_for_roles">
+                                        Require Admin Approval for Role Requests
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="allow_free_roles" id="allow_free_roles" {{ old('allow_free_roles', true) ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="allow_free_roles">
+                                        Allow Free Role Assignment
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">Update Role Settings</button>
                             </div>
                         </div>
                     </form>

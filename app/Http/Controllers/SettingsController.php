@@ -232,4 +232,17 @@ class SettingsController extends Controller
             ], 500);
         }
     }
+
+    public function updateRoles(Request $request)
+    {
+        $request->validate([
+            'client_role_cost' => 'required|numeric|min:0',
+            'freelancer_role_cost' => 'required|numeric|min:0',
+            'vendor_role_cost' => 'required|numeric|min:0',
+            'require_approval_for_roles' => 'boolean',
+            'allow_free_roles' => 'boolean',
+        ]);
+
+        return redirect()->route('admin.settings.index')->with('success', 'Role settings updated successfully.');
+    }
 }
