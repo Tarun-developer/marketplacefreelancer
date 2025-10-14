@@ -177,6 +177,10 @@
 
                                     <!-- Submit Button -->
                                     <div class="d-grid gap-2">
+                                        <div id="checkout-hint" class="alert alert-info small py-2 mb-2" style="display: none;">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            <span id="hint-text">Please select a payment method and accept the terms to continue</span>
+                                        </div>
                                         <button type="submit" class="btn btn-primary btn-lg" id="submit-btn" disabled>
                                             <i class="bi bi-lock-fill me-2"></i>Proceed to Secure Payment
                                         </button>
@@ -240,12 +244,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const feeDisplay = document.getElementById('fee-display');
     const feeAmount = document.getElementById('fee-amount');
     const totalAmount = document.getElementById('total-amount');
+    const checkoutHint = document.getElementById('checkout-hint');
+    const hintText = document.getElementById('hint-text');
 
     // Enable submit button only when gateway is selected and terms are accepted
     function updateSubmitButton() {
         const gatewaySelected = Array.from(gatewayRadios).some(radio => radio.checked);
         const termsAccepted = termsCheckbox.checked;
-        submitBtn.disabled = !(gatewaySelected && termsAccepted);
+        const canProceed = gatewaySelected && termsAccepted;
+
+        submitBtn.disabled = !canProceed;
+
+        // Show helpful hint
+        if (!canProceed) {
+            checkoutHint.style.display = 'block';
+            if (!gatewaySelected && !termsAccepted) {
+                hintText.textContent = 'Please select a payment method and accept the terms to continue';
+            } else if (!gatewaySelected) {
+                hintText.textContent = 'Please select a payment method to continue';
+            } else if (!termsAccepted) {
+                hintText.textContent = 'Please accept the terms and conditions to continue';
+            }
+        } else {
+            checkoutHint.style.display = 'none';
+        }
     }
 
     // Calculate and display fees
@@ -284,7 +306,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Make gateway cards clickable
+    document.querySelectorAll('.gateway-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Don't trigger if clicking directly on the radio or label
+            if (e.target.classList.contains('gateway-radio') || e.target.closest('label')) {
+                return;
+            }
+            const radio = this.querySelector('.gateway-radio');
+            if (radio) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change'));
+            }
+        });
+    });
+
     termsCheckbox.addEventListener('change', updateSubmitButton);
+
+    // Initial check - if only one gateway, auto-select it
+    if (gatewayRadios.length === 1) {
+        gatewayRadios[0].checked = true;
+        gatewayRadios[0].dispatchEvent(new Event('change'));
+    }
+
+    // Show initial hint
+    updateSubmitButton();
 
     // Form validation
     document.getElementById('checkout-form').addEventListener('submit', function(e) {
