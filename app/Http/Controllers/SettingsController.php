@@ -348,6 +348,7 @@ class SettingsController extends Controller
             // Calculate fees
             $fee = $gateway->calculateFee($cost);
             $totalAmount = $cost + $fee;
+            $netAmount = $cost - $fee; // Net amount received after fees
 
             // Create transaction record
             $transaction = \App\Modules\Payments\Models\Transaction::create([
@@ -356,6 +357,7 @@ class SettingsController extends Controller
                 'type' => 'role_purchase',
                 'amount' => $cost,
                 'fee_amount' => $fee,
+                'net_amount' => $netAmount,
                 'currency' => $gateway->transaction_fee_currency ?? 'USD',
                 'status' => 'pending',
                 'description' => "Purchase of {$role} role",

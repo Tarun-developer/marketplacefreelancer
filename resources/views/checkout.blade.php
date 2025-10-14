@@ -309,12 +309,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Make gateway cards clickable
     document.querySelectorAll('.gateway-card').forEach(card => {
         card.addEventListener('click', function(e) {
-            // Don't trigger if clicking directly on the radio or label
-            if (e.target.classList.contains('gateway-radio') || e.target.closest('label')) {
+            // Only trigger if not clicking on interactive elements
+            if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
                 return;
             }
             const radio = this.querySelector('.gateway-radio');
-            if (radio) {
+            if (radio && !radio.checked) {
                 radio.checked = true;
                 radio.dispatchEvent(new Event('change'));
             }
