@@ -282,9 +282,9 @@ class SettingsController extends Controller
         }
 
          $costs = [
-             'client' => config('settings.client_role_cost', 0),
-             'freelancer' => config('settings.freelancer_role_cost', 0),
-             'vendor' => config('settings.vendor_role_cost', 0),
+             'client' => config('settings.client_role_cost', 10),
+             'freelancer' => config('settings.freelancer_role_cost', 15),
+             'vendor' => config('settings.vendor_role_cost', 20),
              'customer' => 0, // Customer role is free
          ];
 
@@ -304,13 +304,19 @@ class SettingsController extends Controller
             }
         }
 
-        return view('checkout', compact('role', 'cost'));
+        // Get active payment gateways
+        $gateways = \App\Modules\Payments\Models\PaymentGateway::active()
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->get();
+
+        return view('checkout', compact('role', 'cost', 'gateways'));
     }
 
     public function processPayment(Request $request, $role)
     {
         $request->validate([
-            'payment_method' => 'required|in:stripe,paypal',
+            'gateway_id' => 'required|exists:payment_gateways,id',
             'terms' => 'accepted',
         ]);
 
@@ -321,13 +327,50 @@ class SettingsController extends Controller
             return redirect()->route('dashboard')->with('info', 'You already have this role.');
         }
 
-        // Simulate payment processing
-        $cost = config('settings.' . $role . '_role_cost', 0);
+        $costs = [
+            'client' => config('settings.client_role_cost', 10),
+            'freelancer' => config('settings.freelancer_role_cost', 15),
+            'vendor' => config('settings.vendor_role_cost', 20),
+            'customer' => 0,
+        ];
+
+        $cost = $costs[$role] ?? 0;
 
         if ($cost > 0) {
-            // Here you would process the actual payment
-            // For demo, we'll just assign the role
-            // TODO: Integrate with Stripe/PayPal
+            // Get the selected payment gateway
+            $gateway = \App\Modules\Payments\Models\PaymentGateway::findOrFail($request->gateway_id);
+
+            // Check if gateway is active
+            if (!$gateway->is_active) {
+                return back()->with('error', 'Selected payment gateway is not available.');
+            }
+
+            // Calculate fees
+            $fee = $gateway->calculateFee($cost);
+            $totalAmount = $cost + $fee;
+
+            // Create transaction record
+            $transaction = \App\Modules\Payments\Models\Transaction::create([
+                'user_id' => $user->id,
+                'payment_gateway_id' => $gateway->id,
+                'type' => 'role_purchase',
+                'amount' => $cost,
+                'fee_amount' => $fee,
+                'currency' => $gateway->transaction_fee_currency ?? 'USD',
+                'status' => 'pending',
+                'description' => "Purchase of {$role} role",
+                'metadata' => json_encode([
+                    'role' => $role,
+                    'gateway_name' => $gateway->name,
+                ]),
+            ]);
+
+            // TODO: Redirect to payment gateway for actual payment processing
+            // For now, we'll simulate successful payment
+            $transaction->markAsCompleted();
+
+            // Record gateway usage
+            $gateway->recordTransaction($cost);
         }
 
         // Assign the role (one-time only)
