@@ -42,8 +42,6 @@ class PaymentGateway extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'test_mode' => 'boolean',
-        'config' => 'array',
-        'sandbox_config' => 'array',
         'supported_currencies' => 'array',
         'supported_countries' => 'array',
         'transaction_fee_percentage' => 'decimal:2',

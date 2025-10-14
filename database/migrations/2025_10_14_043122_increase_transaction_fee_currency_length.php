@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('payment_gateways', function (Blueprint $table) {
-            // Change config and sandbox_config from JSON to TEXT for encrypted storage
-            $table->text('config')->nullable()->change();
-            $table->text('sandbox_config')->nullable()->change();
+            // Increase transaction_fee_currency length from 3 to 10 to support crypto currencies
+            $table->string('transaction_fee_currency', 10)->default('USD')->change();
         });
     }
 
@@ -24,8 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('payment_gateways', function (Blueprint $table) {
-            $table->json('config')->nullable()->change();
-            $table->json('sandbox_config')->nullable()->change();
+            $table->string('transaction_fee_currency', 3)->default('USD')->change();
         });
     }
 };
