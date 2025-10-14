@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Support;
 
 use App\Http\Controllers\Controller;
-use App\Models\SupportTicket;
+use App\Modules\Support\Models\SupportTicket;
 use Illuminate\Http\Request;
 
 class SupportTicketController extends Controller

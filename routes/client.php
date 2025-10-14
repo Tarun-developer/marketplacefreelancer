@@ -22,6 +22,11 @@ Route::middleware(['auth', 'role:client'])->prefix('client')->name('client.')->g
     // Payments
     Route::get('payments', [ClientOrderController::class, 'payments'])->name('payments');
 
-    // Favorites
-    Route::get('favorites', [ClientJobController::class, 'favorites'])->name('favorites');
+     // Favorites
+     Route::get('favorites', [ClientJobController::class, 'favorites'])->name('favorites');
+
+     // Services
+     Route::get('services', [App\Http\Controllers\Client\ClientServiceController::class, 'index'])->name('services.index');
+     Route::get('services/{service}', [App\Http\Controllers\Client\ClientServiceController::class, 'show'])->name('services.show');
+     Route::post('services/{service}/purchase', [App\Http\Controllers\Client\ClientServiceController::class, 'purchase'])->name('services.purchase');
 });

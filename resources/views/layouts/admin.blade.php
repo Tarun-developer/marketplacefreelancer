@@ -128,11 +128,11 @@
                                  <i class="bi bi-ticket me-2"></i><span>Support Tickets</span>
                              </a>
                          </li>
-                         <li class="nav-item">
-                             <a href="{{ route('admin.subscriptions.index') }}" class="nav-link text-white {{ request()->routeIs('admin.subscriptions.*') ? 'active bg-secondary' : '' }}">
-                                 <i class="bi bi-card-checklist me-2"></i><span>Subscriptions</span>
-                             </a>
-                         </li>
+                          <li class="nav-item">
+                              <a href="{{ route('admin.subscriptions.index') }}" class="nav-link text-white {{ request()->routeIs('admin.subscriptions.*', 'admin.subscription-plans.*') ? 'active bg-secondary' : '' }}">
+                                  <i class="bi bi-card-checklist me-2"></i><span>Subscriptions</span>
+                              </a>
+                          </li>
                          <li class="nav-item">
                              <a href="{{ route('admin.payment-gateways.index') }}" class="nav-link text-white {{ request()->routeIs('admin.payment-gateways.*') ? 'active bg-secondary' : '' }}">
                                  <i class="bi bi-credit-card-2-front me-2"></i><span>Payment Gateways</span>

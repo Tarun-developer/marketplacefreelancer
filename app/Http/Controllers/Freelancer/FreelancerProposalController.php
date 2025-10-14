@@ -10,7 +10,7 @@ class FreelancerProposalController extends Controller
 {
     public function index()
     {
-        $proposals = Bid::where('user_id', auth()->id())->paginate(10);
+         $proposals = Bid::with('job')->where('freelancer_id', auth()->id())->paginate(10);
 
         return view('freelancer.proposals.index', compact('proposals'));
     }
@@ -27,8 +27,9 @@ class FreelancerProposalController extends Controller
         return redirect()->route('freelancer.proposals.index');
     }
 
-    public function show(Bid $proposal)
-    {
-        return view('freelancer.proposals.show', compact('proposal'));
-    }
+     public function show(Bid $proposal)
+     {
+         $proposal->load('job');
+         return view('freelancer.proposals.show', compact('proposal'));
+     }
 }

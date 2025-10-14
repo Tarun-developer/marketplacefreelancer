@@ -27,9 +27,9 @@ class SpmSubscriptionPlansSeeder extends Seeder
                     'Email notifications',
                 ],
                 'is_active' => true,
-                'max_bids' => null,
+                 'max_bids' => 100,
                 'max_products' => null,
-                'max_services' => null,
+                 'max_services' => 100,
                 'priority_support' => false,
                 'featured_listings' => false,
                 'plan_type' => 'spm',
@@ -55,9 +55,9 @@ class SpmSubscriptionPlansSeeder extends Seeder
                     'Milestone management',
                 ],
                 'is_active' => true,
-                'max_bids' => null,
+                 'max_bids' => 100,
                 'max_products' => null,
-                'max_services' => null,
+                 'max_services' => 100,
                 'priority_support' => false,
                 'featured_listings' => false,
                 'plan_type' => 'spm',
@@ -86,9 +86,9 @@ class SpmSubscriptionPlansSeeder extends Seeder
                     'Export to PDF',
                 ],
                 'is_active' => true,
-                'max_bids' => null,
+                 'max_bids' => 100,
                 'max_products' => null,
-                'max_services' => null,
+                 'max_services' => 100,
                 'priority_support' => true,
                 'featured_listings' => false,
                 'plan_type' => 'spm',
@@ -117,9 +117,9 @@ class SpmSubscriptionPlansSeeder extends Seeder
                     '24/7 phone support',
                 ],
                 'is_active' => true,
-                'max_bids' => null,
+                 'max_bids' => 100,
                 'max_products' => null,
-                'max_services' => null,
+                 'max_services' => 100,
                 'priority_support' => true,
                 'featured_listings' => false,
                 'plan_type' => 'spm',
@@ -138,6 +138,99 @@ class SpmSubscriptionPlansSeeder extends Seeder
             );
         }
 
-        $this->command->info('SPM Subscription Plans created successfully!');
+         // Freelancer Plans
+         $freelancerPlans = [
+             [
+                 'name' => 'Freelancer Free',
+                 'description' => 'Basic freelancing with limited bids',
+                 'price' => 0.00,
+                 'currency' => 'USD',
+                 'billing_period' => 'monthly',
+                 'features' => [
+                     '5 bids per month',
+                     'Basic profile',
+                     'Job browsing',
+                     'Proposal submission',
+                 ],
+                 'is_active' => true,
+                 'max_bids' => 5,
+                 'max_products' => null,
+                 'max_services' => 5,
+                 'priority_support' => false,
+                 'featured_listings' => false,
+                 'plan_type' => 'freelancer',
+             ],
+             [
+                 'name' => 'Freelancer Basic',
+                 'description' => 'Enhanced freelancing tools',
+                 'price' => 9.99,
+                 'currency' => 'USD',
+                 'billing_period' => 'monthly',
+                 'features' => [
+                     '20 bids per month',
+                     'Enhanced profile',
+                     'Priority in search',
+                     'Advanced analytics',
+                 ],
+                 'is_active' => true,
+                 'max_bids' => 20,
+                 'max_products' => null,
+                 'max_services' => 5,
+                 'priority_support' => false,
+                 'featured_listings' => false,
+                 'plan_type' => 'freelancer',
+             ],
+             [
+                 'name' => 'Freelancer Pro',
+                 'description' => 'Professional freelancing features',
+                 'price' => 29.99,
+                 'currency' => 'USD',
+                 'billing_period' => 'monthly',
+                 'features' => [
+                     '50 bids per month',
+                     'Premium profile',
+                     'Featured listings',
+                     'Priority support',
+                     'Advanced tools',
+                 ],
+                 'is_active' => true,
+                 'max_bids' => 50,
+                 'max_products' => null,
+                 'max_services' => 5,
+                 'priority_support' => true,
+                 'featured_listings' => true,
+                 'plan_type' => 'freelancer',
+             ],
+             [
+                 'name' => 'Freelancer Enterprise',
+                 'description' => 'Complete freelancing solution',
+                 'price' => 99.99,
+                 'currency' => 'USD',
+                 'billing_period' => 'monthly',
+                 'features' => [
+                     '100 bids per month',
+                     'Custom profile',
+                     'Dedicated support',
+                     'API access',
+                     'White-label options',
+                 ],
+                 'is_active' => true,
+                 'max_bids' => 100,
+                 'max_products' => null,
+                 'max_services' => 5,
+                 'priority_support' => true,
+                 'featured_listings' => true,
+                 'plan_type' => 'freelancer',
+             ],
+         ];
+
+         foreach ($freelancerPlans as $plan) {
+             SubscriptionPlan::firstOrCreate(
+                 ['name' => $plan['name']],
+                 $plan
+             );
+         }
+
+         $this->command->info('SPM and Freelancer Subscription Plans created successfully!');
     }
 }

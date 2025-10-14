@@ -25,17 +25,20 @@ class User extends Authenticatable implements HasMedia
      * @var list<string>
      */
      protected $fillable = [
-         'name',
-         'email',
-         'password',
-         'role',
-         'current_role',
-         'is_active',
-         'email_verified_at',
-         'has_spm_access',
-         'spm_access_expires_at',
-         'spm_plan',
-     ];
+          'name',
+          'email',
+          'password',
+          'role',
+          'current_role',
+          'is_active',
+          'email_verified_at',
+          'has_spm_access',
+          'spm_access_expires_at',
+          'spm_plan',
+          'bids_used_this_month',
+          'bids_reset_date',
+          'extra_bids',
+      ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -52,16 +55,19 @@ class User extends Authenticatable implements HasMedia
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_active' => 'boolean',
-            'has_spm_access' => 'boolean',
-            'spm_access_expires_at' => 'datetime',
-        ];
-    }
+     protected function casts(): array
+     {
+         return [
+             'email_verified_at' => 'datetime',
+             'password' => 'hashed',
+             'is_active' => 'boolean',
+             'has_spm_access' => 'boolean',
+             'spm_access_expires_at' => 'datetime',
+             'bids_reset_date' => 'date',
+             'bids_used_this_month' => 'integer',
+             'extra_bids' => 'integer',
+         ];
+     }
 
     public function profile()
     {
@@ -90,12 +96,12 @@ class User extends Authenticatable implements HasMedia
 
     public function ordersAsBuyer()
     {
-        return $this->hasMany(\App\Modules\Orders\Models\Order::class, 'buyer_id');
+        return $this->hasMany(Order::class, 'buyer_id');
     }
 
     public function ordersAsSeller()
     {
-        return $this->hasMany(\App\Modules\Orders\Models\Order::class, 'seller_id');
+        return $this->hasMany(Order::class, 'seller_id');
     }
 
     public function orders()
@@ -113,10 +119,15 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(\App\Modules\Jobs\Models\Job::class, 'client_id');
     }
 
-    public function bids()
-    {
-        return $this->hasMany(\App\Modules\Jobs\Models\Bid::class, 'freelancer_id');
-    }
+     public function bids()
+     {
+         return $this->hasMany(\App\Modules\Jobs\Models\Bid::class, 'freelancer_id');
+     }
+
+     public function spmProjects()
+     {
+         return $this->hasMany(SpmProject::class, 'freelancer_id');
+     }
 
     public function products()
     {
@@ -186,19 +197,33 @@ class User extends Authenticatable implements HasMedia
         return $this->spm_access_expires_at->isFuture();
     }
 
-    /**
-     * Get active SPM subscription
-     */
-    public function activeSpmSubscription()
-    {
-        return $this->subscriptions()
-            ->whereHas('plan', function ($query) {
-                $query->where('plan_type', 'spm');
-            })
-            ->where('status', 'active')
-            ->where('ends_at', '>', now())
-            ->first();
-    }
+     /**
+      * Get active SPM subscription
+      */
+     public function activeSpmSubscription()
+     {
+         return $this->subscriptions()
+             ->whereHas('plan', function ($query) {
+                 $query->where('plan_type', 'spm');
+             })
+             ->where('status', 'active')
+             ->where('ends_at', '>', now())
+             ->first();
+     }
+
+     /**
+      * Get active Freelancer subscription
+      */
+     public function activeFreelancerSubscription()
+     {
+         return $this->subscriptions()
+             ->whereHas('plan', function ($query) {
+                 $query->where('plan_type', 'freelancer');
+             })
+             ->where('status', 'active')
+             ->where('ends_at', '>', now())
+             ->first();
+     }
 
     /**
      * Get SPM plan limits
@@ -238,15 +263,81 @@ class User extends Authenticatable implements HasMedia
         ]);
     }
 
-    /**
-     * Revoke SPM access
-     */
-    public function revokeSpmAccess(): void
-    {
-        $this->update([
-            'has_spm_access' => false,
-            'spm_plan' => null,
-            'spm_access_expires_at' => null,
-        ]);
-    }
-}
+     /**
+      * Revoke SPM access
+      */
+     public function revokeSpmAccess(): void
+     {
+         $this->update([
+             'has_spm_access' => false,
+             'spm_plan' => null,
+             'spm_access_expires_at' => null,
+         ]);
+     }
+
+     /**
+      * Get current bid limit
+      */
+     public function getBidLimit(): int
+     {
+         $freelancerSubscription = $this->activeFreelancerSubscription();
+         $spmSubscription = $this->activeSpmSubscription();
+
+         $subscription = $freelancerSubscription ?: $spmSubscription;
+         $baseLimit = $subscription && $subscription->plan ? $subscription->plan->max_bids : 5; // Default for free
+         return $baseLimit + $this->extra_bids;
+     }
+
+     /**
+      * Get current service limit
+      */
+     public function getServiceLimit(): int
+     {
+         $freelancerSubscription = $this->activeFreelancerSubscription();
+         $spmSubscription = $this->activeSpmSubscription();
+
+         $subscription = $freelancerSubscription ?: $spmSubscription;
+         $baseLimit = $subscription && $subscription->plan ? ($subscription->plan->max_services ?? 10) : 10; // Default for free
+         return $baseLimit;
+     }
+
+     /**
+      * Check if user can place a bid
+      */
+     public function canPlaceBid(): bool
+     {
+         $this->resetBidsIfNeeded();
+         return $this->bids_used_this_month < $this->getBidLimit();
+     }
+
+     /**
+      * Increment bid count
+      */
+     public function incrementBidCount(): void
+     {
+         $this->increment('bids_used_this_month');
+     }
+
+     /**
+      * Reset bids if month has passed
+      */
+     public function resetBidsIfNeeded(): void
+     {
+         if ($this->bids_reset_date && $this->bids_reset_date->isPast()) {
+             $this->update([
+                 'bids_used_this_month' => 0,
+                 'bids_reset_date' => now()->addMonth(),
+             ]);
+         } elseif (!$this->bids_reset_date) {
+             $this->update(['bids_reset_date' => now()->addMonth()]);
+         }
+     }
+
+     /**
+      * Add extra bids
+      */
+     public function addExtraBids(int $amount): void
+     {
+         $this->increment('extra_bids', $amount);
+     }
+ }

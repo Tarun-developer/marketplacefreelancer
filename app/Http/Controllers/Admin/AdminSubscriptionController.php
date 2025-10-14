@@ -60,12 +60,68 @@ class AdminSubscriptionController extends Controller
             ->with('success', 'Subscription extended successfully');
     }
 
-    public function plans()
-    {
-        $plans = SubscriptionPlan::all();
+     public function index()
+     {
+         $plans = SubscriptionPlan::all();
 
-        return view('admin.subscriptions.plans', compact('plans'));
-    }
+         return view('admin.subscriptions.plans', compact('plans'));
+     }
+
+     public function create()
+     {
+         return view('admin.subscriptions.create-plan');
+     }
+
+     public function store(Request $request)
+     {
+         $validated = $request->validate([
+             'name' => 'required|string|max:255',
+             'slug' => 'required|string|unique:subscription_plans',
+             'type' => 'required|in:freelancer,vendor,spm',
+             'price' => 'required|numeric|min:0',
+             'billing_period' => 'required|in:monthly,yearly',
+             'features' => 'required|array',
+             'is_active' => 'boolean',
+         ]);
+
+         SubscriptionPlan::create($validated);
+
+         return redirect()->route('admin.subscription-plans.index')
+             ->with('success', 'Subscription plan created successfully');
+     }
+
+     public function edit(SubscriptionPlan $subscription_plan)
+     {
+         return view('admin.subscriptions.edit-plan', compact('subscription_plan'));
+     }
+
+     public function update(Request $request, SubscriptionPlan $subscription_plan)
+     {
+         $validated = $request->validate([
+             'name' => 'required|string|max:255',
+             'price' => 'required|numeric|min:0',
+             'features' => 'required|array',
+             'is_active' => 'boolean',
+         ]);
+
+         $subscription_plan->update($validated);
+
+         return redirect()->route('admin.subscription-plans.index')
+             ->with('success', 'Subscription plan updated successfully');
+     }
+
+     public function destroy(SubscriptionPlan $subscription_plan)
+     {
+         if ($subscription_plan->subscriptions()->where('status', 'active')->exists()) {
+             return redirect()->back()
+                 ->with('error', 'Cannot delete plan with active subscriptions');
+         }
+
+         $subscription_plan->delete();
+
+         return redirect()->route('admin.subscription-plans.index')
+             ->with('success', 'Subscription plan deleted successfully');
+     }
 
     public function createPlan()
     {
@@ -77,7 +133,7 @@ class AdminSubscriptionController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|unique:subscription_plans',
-            'type' => 'required|in:freelancer,vendor',
+             'type' => 'required|in:freelancer,vendor,spm',
             'price' => 'required|numeric|min:0',
             'billing_period' => 'required|in:monthly,yearly',
             'features' => 'required|array',

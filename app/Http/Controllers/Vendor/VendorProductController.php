@@ -298,6 +298,7 @@ class VendorProductController extends Controller
         $user = auth()->user();
         $stats = [
             'total_products' => $user->products()->count(),
+            'total_orders' => $user->ordersAsSeller()->count(),
             'total_sales' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
             'monthly_sales' => $user->ordersAsSeller()
                 ->where('status', 'completed')

@@ -7,21 +7,21 @@
 @section('content')
     <!-- Stats Cards -->
     <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-2">Active Gigs</h6>
-                            <h3 class="mb-0 text-primary">{{ $stats['active_gigs'] }}</h3>
-                        </div>
-                        <div class="text-primary" style="font-size: 2rem;">
-                            <i class="bi bi-tools"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Active Gigs</h6>
+                             <h3 class="mb-0 text-primary">{{ $stats['active_gigs'] }} / {{ auth()->user()->getServiceLimit() }}</h3>
+                         </div>
+                         <div class="text-primary" style="font-size: 2rem;">
+                             <i class="bi bi-tools"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
         <div class="col-md-3">
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
@@ -52,21 +52,83 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-2">Pending Bids</h6>
-                            <h3 class="mb-0 text-warning">{{ $stats['pending_bids'] }}</h3>
-                        </div>
-                        <div class="text-warning" style="font-size: 2rem;">
-                            <i class="bi bi-hourglass-split"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Pending Bids</h6>
+                             <h3 class="mb-0 text-warning">{{ $stats['pending_bids'] }}</h3>
+                         </div>
+                         <div class="text-warning" style="font-size: 2rem;">
+                             <i class="bi bi-hourglass-split"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Bid Usage</h6>
+                             <h3 class="mb-0 text-info">{{ auth()->user()->bids_used_this_month }} / {{ auth()->user()->getBidLimit() }}</h3>
+                             <small class="text-muted">This month</small>
+                         </div>
+                         <div class="text-info" style="font-size: 2rem;">
+                             <i class="bi bi-graph-up"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Current Plan</h6>
+                             <h4 class="mb-0 text-success">{{ auth()->user()->activeFreelancerSubscription()->plan->name ?? 'Free' }}</h4>
+                             <small class="text-muted">{{ auth()->user()->activeFreelancerSubscription() ? '$' . number_format(auth()->user()->activeFreelancerSubscription()->plan->price, 2) . '/' . auth()->user()->activeFreelancerSubscription()->plan->billing_period : 'No subscription' }}</small>
+                         </div>
+                         <div class="text-success" style="font-size: 2rem;">
+                             <i class="bi bi-star"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Service Orders</h6>
+                             <h3 class="mb-0 text-info">{{ $stats['service_orders'] }}</h3>
+                         </div>
+                         <div class="text-info" style="font-size: 2rem;">
+                             <i class="bi bi-receipt"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Active Projects</h6>
+                             <h3 class="mb-0 text-warning">{{ $stats['active_projects'] }}</h3>
+                         </div>
+                         <div class="text-warning" style="font-size: 2rem;">
+                             <i class="bi bi-folder"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
     </div>
 
     <!-- Quick Actions -->
@@ -88,9 +150,18 @@
                         <a href="{{ route('freelancer.proposals.index') }}" class="btn btn-outline-success">
                             <i class="bi bi-file-earmark-text me-1"></i> My Proposals
                         </a>
-                        <a href="{{ route('freelancer.earnings') }}" class="btn btn-outline-info">
-                            <i class="bi bi-wallet2 me-1"></i> View Earnings
-                        </a>
+                         <a href="{{ route('freelancer.earnings') }}" class="btn btn-outline-info">
+                             <i class="bi bi-wallet2 me-1"></i> View Earnings
+                         </a>
+                         <a href="{{ route('freelancer.buy-bids') }}" class="btn btn-outline-warning">
+                             <i class="bi bi-plus-circle me-1"></i> Buy Bids
+                         </a>
+                         <a href="{{ route('freelancer.service-orders') }}" class="btn btn-outline-info">
+                             <i class="bi bi-receipt me-1"></i> Service Orders
+                         </a>
+                         <a href="{{ route('freelancer.projects.index') }}" class="btn btn-outline-warning">
+                             <i class="bi bi-folder me-1"></i> My Projects
+                         </a>
                     </div>
                 </div>
             </div>
@@ -178,33 +249,65 @@
                 </div>
             </div>
 
-            <!-- Tips & Recommendations -->
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title mb-3">
-                        <i class="bi bi-lightbulb text-warning me-2"></i>
-                        Tips for Success
-                    </h6>
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <small>Respond to messages within 24 hours</small>
-                        </div>
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <small>Keep your portfolio updated</small>
-                        </div>
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <small>Write detailed proposals</small>
-                        </div>
-                        <div class="d-flex">
-                            <i class="bi bi-check-circle-fill text-success me-2"></i>
-                            <small>Deliver work on time</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
+             <!-- Bid Packages -->
+             <div class="card border-0 shadow-sm mb-4">
+                 <div class="card-body">
+                     <h6 class="card-title mb-3">
+                         <i class="bi bi-bag text-primary me-2"></i>
+                         Bid Packages
+                     </h6>
+                     <div class="d-flex flex-column gap-2">
+                         <div class="d-flex justify-content-between">
+                             <small>Free: 5 bids/month</small>
+                             @if(auth()->user()->activeSpmSubscription() && auth()->user()->activeSpmSubscription()->plan->name == 'SPM Free') <i class="bi bi-check-circle text-success"></i> @endif
+                         </div>
+                         <div class="d-flex justify-content-between">
+                             <small>Basic: 20 bids/month</small>
+                             @if(auth()->user()->activeSpmSubscription() && auth()->user()->activeSpmSubscription()->plan->name == 'SPM Basic') <i class="bi bi-check-circle text-success"></i> @endif
+                         </div>
+                         <div class="d-flex justify-content-between">
+                             <small>Pro: 50 bids/month</small>
+                             @if(auth()->user()->activeSpmSubscription() && auth()->user()->activeSpmSubscription()->plan->name == 'SPM Pro') <i class="bi bi-check-circle text-success"></i> @endif
+                         </div>
+                         <div class="d-flex justify-content-between">
+                             <small>Enterprise: 100 bids/month</small>
+                             @if(auth()->user()->activeSpmSubscription() && auth()->user()->activeSpmSubscription()->plan->name == 'SPM Enterprise') <i class="bi bi-check-circle text-success"></i> @endif
+                     </div>
+                     <div class="mt-3">
+                         <a href="{{ route('freelancer.buy-bids') }}" class="btn btn-sm btn-outline-primary w-100">
+                             <i class="bi bi-plus me-1"></i> Buy Extra
+                         </a>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Tips & Recommendations -->
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <h6 class="card-title mb-3">
+                         <i class="bi bi-lightbulb text-warning me-2"></i>
+                         Tips for Success
+                     </h6>
+                     <div class="d-flex flex-column gap-3">
+                         <div class="d-flex">
+                             <i class="bi bi-check-circle-fill text-success me-2"></i>
+                             <small>Respond to messages within 24 hours</small>
+                         </div>
+                         <div class="d-flex">
+                             <i class="bi bi-check-circle-fill text-success me-2"></i>
+                             <small>Keep your portfolio updated</small>
+                         </div>
+                         <div class="d-flex">
+                             <i class="bi bi-check-circle-fill text-success me-2"></i>
+                             <small>Write detailed proposals</small>
+                         </div>
+                         <div class="d-flex">
+                             <i class="bi bi-check-circle-fill text-success me-2"></i>
+                             <small>Deliver work on time</small>
+                         </div>
+                     </div>
+                 </div>
+             </div>
         </div>
     </div>
 @endsection

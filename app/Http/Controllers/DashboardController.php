@@ -220,12 +220,14 @@ class DashboardController extends Controller
     {
         $user = $user ?? auth()->user();
 
-        $stats = [
-            'active_gigs' => $user->services()->where('status', 'active')->count(),
-            'completed_jobs' => $user->ordersAsSeller()->where('status', 'completed')->count(),
-            'total_earnings' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
-            'pending_bids' => $user->bids()->where('status', 'pending')->count(),
-        ];
+         $stats = [
+             'active_gigs' => $user->services()->where('status', 'active')->count(),
+             'completed_jobs' => $user->ordersAsSeller()->where('status', 'completed')->count(),
+             'total_earnings' => $user->ordersAsSeller()->where('status', 'completed')->sum('amount'),
+             'pending_bids' => $user->bids()->where('status', 'pending')->count(),
+             'service_orders' => $user->ordersAsSeller()->where('orderable_type', \App\Modules\Services\Models\Service::class)->count(),
+             'active_projects' => $user->spmProjects()->where('status', 'active')->count(),
+         ];
 
         $active_jobs = Job::whereHas('bids', function ($query) use ($user) {
             $query->where('freelancer_id', $user->id)->where('status', 'accepted');

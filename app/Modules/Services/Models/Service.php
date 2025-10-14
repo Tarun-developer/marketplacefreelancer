@@ -12,33 +12,43 @@ class Service extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'title',
-        'slug',
-        'description',
-        'category',
-        'price',
-        'currency',
-        'delivery_time',
-        'revisions',
-        'images',
-        'is_active',
-        'status',
-    ];
+     protected $fillable = [
+         'user_id',
+         'title',
+         'slug',
+         'description',
+         'category_id',
+         'price',
+         'currency',
+         'delivery_time',
+         'revisions',
+         'images',
+         'is_active',
+         'status',
+     ];
 
     protected $casts = [
         'images' => 'array',
         'is_active' => 'boolean',
     ];
 
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+     public function user(): BelongsTo
+     {
+         return $this->belongsTo(User::class);
+     }
 
-    public function offers(): HasMany
-    {
-        return $this->hasMany(Offer::class);
-    }
+     public function category(): BelongsTo
+     {
+         return $this->belongsTo(\App\Modules\Products\Models\Category::class);
+     }
+
+     public function tags()
+     {
+         return $this->belongsToMany(\App\Modules\Products\Models\Tag::class, 'service_tags');
+     }
+
+     public function offers(): HasMany
+     {
+         return $this->hasMany(Offer::class);
+     }
 }

@@ -19,20 +19,36 @@
             <span class="menu-badge">{{ auth()->user()->bids()->where('status', 'pending')->count() }}</span>
         @endif
     </a>
-    <a href="{{ route('freelancer.services.index') }}" class="menu-item {{ request()->routeIs('freelancer.services.*') ? 'active' : '' }}">
-        <i class="bi bi-tools"></i>
-        <span>My Gigs</span>
-    </a>
+     <a href="{{ route('freelancer.services.index') }}" class="menu-item {{ request()->routeIs('freelancer.services.*') ? 'active' : '' }}">
+         <i class="bi bi-tools"></i>
+         <span>My Gigs</span>
+     </a>
+     <a href="{{ route('freelancer.service-orders') }}" class="menu-item {{ request()->routeIs('freelancer.service-orders*') ? 'active' : '' }}">
+         <i class="bi bi-receipt"></i>
+         <span>Service Orders</span>
+     </a>
+     <a href="{{ route('freelancer.projects.index') }}" class="menu-item {{ request()->routeIs('freelancer.projects.*') ? 'active' : '' }}">
+         <i class="bi bi-folder"></i>
+         <span>My Projects</span>
+     </a>
 
     <div class="menu-section-title mt-4">Finance</div>
-    <a href="{{ route('freelancer.earnings') }}" class="menu-item">
-        <i class="bi bi-currency-dollar"></i>
-        <span>Earnings</span>
-    </a>
-    <a href="#" class="menu-item">
-        <i class="bi bi-credit-card"></i>
-        <span>Payouts</span>
-    </a>
+     <a href="{{ route('freelancer.earnings') }}" class="menu-item">
+         <i class="bi bi-currency-dollar"></i>
+         <span>Earnings</span>
+     </a>
+     <a href="{{ route('freelancer.buy-bids') }}" class="menu-item">
+         <i class="bi bi-bag-plus"></i>
+         <span>Buy Bids</span>
+     </a>
+     <a href="{{ route('freelancer.plans') }}" class="menu-item">
+         <i class="bi bi-star"></i>
+         <span>Upgrade Plan</span>
+     </a>
+     <a href="#" class="menu-item">
+         <i class="bi bi-credit-card"></i>
+         <span>Payouts</span>
+     </a>
 
     <div class="menu-section-title mt-4">Account</div>
     <a href="{{ route('freelancer.profile') }}" class="menu-item">
