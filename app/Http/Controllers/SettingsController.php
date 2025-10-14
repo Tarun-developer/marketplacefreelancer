@@ -354,6 +354,7 @@ class SettingsController extends Controller
             $transaction = \App\Modules\Payments\Models\Transaction::create([
                 'user_id' => $user->id,
                 'payment_gateway_id' => $gateway->id,
+                'gateway' => $gateway->slug,
                 'type' => 'role_purchase',
                 'amount' => $cost,
                 'fee_amount' => $fee,
