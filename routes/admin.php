@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminDisputeController;
 use App\Http\Controllers\Admin\AdminJobController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminPaymentGatewayController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminServiceController;
 use App\Http\Controllers\Admin\AdminSettingsController;
@@ -82,6 +83,12 @@ Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->
      Route::post('licenses/{license}/extend', [LicenseController::class, 'extend'])->name('licenses.extend');
      Route::post('licenses/{license}/change-limit', [LicenseController::class, 'changeLimit'])->name('licenses.change-limit');
      Route::post('licenses/generate-manual', [LicenseController::class, 'generateManual'])->name('licenses.generate-manual');
+
+    // Payment Gateways Management
+    Route::resource('payment-gateways', AdminPaymentGatewayController::class);
+    Route::post('payment-gateways/{paymentGateway}/toggle-status', [AdminPaymentGatewayController::class, 'toggleStatus'])->name('payment-gateways.toggle-status');
+    Route::post('payment-gateways/{paymentGateway}/toggle-test-mode', [AdminPaymentGatewayController::class, 'toggleTestMode'])->name('payment-gateways.toggle-test-mode');
+    Route::post('payment-gateways/{paymentGateway}/update-config', [AdminPaymentGatewayController::class, 'updateConfig'])->name('payment-gateways.update-config');
 
     // Settings Management
     Route::prefix('settings')->name('settings.')->group(function () {
