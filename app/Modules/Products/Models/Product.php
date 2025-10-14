@@ -145,10 +145,15 @@ class Product extends Model implements HasMedia
         return $this->hasMany(\App\Models\License::class);
     }
 
-    public function tags()
-    {
-        return $this->belongsToMany(Tag::class, 'product_tags');
-    }
+     public function tags()
+     {
+         return $this->belongsToMany(Tag::class, 'product_tags');
+     }
+
+     public function reviews()
+     {
+         return $this->hasManyThrough(\App\Modules\Reviews\Models\Review::class, \App\Modules\Orders\Models\Order::class, 'orderable_id', 'order_id');
+     }
 
     public function versions()
     {
