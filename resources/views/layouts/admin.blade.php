@@ -134,6 +134,11 @@
                              </a>
                          </li>
                          <li class="nav-item">
+                             <a href="{{ route('admin.payment-gateways.index') }}" class="nav-link text-white {{ request()->routeIs('admin.payment-gateways.*') ? 'active bg-secondary' : '' }}">
+                                 <i class="bi bi-credit-card-2-front me-2"></i><span>Payment Gateways</span>
+                             </a>
+                         </li>
+                         <li class="nav-item">
                              <a href="{{ route('admin.settings.index') }}" class="nav-link text-white {{ request()->routeIs('admin.settings.*') ? 'active bg-secondary' : '' }}">
                                  <i class="bi bi-gear me-2"></i><span>Settings</span>
                              </a>
