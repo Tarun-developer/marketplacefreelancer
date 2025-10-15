@@ -255,4 +255,51 @@ class FreelancerJobController extends Controller
 
          return view('freelancer.service-order-show', compact('order'));
      }
+
+     public function earnings()
+     {
+         $user = auth()->user();
+
+         // Ensure wallet exists, create if not
+         if (!$user->wallet) {
+             $user->wallet()->create([
+                 'balance' => 0.00,
+                 'currency' => 'USD',
+             ]);
+             $user->load('wallet');
+         }
+
+         // Calculate total earnings from completed orders
+         $totalEarnings = $user->ordersAsSeller()
+             ->where('status', 'completed')
+             ->sum('amount');
+
+         // Calculate monthly earnings
+         $monthlyEarnings = $user->ordersAsSeller()
+             ->where('status', 'completed')
+             ->whereYear('completed_at', now()->year)
+             ->whereMonth('completed_at', now()->month)
+             ->sum('amount');
+
+         // Calculate pending earnings (in progress orders)
+         $pendingEarnings = $user->ordersAsSeller()
+             ->whereIn('status', ['pending', 'processing'])
+             ->sum('amount');
+
+         // Available balance from wallet
+         $availableBalance = $user->wallet->balance;
+
+         // Get recent transactions
+         $transactions = \App\Modules\Wallet\Models\WalletTransaction::where('wallet_id', $user->wallet->id)
+             ->latest()
+             ->paginate(15);
+
+         return view('freelancer.earnings', compact(
+             'totalEarnings',
+             'monthlyEarnings',
+             'pendingEarnings',
+             'availableBalance',
+             'transactions'
+         ));
+     }
  }

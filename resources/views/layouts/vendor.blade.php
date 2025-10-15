@@ -43,14 +43,21 @@
     </a>
 
     <div class="menu-section-title mt-4">Finance</div>
-    <a href="#" class="menu-item">
+    <a href="{{ route('vendor.earnings') }}" class="menu-item {{ request()->routeIs('vendor.earnings') ? 'active' : '' }}">
         <i class="bi bi-currency-dollar"></i>
-        <span>Revenue</span>
+        <span>Earnings</span>
     </a>
     <a href="#" class="menu-item">
         <i class="bi bi-credit-card"></i>
         <span>Payouts</span>
     </a>
+
+    <div class="menu-section-title mt-4">Communication</div>
+     <a href="{{ route('messages.index') }}" class="menu-item {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+         <i class="bi bi-chat-dots"></i>
+         <span>Messages</span>
+         <span class="menu-badge" id="messagesBadge" style="display: none;">0</span>
+     </a>
 
      <div class="menu-section-title mt-4">Account</div>
      <a href="{{ route('profile.edit') }}" class="menu-item">
@@ -61,7 +68,7 @@
          <i class="bi bi-book"></i>
          <span>License Docs</span>
      </a>
-     <a href="#" class="menu-item">
+     <a href="{{ route('profile.edit') }}" class="menu-item">
          <i class="bi bi-gear"></i>
          <span>Settings</span>
      </a>

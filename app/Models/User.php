@@ -91,7 +91,14 @@ class User extends Authenticatable implements HasMedia
 
     public function walletTransactions()
     {
-        return $this->hasMany(\App\Modules\Wallet\Models\WalletTransaction::class);
+        return $this->hasManyThrough(
+            \App\Modules\Wallet\Models\WalletTransaction::class,
+            \App\Modules\Wallet\Models\Wallet::class,
+            'user_id',      // Foreign key on wallets table
+            'wallet_id',    // Foreign key on wallet_transactions table
+            'id',           // Local key on users table
+            'id'            // Local key on wallets table
+        );
     }
 
     public function ordersAsBuyer()
@@ -127,6 +134,37 @@ class User extends Authenticatable implements HasMedia
      public function spmProjects()
      {
          return $this->hasMany(SpmProject::class, 'freelancer_id');
+     }
+
+     public function favorites()
+     {
+         return $this->hasMany(\App\Models\UserFavorite::class);
+     }
+
+     public function favoriteServices()
+     {
+         return $this->morphedByMany(\App\Modules\Services\Models\Service::class, 'favorable', 'user_favorites');
+     }
+
+     public function isFavorite($model)
+     {
+         return $this->favorites()->where('favorable_type', get_class($model))->where('favorable_id', $model->id)->exists();
+     }
+
+     public function toggleFavorite($model)
+     {
+         $favorite = $this->favorites()->where('favorable_type', get_class($model))->where('favorable_id', $model->id)->first();
+
+         if ($favorite) {
+             $favorite->delete();
+             return false;
+         } else {
+             $this->favorites()->create([
+                 'favorable_type' => get_class($model),
+                 'favorable_id' => $model->id,
+             ]);
+             return true;
+         }
      }
 
     public function products()
@@ -225,6 +263,20 @@ class User extends Authenticatable implements HasMedia
              ->first();
      }
 
+     /**
+      * Get active Client subscription
+      */
+     public function activeClientSubscription()
+     {
+         return $this->subscriptions()
+             ->whereHas('plan', function ($query) {
+                 $query->where('plan_type', 'client');
+             })
+             ->where('status', 'active')
+             ->where('ends_at', '>', now())
+             ->first();
+     }
+
     /**
      * Get SPM plan limits
      */
@@ -299,6 +351,51 @@ class User extends Authenticatable implements HasMedia
          $subscription = $freelancerSubscription ?: $spmSubscription;
          $baseLimit = $subscription && $subscription->plan ? ($subscription->plan->max_services ?? 10) : 10; // Default for free
          return $baseLimit;
+     }
+
+     /**
+      * Get current project limit for clients
+      */
+     public function getProjectLimit(): int
+     {
+         $clientSubscription = $this->activeClientSubscription();
+         $baseLimit = $clientSubscription && $clientSubscription->plan ? ($clientSubscription->plan->max_projects ?? 5) : 5; // Default for free
+         return $baseLimit;
+     }
+
+     /**
+      * Check if client can post project
+      */
+     public function canPostProject(): bool
+     {
+         return $this->jobs()->count() < $this->getProjectLimit();
+     }
+
+     /**
+      * Check if escrow is enabled for client
+      */
+     public function hasEscrowEnabled(): bool
+     {
+         $clientSubscription = $this->activeClientSubscription();
+         return $clientSubscription && $clientSubscription->plan ? $clientSubscription->plan->escrow_enabled : true; // Default enabled
+     }
+
+     /**
+      * Check if advance payment is required
+      */
+     public function requiresAdvancePayment(): bool
+     {
+         $clientSubscription = $this->activeClientSubscription();
+         return $clientSubscription && $clientSubscription->plan ? $clientSubscription->plan->advance_payment_required : false;
+     }
+
+     /**
+      * Check if verification is required
+      */
+     public function requiresVerification(): bool
+     {
+         $clientSubscription = $this->activeClientSubscription();
+         return $clientSubscription && $clientSubscription->plan ? $clientSubscription->plan->verified_required : false;
      }
 
      /**

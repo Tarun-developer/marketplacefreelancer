@@ -60,12 +60,12 @@ class AdminSubscriptionController extends Controller
             ->with('success', 'Subscription extended successfully');
     }
 
-     public function index()
-     {
-         $plans = SubscriptionPlan::all();
+      public function plans()
+      {
+          $plans = SubscriptionPlan::all();
 
-         return view('admin.subscriptions.plans', compact('plans'));
-     }
+          return view('admin.subscriptions.plans', compact('plans'));
+      }
 
      public function create()
      {

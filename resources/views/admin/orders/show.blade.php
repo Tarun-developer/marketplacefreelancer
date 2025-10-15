@@ -14,11 +14,21 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col-sm-3"><strong>Buyer:</strong></div>
-                    <div class="col-sm-9">{{ $order->buyer->name }}</div>
+                    <div class="col-sm-9">
+                        {{ $order->buyer->name }}
+                        <a href="{{ route('messages.start', $order->buyer->id) }}" class="btn btn-sm btn-outline-primary ms-2" title="Chat with Buyer">
+                            <i class="bi bi-chat-dots"></i> Chat
+                        </a>
+                    </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-sm-3"><strong>Seller:</strong></div>
-                    <div class="col-sm-9">{{ $order->seller->name }}</div>
+                    <div class="col-sm-9">
+                        {{ $order->seller->name }}
+                        <a href="{{ route('messages.start', $order->seller->id) }}" class="btn btn-sm btn-outline-primary ms-2" title="Chat with Seller">
+                            <i class="bi bi-chat-dots"></i> Chat
+                        </a>
+                    </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-sm-3"><strong>Amount:</strong></div>

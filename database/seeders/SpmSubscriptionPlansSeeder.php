@@ -231,6 +231,77 @@ class SpmSubscriptionPlansSeeder extends Seeder
              );
          }
 
-         $this->command->info('SPM and Freelancer Subscription Plans created successfully!');
+         // Client Plans
+         $clientPlans = [
+             [
+                 'name' => 'Client Free',
+                 'description' => 'Basic client access with limited projects',
+                 'price' => 0.00,
+                 'currency' => 'USD',
+                 'billing_period' => 'monthly',
+                 'features' => [
+                     '5 projects per month',
+                     'Basic escrow',
+                     'Standard support',
+                 ],
+                 'is_active' => true,
+                 'max_projects' => 5,
+                 'escrow_enabled' => true,
+                 'advance_payment_required' => false,
+                 'verified_required' => false,
+                 'priority_support' => false,
+                 'plan_type' => 'client',
+             ],
+             [
+                 'name' => 'Client Basic',
+                 'description' => 'Enhanced client tools',
+                 'price' => 14.99,
+                 'currency' => 'USD',
+                 'billing_period' => 'monthly',
+                 'features' => [
+                     '20 projects per month',
+                     'Advanced escrow',
+                     'Priority in freelancer search',
+                     'Project analytics',
+                 ],
+                 'is_active' => true,
+                 'max_projects' => 20,
+                 'escrow_enabled' => true,
+                 'advance_payment_required' => false,
+                 'verified_required' => false,
+                 'priority_support' => false,
+                 'plan_type' => 'client',
+             ],
+             [
+                 'name' => 'Client Pro',
+                 'description' => 'Professional client features',
+                 'price' => 39.99,
+                 'currency' => 'USD',
+                 'billing_period' => 'monthly',
+                 'features' => [
+                     'Unlimited projects',
+                     'Premium escrow',
+                     'Verified badge',
+                     'Dedicated account manager',
+                     'Advanced reporting',
+                 ],
+                 'is_active' => true,
+                 'max_projects' => null, // Unlimited
+                 'escrow_enabled' => true,
+                 'advance_payment_required' => true,
+                 'verified_required' => true,
+                 'priority_support' => true,
+                 'plan_type' => 'client',
+             ],
+         ];
+
+         foreach ($clientPlans as $plan) {
+             SubscriptionPlan::firstOrCreate(
+                 ['name' => $plan['name']],
+                 $plan
+             );
+         }
+
+         $this->command->info('SPM, Freelancer, and Client Subscription Plans created successfully!');
     }
 }

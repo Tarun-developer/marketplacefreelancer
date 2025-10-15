@@ -12,36 +12,51 @@
                     <span class="fw-bold text-dark fs-4">Market<span class="text-primary">Fusion</span></span>
                 </a>
 
-                <!-- Mobile Toggle Button -->
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                 <!-- Mobile Toggle Button -->
+                 <button class="navbar-toggler border-0 d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-expanded="false">
+                     <span class="navbar-toggler-icon"></span>
+                 </button>
 
-                <!-- Navigation Content -->
-                <div class="collapse navbar-collapse" id="navbarContent">
-                    <!-- Center Navigation Links -->
-                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link {{ request()->is('/') ? 'active fw-semibold' : '' }}" href="{{ url('/') }}">
-                                <i class="bi bi-house-door me-1"></i>Home
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-briefcase me-1"></i>Find Work
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-cart me-1"></i>Marketplace
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                <i class="bi bi-people me-1"></i>Freelancers
-                            </a>
-                        </li>
-                    </ul>
+                 <!-- Navigation Content -->
+                 <div class="navbar-collapse show" id="navbarContent">
+                     <!-- Center Navigation Links -->
+                     <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                         <li class="nav-item">
+                             <a class="nav-link {{ request()->is('/') ? 'active fw-semibold' : '' }}" href="{{ url('/') }}">
+                                 <i class="bi bi-house-door me-1"></i>Home
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link {{ request()->routeIs('jobs.index') ? 'active fw-semibold' : '' }}" href="{{ route('jobs.index') }}">
+                                 <i class="bi bi-briefcase me-1"></i>Find Work
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link {{ request()->routeIs('products.index') ? 'active fw-semibold' : '' }}" href="{{ route('products.index') }}">
+                                 <i class="bi bi-cart me-1"></i>Marketplace
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link {{ request()->routeIs('services.index') ? 'active fw-semibold' : '' }}" href="{{ route('services.index') }}">
+                                 <i class="bi bi-tools me-1"></i>Services
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link {{ request()->routeIs('freelancers.index') ? 'active fw-semibold' : '' }}" href="{{ route('freelancers.index') }}">
+                                 <i class="bi bi-people me-1"></i>Freelancers
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link {{ request()->routeIs('contact') ? 'active fw-semibold' : '' }}" href="{{ route('contact') }}">
+                                 <i class="bi bi-envelope me-1"></i>Contact
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a class="nav-link {{ request()->routeIs('about') ? 'active fw-semibold' : '' }}" href="{{ route('about') }}">
+                                 <i class="bi bi-info-circle me-1"></i>About
+                             </a>
+                         </li>
+                     </ul>
 
                     <!-- Right Side -->
                     <div class="d-flex align-items-center gap-2">
@@ -126,17 +141,22 @@
                                             <i class="bi bi-speedometer2 me-2"></i>Dashboard
                                         </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                            <i class="bi bi-person me-2"></i>Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bi bi-wallet2 me-2"></i>Wallet
-                                            <span class="badge bg-success ms-2">$0.00</span>
-                                        </a>
-                                    </li>
+                                     <li>
+                                         <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                                             <i class="bi bi-person me-2"></i>Profile
+                                         </a>
+                                     </li>
+                                     <li>
+                                         <a class="dropdown-item" href="{{ route('downloads') }}">
+                                             <i class="bi bi-download me-2"></i>My Downloads
+                                         </a>
+                                     </li>
+                                     <li>
+                                         <a class="dropdown-item" href="#">
+                                             <i class="bi bi-wallet2 me-2"></i>Wallet
+                                             <span class="badge bg-success ms-2">$0.00</span>
+                                         </a>
+                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="#">
                                             <i class="bi bi-gear me-2"></i>Settings
@@ -234,5 +254,19 @@
 
 header.sticky-top {
     z-index: 1020;
+}
+
+#navbarContent {
+    display: flex !important;
+}
+
+@media (max-width: 991.98px) {
+    #navbarContent {
+        display: none !important;
+    }
+
+    #navbarContent.show {
+        display: block !important;
+    }
 }
 </style>

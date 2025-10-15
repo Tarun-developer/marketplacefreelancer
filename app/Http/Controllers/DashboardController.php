@@ -240,12 +240,13 @@ class DashboardController extends Controller
     {
         $user = $user ?? auth()->user();
 
-        $stats = [
-            'posted_jobs' => $user->jobs()->count(),
-            'active_orders' => $user->ordersAsBuyer()->whereIn('status', ['pending', 'processing'])->count(),
-            'completed_orders' => $user->ordersAsBuyer()->where('status', 'completed')->count(),
-            'total_spent' => $user->ordersAsBuyer()->where('status', 'completed')->sum('amount'),
-        ];
+         $stats = [
+             'posted_jobs' => $user->jobs()->count(),
+             'project_limit' => $user->getProjectLimit(),
+             'active_orders' => $user->ordersAsBuyer()->whereIn('status', ['pending', 'processing'])->count(),
+             'completed_orders' => $user->ordersAsBuyer()->where('status', 'completed')->count(),
+             'total_spent' => $user->ordersAsBuyer()->where('status', 'completed')->sum('amount'),
+         ];
 
         $recent_orders = $user->ordersAsBuyer()
             ->with('seller')

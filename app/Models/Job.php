@@ -9,20 +9,21 @@ class Job extends Model
 {
     protected $table = 'marketplace_jobs';
 
-    protected $fillable = [
-        'client_id',
-        'title',
-        'slug',
-        'description',
-        'category',
-        'budget_min',
-        'budget_max',
-        'currency',
-        'duration',
-        'skills_required',
-        'status',
-        'expires_at',
-    ];
+     protected $fillable = [
+         'client_id',
+         'title',
+         'slug',
+         'description',
+         'category',
+         'budget_min',
+         'budget_max',
+         'currency',
+         'duration',
+         'skills_required',
+         'status',
+         'expires_at',
+         'priority',
+     ];
 
     protected $casts = [
         'budget_min' => 'decimal:2',

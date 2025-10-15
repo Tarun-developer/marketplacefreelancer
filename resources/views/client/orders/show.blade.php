@@ -52,7 +52,14 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="text-muted small mb-1">Seller</div>
-                            <div class="fw-bold">{{ $order->seller->name ?? 'N/A' }}</div>
+                            <div class="fw-bold">
+                                {{ $order->seller->name ?? 'N/A' }}
+                                @if($order->seller)
+                                    <a href="{{ route('messages.start', $order->seller->id) }}" class="btn btn-sm btn-outline-primary ms-2" title="Chat with Seller">
+                                        <i class="bi bi-chat-dots"></i>
+                                    </a>
+                                @endif
+                            </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="text-muted small mb-1">Order Type</div>
@@ -98,9 +105,11 @@
                                 <i class="bi bi-star me-1"></i>Leave Review
                             </button>
                         @endif
-                        <button class="btn btn-outline-info">
-                            <i class="bi bi-chat-dots me-1"></i>Contact Seller
-                        </button>
+                        @if($order->seller)
+                            <a href="{{ route('messages.start', $order->seller->id) }}" class="btn btn-outline-info">
+                                <i class="bi bi-chat-dots me-1"></i>Contact Seller
+                            </a>
+                        @endif
                         @if($order->status === 'pending')
                             <button class="btn btn-outline-danger">
                                 <i class="bi bi-x-circle me-1"></i>Cancel Order

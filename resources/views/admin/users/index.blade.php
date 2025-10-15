@@ -123,8 +123,15 @@
                                 </td>
                                 <td>{{ $user->created_at->format('M d, Y') }}</td>
                                 <td>
-                                    <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-primary">View</a>
-                                    <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-warning">Edit</a>
+                                    <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-primary" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a href="{{ route('messages.start', $user->id) }}" class="btn btn-sm btn-info" title="Chat with User">
+                                        <i class="bi bi-chat-dots"></i>
+                                    </a>
+                                    <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-warning" title="Edit User">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
 
                                     @if($user->is_active)
                                         <form action="{{ route('admin.users.suspend', $user) }}" method="POST" class="d-inline">

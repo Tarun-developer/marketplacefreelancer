@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Modules\Products\Models\Product;
 use App\Modules\Orders\Models\Order;
+use App\Models\License;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -58,7 +59,7 @@ class ClientProductController extends Controller
     public function purchase(Product $product, Request $request)
     {
         $request->validate([
-            'license_type' => 'required|in:single,multiple',
+            'license_type' => 'required|in:standard,professional,ultimate',
             'quantity' => 'required|integer|min:1',
         ]);
 
@@ -69,8 +70,14 @@ class ClientProductController extends Controller
             return back()->with('error', 'Please verify your email before purchasing.');
         }
 
-        // Calculate total amount
-        $price = $product->is_free ? 0 : $product->price;
+        // Get price based on license type
+        $price = match ($request->license_type) {
+            'standard' => $product->standard_price ?? $product->price,
+            'professional' => $product->professional_price ?? $product->price,
+            'ultimate' => $product->ultimate_price ?? $product->price,
+            default => $product->price,
+        };
+
         $totalAmount = $price * $request->quantity;
 
         // Check if user has sufficient balance
@@ -101,15 +108,35 @@ class ClientProductController extends Controller
                     'amount' => $totalAmount,
                     'type' => 'product_purchase',
                     'status' => 'completed',
-                    'description' => "Purchased {$product->name}",
+                    'description' => "Purchased {$product->name} ({$request->license_type} license)",
                 ]);
 
                 // Send notifications or emails here if needed
             });
 
-            return redirect()->route('client.orders.show', $order->id)->with('success', 'Product purchased successfully!');
+             // Generate license
+             License::create([
+                 'product_id' => $product->id,
+                 'buyer_id' => $user->id,
+                 'license_key' => License::generateLicenseKey($product->id, $user->id),
+                 'license_type' => $request->license_type,
+                 'activation_limit' => $this->getActivationLimit($request->license_type),
+                 'status' => 'active',
+             ]);
+
+             return redirect()->route('downloads')->with('success', 'Product purchased successfully! Check your downloads page to access your product.');
         } catch (\Exception $e) {
-            return back()->with('error', 'Purchase failed. Please try again.');
+             return back()->with('error', 'Purchase failed. Please try again.');
         }
+    }
+
+    private function getActivationLimit(string $licenseType): int
+    {
+        return match ($licenseType) {
+            'standard' => 1,
+            'professional' => 5,
+            'ultimate' => 999999, // Unlimited
+            default => 1,
+        };
     }
 }

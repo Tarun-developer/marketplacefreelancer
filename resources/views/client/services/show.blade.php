@@ -120,6 +120,19 @@
                                     <i class="fas fa-credit-card me-2"></i>Purchase for ${{ number_format($service->price, 2) }}
                                 </button>
                             </form>
+
+                            <div class="mt-3">
+                                @if(auth()->user()->isFavorite($service))
+                                    <button type="button" class="btn btn-outline-danger w-100 favorite-btn" data-action="unfavorite" data-service-id="{{ $service->id }}">
+                                        <i class="fas fa-heart-broken me-2"></i>Remove from Favorites
+                                    </button>
+                                @else
+                                    <button type="button" class="btn btn-outline-primary w-100 favorite-btn" data-action="favorite" data-service-id="{{ $service->id }}">
+                                        <i class="fas fa-heart me-2"></i>Add to Favorites
+                                    </button>
+                                @endif
+                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -127,4 +140,71 @@
         </div>
     </div>
 </div>
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const favoriteBtns = document.querySelectorAll('.favorite-btn');
+
+    favoriteBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const action = this.dataset.action;
+            const serviceId = this.dataset.serviceId;
+            const url = action === 'favorite' ? `/client/services/${serviceId}/favorite` : `/client/services/${serviceId}/favorite`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    if (action === 'favorite') {
+                        this.classList.remove('btn-outline-primary');
+                        this.classList.add('btn-outline-danger');
+                        this.innerHTML = '<i class="fas fa-heart-broken me-2"></i>Remove from Favorites';
+                        this.dataset.action = 'unfavorite';
+                    } else {
+                        this.classList.remove('btn-outline-danger');
+                        this.classList.add('btn-outline-primary');
+                        this.innerHTML = '<i class="fas fa-heart me-2"></i>Add to Favorites';
+                        this.dataset.action = 'favorite';
+                    }
+                    // Show success message
+                    showAlert(data.message, 'success');
+                } else {
+                    showAlert('An error occurred', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred', 'danger');
+            });
+        });
+    });
+
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+        alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+});
+</script>
+@endpush
+
 @endsection

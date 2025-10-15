@@ -43,6 +43,27 @@ class ClientServiceController extends Controller
             'requirements' => $request->requirements,
         ]);
 
-        return redirect()->route('client.orders.show', $order)->with('success', 'Service purchased successfully. Please complete payment.');
-    }
-}
+         return redirect()->route('client.orders.show', $order)->with('success', 'Service purchased successfully. Please complete payment.');
+     }
+
+     public function toggleFavorite(\App\Modules\Services\Models\Service $service)
+     {
+         $isFavorite = auth()->user()->toggleFavorite($service);
+
+         return response()->json([
+             'success' => true,
+             'is_favorite' => $isFavorite,
+             'message' => $isFavorite ? 'Added to favorites' : 'Removed from favorites',
+         ]);
+     }
+
+     public function removeFavorite(\App\Modules\Services\Models\Service $service)
+     {
+         auth()->user()->favorites()->where('favorable_type', \App\Modules\Services\Models\Service::class)->where('favorable_id', $service->id)->delete();
+
+         return response()->json([
+             'success' => true,
+             'message' => 'Removed from favorites',
+         ]);
+     }
+ }

@@ -144,6 +144,11 @@
                                         <i class="bi bi-clock me-1"></i>Submitted {{ $bid->created_at ? $bid->created_at->diffForHumans() : 'recently' }}
                                     </small>
                                     <div>
+                                        @if($bid->freelancer)
+                                            <a href="{{ route('messages.start', $bid->freelancer->id) }}" class="btn btn-sm btn-outline-info me-2" title="Chat with Freelancer">
+                                                <i class="bi bi-chat-dots me-1"></i>Chat
+                                            </a>
+                                        @endif
                                         <button class="btn btn-sm btn-outline-primary me-2">
                                             <i class="bi bi-eye me-1"></i>View Profile
                                         </button>

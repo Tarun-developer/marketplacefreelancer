@@ -72,7 +72,12 @@ Route::middleware(['auth', 'role:super_admin|admin|manager'])->prefix('admin')->
      Route::resource('subscriptions', AdminSubscriptionController::class)->only(['index', 'show']);
      Route::post('subscriptions/{subscription}/cancel', [AdminSubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
      Route::post('subscriptions/{subscription}/extend', [AdminSubscriptionController::class, 'extend'])->name('subscriptions.extend');
-     Route::resource('subscription-plans', AdminSubscriptionController::class)->except(['show']);
+      Route::get('subscription-plans', [AdminSubscriptionController::class, 'plans'])->name('subscription-plans.index');
+      Route::get('subscription-plans/create', [AdminSubscriptionController::class, 'create'])->name('subscription-plans.create');
+      Route::post('subscription-plans', [AdminSubscriptionController::class, 'store'])->name('subscription-plans.store');
+      Route::get('subscription-plans/{subscription_plan}/edit', [AdminSubscriptionController::class, 'edit'])->name('subscription-plans.edit');
+      Route::put('subscription-plans/{subscription_plan}', [AdminSubscriptionController::class, 'update'])->name('subscription-plans.update');
+      Route::delete('subscription-plans/{subscription_plan}', [AdminSubscriptionController::class, 'destroy'])->name('subscription-plans.destroy');
 
      // SPM Management
      Route::resource('spm', AdminSpmController::class)->except(['create', 'store']);

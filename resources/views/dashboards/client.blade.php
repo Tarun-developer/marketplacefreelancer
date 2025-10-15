@@ -11,10 +11,10 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-2">Posted Jobs</h6>
-                            <h3 class="mb-0 text-primary">{{ $stats['posted_jobs'] }}</h3>
-                        </div>
+                         <div>
+                             <h6 class="text-muted mb-2">Posted Jobs</h6>
+                             <h3 class="mb-0 text-primary">{{ $stats['posted_jobs'] }} / {{ $stats['project_limit'] }}</h3>
+                         </div>
                         <div class="text-primary" style="font-size: 2rem;">
                             <i class="bi bi-briefcase"></i>
                         </div>
@@ -52,14 +52,37 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="text-muted mb-2">Total Spent</h6>
-                            <h3 class="mb-0 text-info">${{ number_format($stats['total_spent'], 2) }}</h3>
-                        </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Total Spent</h6>
+                             <h3 class="mb-0 text-info">${{ number_format($stats['total_spent'], 2) }}</h3>
+                         </div>
+                         <div class="text-info" style="font-size: 2rem;">
+                             <i class="bi bi-currency-dollar"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+         <div class="col-md-3">
+             <div class="card border-0 shadow-sm">
+                 <div class="card-body">
+                     <div class="d-flex justify-content-between align-items-center">
+                         <div>
+                             <h6 class="text-muted mb-2">Current Plan</h6>
+                             <h4 class="mb-0 text-success">{{ auth()->user()->activeClientSubscription()->plan->name ?? 'Free' }}</h4>
+                             <small class="text-muted">{{ auth()->user()->activeClientSubscription() ? '$' . number_format(auth()->user()->activeClientSubscription()->plan->price, 2) . '/' . auth()->user()->activeClientSubscription()->plan->billing_period : 'No subscription' }}</small>
+                         </div>
+                         <div class="text-success" style="font-size: 2rem;">
+                             <i class="bi bi-star"></i>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+         </div>
                         <div class="text-info" style="font-size: 2rem;">
                             <i class="bi bi-wallet2"></i>
                         </div>

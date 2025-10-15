@@ -50,6 +50,13 @@
          <span>Payouts</span>
      </a>
 
+    <div class="menu-section-title mt-4">Communication</div>
+     <a href="{{ route('messages.index') }}" class="menu-item {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+         <i class="bi bi-chat-dots"></i>
+         <span>Messages</span>
+         <span class="menu-badge" id="messagesBadge" style="display: none;">0</span>
+     </a>
+
     <div class="menu-section-title mt-4">Account</div>
     <a href="{{ route('freelancer.profile') }}" class="menu-item">
         <i class="bi bi-person"></i>

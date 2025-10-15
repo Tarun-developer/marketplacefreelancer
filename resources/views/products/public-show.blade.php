@@ -343,9 +343,20 @@
                         <p><strong>Support:</strong> <a href="mailto:{{ $product->support_email }}">{{ $product->support_email }}</a></p>
                     @endif
 
-                    <a href="{{ route('vendor.profile', $product->user) }}" class="btn btn-outline-primary btn-sm w-100">
-                        View Vendor Profile
-                    </a>
+                    <div class="d-grid gap-2">
+                        @auth
+                            <a href="{{ route('messages.start', $product->user->id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-chat-dots me-2"></i>Chat with Vendor
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-chat-dots me-2"></i>Login to Chat
+                            </a>
+                        @endauth
+                        <a href="{{ route('vendor.profile', $product->user) }}" class="btn btn-outline-primary btn-sm">
+                            View Vendor Profile
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -449,13 +460,37 @@ function changeMainImage(src) {
 
 function initiatePurchase() {
     const selectedLicense = document.querySelector('input[name="license_type"]:checked').value;
-    // Implement purchase flow
-    alert('Purchase flow for ' + selectedLicense + ' license coming soon!');
+    window.location.href = '{{ route("products.checkout", $product) }}?license_type=' + selectedLicense;
 }
 
 function addToCart() {
-    // Implement add to cart
-    alert('Add to cart functionality coming soon!');
+    const selectedLicense = document.querySelector('input[name="license_type"]:checked').value;
+    const productId = {{ $product->id }};
+
+    fetch('{{ route("products.add-to-cart") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify({
+            product_id: productId,
+            license_type: selectedLicense
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Product added to cart successfully!');
+            // You could update a cart counter here if you have one
+        } else {
+            alert('Error: ' + (data.error || 'Failed to add to cart'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to add to cart. Please try again.');
+    });
 }
 </script>
 @endpush

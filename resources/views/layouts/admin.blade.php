@@ -143,6 +143,16 @@
                                  <i class="bi bi-gear me-2"></i><span>Settings</span>
                              </a>
                          </li>
+                         <!-- Communication -->
+                         <li class="nav-item">
+                             <div class="nav-link text-white-50 fw-bold small mt-3">COMMUNICATION</div>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('messages.index') }}" class="nav-link text-white {{ request()->routeIs('messages.*') ? 'active bg-secondary' : '' }}">
+                                 <i class="bi bi-chat-dots me-2"></i><span>Messages</span>
+                                 <span class="badge bg-danger ms-auto" id="messagesBadge" style="display: none;">0</span>
+                             </a>
+                         </li>
                      @elseif($userRole === 'freelancer')
                          <!-- Freelancer Section -->
                          <li class="nav-item">
@@ -282,6 +292,30 @@
             document.body.classList.toggle('theme-dark');
             this.textContent = document.body.classList.contains('theme-dark') ? '☀️' : '🌙';
         });
+
+        // Messages badge polling
+        async function updateMessagesBadge() {
+            try {
+                const response = await fetch('{{ route('messages.unread-count') }}');
+                const data = await response.json();
+                const badge = document.getElementById('messagesBadge');
+
+                if (data.count > 0) {
+                    badge.textContent = data.count;
+                    badge.style.display = 'inline-block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Failed to fetch unread messages count:', error);
+            }
+        }
+
+        // Update badge on page load
+        updateMessagesBadge();
+
+        // Poll every 10 seconds
+        setInterval(updateMessagesBadge, 10000);
     </script>
 </body>
 </html>
