@@ -2,11 +2,13 @@
 
 namespace App\Modules\Products\Models;
 
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -145,12 +147,17 @@ class Product extends Model implements HasMedia
         return $this->hasMany(\App\Models\License::class);
     }
 
-     public function tags()
-     {
-         return $this->belongsToMany(Tag::class, 'product_tags');
-     }
+      public function tags()
+      {
+          return $this->belongsToMany(Tag::class, 'product_tags');
+      }
 
-     public function reviews()
+      public function orders(): MorphMany
+      {
+          return $this->morphMany(Order::class, 'orderable');
+      }
+
+      public function reviews()
      {
          return $this->hasManyThrough(\App\Modules\Reviews\Models\Review::class, \App\Modules\Orders\Models\Order::class, 'orderable_id', 'order_id');
      }

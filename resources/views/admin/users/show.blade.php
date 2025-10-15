@@ -25,9 +25,7 @@
                                 <span class="badge @if($user->is_active) bg-success @else bg-danger @endif ms-2">
                                     {{ $user->is_active ? 'Active' : 'Inactive' }}
                                 </span>
-                                @if($user->status)
-                                    <span class="badge bg-warning ms-2">{{ ucfirst($user->status) }}</span>
-                                @endif
+
                             </div>
                             <p><strong>Joined:</strong> {{ $user->created_at->format('M d, Y \a\t g:i A') }}</p>
                             <p><strong>Last Login:</strong> {{ $user->updated_at->format('M d, Y \a\t g:i A') }}</p>

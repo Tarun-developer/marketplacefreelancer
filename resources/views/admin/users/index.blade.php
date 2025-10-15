@@ -22,12 +22,11 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select name="status" class="form-select">
-                        <option value="">All Status</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="suspended" {{ request('status') === 'suspended' ? 'selected' : '' }}>Suspended</option>
-                        <option value="banned" {{ request('status') === 'banned' ? 'selected' : '' }}>Banned</option>
-                    </select>
+                     <select name="is_active" class="form-select">
+                         <option value="">All Status</option>
+                         <option value="1" {{ request('is_active') === '1' ? 'selected' : '' }}>Active</option>
+                         <option value="0" {{ request('is_active') === '0' ? 'selected' : '' }}>Suspended</option>
+                     </select>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">Search</button>
@@ -61,7 +60,7 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="text-muted">Suspended</h6>
-                    <h3 class="mt-2 text-warning">{{ \App\Models\User::where('status', 'suspended')->count() }}</h3>
+                     <h3 class="mt-2 text-warning">{{ \App\Models\User::where('is_active', false)->count() }}</h3>
                 </div>
             </div>
         </div>
@@ -114,11 +113,9 @@
                                     @endforeach
                                 </td>
                                 <td>
-                                    <span class="badge @if($user->is_active) bg-success @else bg-danger @endif">
-                                        {{ $user->is_active ? 'Active' : 'Inactive' }}
-                                    </span>
-                                    @if($user->status)
-                                        <span class="badge bg-warning">{{ ucfirst($user->status) }}</span>
+                                     <span class="badge @if($user->is_active) bg-success @else bg-danger @endif">
+                                         {{ $user->is_active ? 'Active' : 'Suspended' }}
+                                     </span>
                                     @endif
                                 </td>
                                 <td>{{ $user->created_at->format('M d, Y') }}</td>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PublicProductController;
 use App\Http\Controllers\SettingsController;
@@ -65,18 +66,27 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/downloads', [App\Http\Controllers\DownloadController::class, 'index'])->name('downloads');
     Route::get('/downloads/{order}', [App\Http\Controllers\DownloadController::class, 'download'])->name('downloads.download');
 
-    // Messaging System (All Roles)
-    Route::prefix('messages')->name('messages.')->group(function () {
-        Route::get('/', [App\Http\Controllers\MessagingController::class, 'index'])->name('index');
-        Route::get('/create', [App\Http\Controllers\MessagingController::class, 'create'])->name('create');
-        Route::post('/', [App\Http\Controllers\MessagingController::class, 'store'])->name('store');
-        Route::get('/start/{user}', [App\Http\Controllers\MessagingController::class, 'startConversation'])->name('start');
-        Route::get('/unread-count', [App\Http\Controllers\MessagingController::class, 'getUnreadCount'])->name('unread-count');
-        Route::get('/{conversation}', [App\Http\Controllers\MessagingController::class, 'show'])->name('show');
-        Route::post('/{conversation}/send', [App\Http\Controllers\MessagingController::class, 'sendMessage'])->name('send');
-        Route::get('/{conversation}/new-messages', [App\Http\Controllers\MessagingController::class, 'getNewMessages'])->name('get-new');
-        Route::delete('/{conversation}', [App\Http\Controllers\MessagingController::class, 'destroy'])->name('destroy');
-    });
+     // Chat System (All Roles)
+     Route::prefix('chat')->name('chat.')->group(function () {
+         Route::get('/', [ChatController::class, 'index'])->name('index');
+         Route::get('/{conversation}', [ChatController::class, 'show'])->name('show');
+         Route::post('/', [ChatController::class, 'store'])->name('store');
+         Route::post('/create', [ChatController::class, 'createConversation'])->name('create');
+         Route::get('/{conversation_id}/new-messages', [ChatController::class, 'getNewMessages'])->name('new-messages');
+     });
+
+     // Messaging System (All Roles)
+     Route::prefix('messages')->name('messages.')->group(function () {
+         Route::get('/', [App\Http\Controllers\MessagingController::class, 'index'])->name('index');
+         Route::get('/create', [App\Http\Controllers\MessagingController::class, 'create'])->name('create');
+         Route::post('/', [App\Http\Controllers\MessagingController::class, 'store'])->name('store');
+         Route::get('/start/{user}', [App\Http\Controllers\MessagingController::class, 'startConversation'])->name('start');
+         Route::get('/unread-count', [App\Http\Controllers\MessagingController::class, 'getUnreadCount'])->name('unread-count');
+         Route::get('/{conversation}', [App\Http\Controllers\MessagingController::class, 'show'])->name('show');
+         Route::post('/{conversation}/send', [App\Http\Controllers\MessagingController::class, 'sendMessage'])->name('send');
+         Route::get('/{conversation}/new-messages', [App\Http\Controllers\MessagingController::class, 'getNewMessages'])->name('get-new');
+         Route::delete('/{conversation}', [App\Http\Controllers\MessagingController::class, 'destroy'])->name('destroy');
+     });
 });
 
 // Admin Routes
@@ -88,11 +98,38 @@ Route::middleware('auth')->group(function () {
     Route::get('checkout/{role}', [SettingsController::class, 'checkout'])->name('checkout');
     Route::post('checkout/{role}', [SettingsController::class, 'processPayment'])->name('checkout.process');
 
-    // Profile routes
-    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
-    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+     // Onboarding routes
+     Route::middleware(['auth'])->prefix('onboarding')->name('onboarding.')->group(function () {
+         Route::get('/', [App\Http\Controllers\OnboardingController::class, 'index'])->name('index');
+         Route::get('/step/{step}', [App\Http\Controllers\OnboardingController::class, 'showStep'])->name('step');
+         Route::post('/process', [App\Http\Controllers\OnboardingController::class, 'processStep'])->name('process');
+         Route::get('/skip/{step}', [App\Http\Controllers\OnboardingController::class, 'skipToStep'])->name('skip');
+     });
+
+     // Profile routes
+     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+     Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+     // User Settings routes
+     Route::middleware(['auth'])->prefix('settings')->name('settings.')->group(function () {
+         Route::get('/', [App\Http\Controllers\UserSettingsController::class, 'index'])->name('index');
+         Route::post('/profile', [App\Http\Controllers\UserSettingsController::class, 'updateProfile'])->name('profile');
+         Route::post('/password', [App\Http\Controllers\UserSettingsController::class, 'updatePassword'])->name('password');
+         Route::post('/notifications', [App\Http\Controllers\UserSettingsController::class, 'updateNotifications'])->name('notifications');
+         Route::post('/privacy', [App\Http\Controllers\UserSettingsController::class, 'updatePrivacy'])->name('privacy');
+     });
+
+     // Public Profile routes
+     Route::get('users/{user}', [ProfileController::class, 'show'])->name('users.show');
+     Route::get('users/{user}/reviews', [ProfileController::class, 'reviews'])->name('users.reviews');
+
+     // Feature Purchase routes
+     Route::prefix('checkout')->name('checkout.')->middleware(['auth'])->group(function () {
+         Route::get('/feature/{feature}', [App\Http\Controllers\FeatureController::class, 'checkout'])->name('feature');
+         Route::post('/feature/{feature}/purchase', [App\Http\Controllers\FeatureController::class, 'purchase'])->name('feature.purchase');
+     });
 
      // SPM routes
      Route::prefix('spm')->name('spm.')->middleware(['auth'])->group(function () {

@@ -30,8 +30,15 @@
         @yield('content')
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    @yield('scripts')
-</body>
-</html>
+     <!-- Bootstrap JS -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+     @yield('scripts')
+
+     @auth
+         @include('chat.widget')
+     @endauth
+ </body>
+ </html>

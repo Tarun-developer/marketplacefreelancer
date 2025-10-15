@@ -600,9 +600,9 @@
 
         <!-- User Profile -->
         <div class="sidebar-user">
-            <img src="{{ auth()->user()->getFirstMediaUrl('avatar', 'thumb') ?: asset('images/default-avatar.png') }}"
-                 alt="Avatar"
-                 class="sidebar-user-avatar">
+             <img src="{{ auth()->user()->getFirstMediaUrl('avatar', 'thumb') ?: 'data:image/svg+xml;base64,' . base64_encode('<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><rect width="48" height="48" fill="#6B46C1"/><text x="24" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">U</text></svg>') }}"
+                  alt="Avatar"
+                  class="sidebar-user-avatar">
             <div class="sidebar-user-info">
                 <div class="sidebar-user-name">{{ auth()->user()->name }}</div>
                 <div class="sidebar-user-role">
@@ -657,11 +657,11 @@
                     <i class="bi bi-heart"></i>
                     <span>Favorites</span>
                 </a>
-                <a href="{{ route('public.products.index') }}" class="menu-item">
+                <a href="{{ route('products.index') }}" class="menu-item">
                     <i class="bi bi-bag"></i>
                     <span>Browse Products</span>
                 </a>
-                <a href="{{ route('public.services.index') }}" class="menu-item">
+                <a href="{{ route('services.index') }}" class="menu-item">
                     <i class="bi bi-stars"></i>
                     <span>Browse Services</span>
                 </a>
@@ -678,7 +678,7 @@
                     <i class="bi bi-receipt"></i>
                     <span>Invoices</span>
                 </a>
-                <a href="{{ route('client.subscriptions.plans') }}" class="menu-item {{ request()->routeIs('client.subscriptions.*') ? 'active' : '' }}">
+                <a href="{{ route('client.plans') }}" class="menu-item {{ request()->routeIs('client.plans') ? 'active' : '' }}">
                     <i class="bi bi-star"></i>
                     <span>Subscription Plans</span>
                 </a>
@@ -698,18 +698,29 @@
                 </a>
             </div>
 
-            <!-- Account Section -->
-            <div class="menu-section">
-                <div class="menu-section-title">Account</div>
-                <a href="{{ route('client.profile') }}" class="menu-item {{ request()->routeIs('client.profile') ? 'active' : '' }}">
-                    <i class="bi bi-person"></i>
-                    <span>My Profile</span>
-                </a>
-                <a href="{{ route('profile.edit') }}" class="menu-item {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-                    <i class="bi bi-gear"></i>
-                    <span>Settings</span>
-                </a>
-            </div>
+                 <!-- Account Section -->
+                 <div class="menu-section">
+                     <div class="section-title">
+                         <i class="bi bi-person-circle"></i>
+                         <span>Account</span>
+                     </div>
+                     <a href="{{ route('users.show', auth()->user()) }}" class="menu-item">
+                         <i class="bi bi-person"></i>
+                         <span class="menu-item-text">View Profile</span>
+                     </a>
+                     <a href="{{ route('profile.edit') }}" class="menu-item {{ request()->routeIs('profile.*') ? 'active' : '' }}">
+                         <i class="bi bi-person-gear"></i>
+                         <span class="menu-item-text">Edit Profile</span>
+                     </a>
+                     <a href="{{ route('client.wallet.index') }}" class="menu-item {{ request()->routeIs('client.wallet.*') ? 'active' : '' }}">
+                         <i class="bi bi-wallet2"></i>
+                         <span class="menu-item-text">Wallet</span>
+                     </a>
+                     <a href="{{ route('settings.index') }}" class="menu-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+                         <i class="bi bi-gear"></i>
+                         <span class="menu-item-text">Settings</span>
+                     </a>
+                 </div>
 
             <!-- Logout -->
             <div class="menu-logout">
@@ -734,18 +745,19 @@
                 </button>
                 <h1 class="page-title">@yield('title', 'Dashboard')</h1>
             </div>
-            <div class="top-bar-right">
-                <button class="top-bar-icon" id="themeToggle" title="Toggle Theme">
-                    <i class="bi bi-moon"></i>
-                </button>
-                <a href="{{ route('messages.index') }}" class="top-bar-icon position-relative" title="Messages">
-                    <i class="bi bi-chat-dots"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="topMessagesBadge" style="display: none;">0</span>
-                </a>
-                <button class="top-bar-icon position-relative" title="Notifications">
-                    <i class="bi bi-bell"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none;">0</span>
-                </button>
+             <div class="top-bar-right">
+                 @include('partials.role-switcher')
+                 <button class="top-bar-icon" id="themeToggle" title="Toggle Theme">
+                     <i class="bi bi-moon"></i>
+                 </button>
+                 <a href="{{ route('messages.index') }}" class="top-bar-icon position-relative" title="Messages">
+                     <i class="bi bi-chat-dots"></i>
+                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="topMessagesBadge" style="display: none;">0</span>
+                 </a>
+                 <button class="top-bar-icon position-relative" title="Notifications">
+                     <i class="bi bi-bell"></i>
+                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none;">0</span>
+                 </button>
                 <div class="dropdown">
                     <div class="user-menu" data-bs-toggle="dropdown" aria-expanded="false">
                         <img src="{{ auth()->user()->getFirstMediaUrl('avatar', 'thumb') ?: asset('images/default-avatar.png') }}"
@@ -807,10 +819,12 @@
         </main>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <!-- Bootstrap JS -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom Scripts -->
+
+
+     <!-- Custom Scripts -->
     <script>
         // Sidebar Toggle
         const sidebar = document.getElementById('sidebar');
@@ -889,6 +903,8 @@
         }, 5000);
     </script>
 
-    @stack('scripts')
-</body>
-</html>
+         @stack('scripts')
+     </body>
+     </html>
+
+     @include('chat.widget')

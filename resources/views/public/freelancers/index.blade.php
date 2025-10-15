@@ -22,18 +22,35 @@
                             </div>
                         </div>
 
-                        <h5 class="card-title mb-2">{{ $freelancer->name }}</h5>
-                        <p class="card-text text-muted mb-3">{{ $freelancer->profile->title ?? 'Freelancer' }}</p>
+                         <h5 class="card-title mb-2">{{ $freelancer->name }}</h5>
+                         <p class="card-text text-muted mb-3">{{ $freelancer->profile->title ?? 'Freelancer' }}</p>
 
-                        @if($freelancer->services->count() > 0)
-                            <div class="mb-3">
-                                <small class="text-muted">{{ $freelancer->services->count() }} services</small>
-                            </div>
-                        @endif
+                         <!-- Rating -->
+                         @php
+                             $avgRating = $freelancer->reviews()->avg('rating') ?? 0;
+                             $totalReviews = $freelancer->reviews()->count();
+                         @endphp
+                         <div class="mb-3">
+                             <div class="d-flex align-items-center justify-content-center">
+                                 <div class="me-2">
+                                     @for($i = 1; $i <= 5; $i++)
+                                         <i class="bi bi-star{{ $i <= $avgRating ? '-fill' : '' }} text-warning"></i>
+                                     @endfor
+                                 </div>
+                                 <span class="fw-bold">{{ number_format($avgRating, 1) }}</span>
+                                 <span class="text-muted ms-1">({{ $totalReviews }})</span>
+                             </div>
+                         </div>
 
-                        <a href="{{ route('freelancers.show', $freelancer) }}" class="btn btn-primary w-100">
-                            <i class="bi bi-eye me-2"></i>View Profile
-                        </a>
+                         @if($freelancer->services->count() > 0)
+                             <div class="mb-3">
+                                 <small class="text-muted">{{ $freelancer->services->count() }} services</small>
+                             </div>
+                         @endif
+
+                         <a href="{{ route('freelancers.show', $freelancer) }}" class="btn btn-primary w-100">
+                             <i class="bi bi-eye me-2"></i>View Profile
+                         </a>
                     </div>
                 </div>
             </div>

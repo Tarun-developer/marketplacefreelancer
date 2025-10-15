@@ -10,22 +10,24 @@ class Kyc extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'document_type',
-        'document_number',
-        'document_file',
-        'status',
-        'submitted_at',
-        'reviewed_at',
-        'reviewed_by',
-        'rejection_reason',
-    ];
+     protected $fillable = [
+         'user_id',
+         'document_type',
+         'document_number',
+         'document_file',
+         'status',
+         'submitted_at',
+         'reviewed_at',
+         'reviewed_by',
+         'rejection_reason',
+         'documents',
+     ];
 
-    protected $casts = [
-        'submitted_at' => 'datetime',
-        'reviewed_at' => 'datetime',
-    ];
+     protected $casts = [
+         'submitted_at' => 'datetime',
+         'reviewed_at' => 'datetime',
+         'documents' => 'array',
+     ];
 
     public function user(): BelongsTo
     {

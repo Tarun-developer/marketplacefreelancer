@@ -32,81 +32,87 @@ class DatabaseSeeder extends Seeder
              ProductSeeder::class,
          ]);
 
-         // Seed users with different roles
-         for ($i = 0; $i < 10; $i++) {
-             $user = \App\Models\User::firstOrCreate(
-                 ['email' => 'client' . ($i + 1) . '@example.com'],
-                 [
-                     'name' => 'Client ' . ($i + 1),
-                     'password' => bcrypt('password'),
-                     'role' => 'client',
-                     'is_active' => true,
-                 ]
-             );
-             $user->assignRole('client');
-         }
+          // Seed users with different roles
+          for ($i = 0; $i < 10; $i++) {
+              $user = \App\Models\User::firstOrCreate(
+                  ['email' => 'client' . ($i + 1) . '@example.com'],
+                  [
+                      'name' => 'Client ' . ($i + 1),
+                      'password' => bcrypt('password'),
+                      'role' => 'client',
+                      'is_active' => true,
+                  ]
+              );
+              $user->assignRole('client');
+              $user->generateAvatar();
+          }
 
-         for ($i = 0; $i < 5; $i++) {
-             $user = \App\Models\User::firstOrCreate(
-                 ['email' => 'freelancer' . ($i + 1) . '@example.com'],
-                 [
-                     'name' => 'Freelancer ' . ($i + 1),
-                     'password' => bcrypt('password'),
-                     'role' => 'freelancer',
-                     'is_active' => true,
-                 ]
-             );
-             $user->assignRole('freelancer');
-         }
+          for ($i = 0; $i < 5; $i++) {
+              $user = \App\Models\User::firstOrCreate(
+                  ['email' => 'freelancer' . ($i + 1) . '@example.com'],
+                  [
+                      'name' => 'Freelancer ' . ($i + 1),
+                      'password' => bcrypt('password'),
+                      'role' => 'freelancer',
+                      'is_active' => true,
+                  ]
+              );
+              $user->assignRole('freelancer');
+              $user->generateAvatar();
+          }
 
-         for ($i = 0; $i < 3; $i++) {
-             $user = \App\Models\User::firstOrCreate(
-                 ['email' => 'vendor' . ($i + 1) . '@example.com'],
-                 [
-                     'name' => 'Vendor ' . ($i + 1),
-                     'password' => bcrypt('password'),
-                     'role' => 'vendor',
-                     'is_active' => true,
-                 ]
-             );
-             $user->assignRole('vendor');
-         }
+          for ($i = 0; $i < 3; $i++) {
+              $user = \App\Models\User::firstOrCreate(
+                  ['email' => 'vendor' . ($i + 1) . '@example.com'],
+                  [
+                      'name' => 'Vendor ' . ($i + 1),
+                      'password' => bcrypt('password'),
+                      'role' => 'vendor',
+                      'is_active' => true,
+                  ]
+              );
+              $user->assignRole('vendor');
+              $user->generateAvatar();
+          }
 
-         $admin = \App\Models\User::firstOrCreate(
-             ['email' => 'admin@marketfusion.com'],
-             [
-                 'name' => 'Super Admin',
-                 'password' => bcrypt('password'),
-                 'role' => 'admin',
-                 'is_active' => true,
-                 'email_verified_at' => now(),
-             ]
-         );
-         if (!$admin->hasRole('super_admin')) {
-             $admin->assignRole('super_admin');
-         }
+          $admin = \App\Models\User::firstOrCreate(
+              ['email' => 'admin@marketfusion.com'],
+              [
+                  'name' => 'Super Admin',
+                  'password' => bcrypt('password'),
+                  'role' => 'admin',
+                  'is_active' => true,
+                  'email_verified_at' => now(),
+              ]
+          );
+          if (!$admin->hasRole('super_admin')) {
+              $admin->assignRole('super_admin');
+          }
+          $admin->generateAvatar();
 
-         $admin2 = \App\Models\User::firstOrCreate(
-             ['email' => 'admin2@marketfusion.com'],
-             [
-                 'name' => 'Admin User',
-                 'password' => bcrypt('password'),
-                 'role' => 'admin',
-                 'is_active' => true,
-             ]
-         );
-         $admin2->assignRole('admin');
+          $admin2 = \App\Models\User::firstOrCreate(
+              ['email' => 'admin2@marketfusion.com'],
+              [
+                  'name' => 'Admin User',
+                  'password' => bcrypt('password'),
+                  'role' => 'admin',
+                  'is_active' => true,
+              ]
+          );
+          $admin2->assignRole('admin');
+          $admin2->generateAvatar();
 
-         $testUser = \App\Models\User::firstOrCreate(
-             ['email' => 'test@example.com'],
-             [
-                 'name' => 'Test User',
-                 'password' => bcrypt('password'),
-                 'role' => 'client',
-                 'is_active' => true,
-             ]
-         );
-         $testUser->assignRole('client');
+          $testUser = \App\Models\User::firstOrCreate(
+              ['email' => 'test@example.com'],
+              [
+                  'name' => 'Test User',
+                  'password' => bcrypt('password'),
+                  'role' => 'client',
+                  'is_active' => true,
+              ]
+          );
+          $testUser->assignRole('client');
+          $testUser->generateAvatar();
 
          // Create profiles for admin and test user
          $admin->profile()->create([
@@ -168,22 +174,22 @@ class DatabaseSeeder extends Seeder
 
          // Seed services
          for ($i = 0; $i < 15; $i++) {
-             Service::firstOrCreate(
-                 ['slug' => 'service-' . ($i + 1)],
-                 [
-                     'user_id' => $testUser->id,
-                     'title' => 'Service ' . ($i + 1),
-                     'description' => 'Description for service ' . ($i + 1),
-                     'category' => 'General',
-                     'price' => rand(10, 500),
-                     'currency' => 'USD',
-                     'delivery_time' => rand(1, 30),
-                     'revisions' => 1,
-                      'images' => json_encode(['/images/service-' . ($i + 1) . '.jpg']),
-                     'is_active' => true,
+              Service::firstOrCreate(
+                  ['slug' => 'service-' . ($i + 1)],
+                  [
+                      'user_id' => $testUser->id,
+                      'title' => 'Service ' . ($i + 1),
+                      'description' => 'Description for service ' . ($i + 1),
+                      'category_id' => $categories[array_rand($categories)]->id,
+                      'price' => rand(10, 500),
+                      'currency' => 'USD',
+                      'delivery_time' => rand(1, 30),
+                      'revisions' => 1,
+                       'images' => json_encode(['/images/service-' . ($i + 1) . '.jpg']),
+                      'is_active' => true,
 
-                 ]
-             );
+                  ]
+              );
          }
 
          // Create offers
@@ -243,38 +249,39 @@ class DatabaseSeeder extends Seeder
 
          // Create transactions
          for ($i = 0; $i < 10; $i++) {
-             Transaction::firstOrCreate(
-                 ['gateway_transaction_id' => 'txn_' . ($i + 1)],
-                 [
-                     'user_id' => $testUser->id,
-                     'amount' => rand(10, 500),
-                     'currency' => 'USD',
-                     'gateway' => 'stripe',
-                     'status' => 'completed',
-                     'type' => 'payment',
-                     'description' => 'Payment for order ' . ($i + 1),
-                 ]
-             );
+              Transaction::firstOrCreate(
+                  ['gateway_transaction_id' => 'txn_' . ($i + 1)],
+                  [
+                      'user_id' => $testUser->id,
+                      'amount' => rand(10, 500),
+                      'net_amount' => rand(10, 500) * 0.97, // Simulate fees
+                      'currency' => 'USD',
+                      'gateway' => 'stripe',
+                      'status' => 'completed',
+                      'type' => 'payment',
+                      'description' => 'Payment for order ' . ($i + 1),
+                  ]
+              );
          }
 
          // Seed services
          for ($i = 0; $i < 15; $i++) {
-             \App\Modules\Services\Models\Service::firstOrCreate(
-                 ['slug' => 'service-' . ($i + 1)],
-                 [
-                      'user_id' => $testUser->id,
-                     'title' => 'Service ' . ($i + 1),
-                     'description' => 'Description for service ' . ($i + 1),
-                     'category' => 'General',
-                     'price' => rand(10, 500),
-                     'currency' => 'USD',
-                     'delivery_time' => rand(1, 30),
-                     'revisions' => 1,
-                      'images' => json_encode(['/images/service-' . ($i + 1) . '.jpg']),
-                     'is_active' => true,
+              \App\Modules\Services\Models\Service::firstOrCreate(
+                  ['slug' => 'service-' . ($i + 1)],
+                  [
+                       'user_id' => $testUser->id,
+                      'title' => 'Service ' . ($i + 1),
+                      'description' => 'Description for service ' . ($i + 1),
+                      'category_id' => $categories[array_rand($categories)]->id,
+                      'price' => rand(10, 500),
+                      'currency' => 'USD',
+                      'delivery_time' => rand(1, 30),
+                      'revisions' => 1,
+                       'images' => json_encode(['/images/service-' . ($i + 1) . '.jpg']),
+                      'is_active' => true,
 
-                 ]
-             );
+                  ]
+              );
          }
 
          // Seed jobs
@@ -341,18 +348,19 @@ class DatabaseSeeder extends Seeder
 
           // Seed transactions
          for ($i = 0; $i < 15; $i++) {
-             \App\Modules\Payments\Models\Transaction::firstOrCreate(
-                 ['gateway_transaction_id' => 'txn_' . ($i + 1)],
-                 [
-                      'user_id' => $testUser->id,
-                     'amount' => rand(10, 500),
-                     'currency' => 'USD',
-                     'gateway' => 'stripe',
-                     'status' => 'completed',
-                     'type' => 'payment',
-                     'description' => 'Payment for order ' . ($i + 1),
-                 ]
-             );
+              \App\Modules\Payments\Models\Transaction::firstOrCreate(
+                  ['gateway_transaction_id' => 'txn_' . ($i + 1)],
+                  [
+                       'user_id' => $testUser->id,
+                      'amount' => rand(10, 500),
+                      'net_amount' => rand(10, 500) * 0.97, // Simulate fees
+                      'currency' => 'USD',
+                      'gateway' => 'stripe',
+                      'status' => 'completed',
+                      'type' => 'payment',
+                      'description' => 'Payment for order ' . ($i + 1),
+                  ]
+              );
          }
 
          // Seed orders

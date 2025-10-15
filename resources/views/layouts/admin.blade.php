@@ -550,10 +550,11 @@
                 </button>
                 <h1 class="top-bar-title">@yield('page-title', 'Dashboard')</h1>
             </div>
-            <div class="top-bar-actions">
-                <button class="btn-icon" id="themeToggle" title="Toggle Theme">
-                    <i class="bi bi-moon"></i>
-                </button>
+             <div class="top-bar-actions">
+                 @include('partials.role-switcher')
+                 <button class="btn-icon d-md-none" id="mobileSidebarToggle">
+                     <i class="bi bi-list"></i>
+                 </button>
                 <a href="{{ route('messages.index') }}" class="btn-icon position-relative" title="Messages">
                     <i class="bi bi-chat-dots"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="topMessagesBadge" style="display: none;">0</span>
@@ -610,9 +611,12 @@
         </main>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
+     <!-- Bootstrap JS -->
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+     <script>
         // Sidebar Toggle
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -687,6 +691,8 @@
         // Update badge on page load and poll every 10 seconds
         updateMessagesBadge();
         setInterval(updateMessagesBadge, 10000);
-    </script>
-</body>
-</html>
+     </script>
+ </body>
+ </html>
+
+ @include('chat.widget')

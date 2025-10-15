@@ -10,7 +10,20 @@ class AdminUserController extends Controller
 {
     public function index()
     {
-        $users = User::with('roles')->latest()->paginate(20);
+        $query = User::with('roles');
+
+        if (request('is_active') !== null) {
+            $query->where('is_active', request('is_active') === '1');
+        }
+
+        if (request('role')) {
+            $query->whereHas('roles', function ($q) {
+                $q->where('name', request('role'));
+            });
+        }
+
+        $users = $query->latest()->paginate(20);
+
         return view('admin.users.index', compact('users'));
     }
 
@@ -30,7 +43,7 @@ class AdminUserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-            'status' => 'nullable|in:active,suspended,banned',
+            'is_active' => 'nullable|boolean',
         ]);
 
         $user->update($validated);
@@ -49,7 +62,7 @@ class AdminUserController extends Controller
 
     public function suspend(User $user)
     {
-        $user->update(['status' => 'suspended']);
+        $user->update(['is_active' => false]);
 
         return redirect()->back()
             ->with('success', 'User suspended successfully');
@@ -57,7 +70,7 @@ class AdminUserController extends Controller
 
     public function activate(User $user)
     {
-        $user->update(['status' => 'active']);
+        $user->update(['is_active' => true]);
 
         return redirect()->back()
             ->with('success', 'User activated successfully');

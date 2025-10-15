@@ -14,30 +14,35 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
-    {
-        $user = $request->user();
+     public function index(Request $request)
+     {
+         $user = $request->user();
 
-         // If user has no roles, assign default "customer" role and show common dashboard
-         if ($user->roles->count() === 0) {
-             $user->assignRole('customer');
-             $user->update(['current_role' => 'customer']);
+         // If user hasn't completed onboarding, redirect to onboarding
+         if (!$user->hasCompletedOnboarding()) {
+             return redirect()->route('onboarding.index');
+         }
+
+          // If user has no roles, assign default "customer" role and show common dashboard
+          if ($user->roles->count() === 0) {
+              $user->assignRole('customer');
+              $user->update(['current_role' => 'customer']);
+              return $this->commonDashboard($user);
+          }
+
+         // Force show common dashboard if requested via query parameter
+         if ($request->query('view') === 'all') {
              return $this->commonDashboard($user);
          }
 
-        // Force show common dashboard if requested via query parameter
-        if ($request->query('view') === 'all') {
-            return $this->commonDashboard($user);
-        }
+         // If user has a current role, redirect to that role's dashboard
+         if ($user->current_role) {
+             return redirect()->route($user->current_role . '.dashboard');
+         }
 
-        // If user has a current role, redirect to that role's dashboard
-        if ($user->current_role) {
-            return redirect()->route($user->current_role . '.dashboard');
-        }
-
-        // Otherwise, show common dashboard for role selection
-        return $this->commonDashboard($user);
-    }
+         // Otherwise, show common dashboard for role selection
+         return $this->commonDashboard($user);
+     }
 
     public function redirectToRoleDashboard($user)
     {
@@ -61,39 +66,67 @@ class DashboardController extends Controller
      public function selectRole(Request $request)
      {
          $user = $request->user();
-         $userRoles = $user->roles->pluck('name')->toArray();
 
-         // Available roles for purchase
-         $availableRoles = [
-             'client' => [
-                 'name' => 'Client',
-                 'description' => 'Post jobs and hire freelancers',
-                 'icon' => 'bi-person-badge',
+         // Available features/addons for purchase
+         $availableFeatures = [
+             'spm' => [
+                 'name' => 'Simple Project Management (SPM)',
+                 'description' => 'Advanced project management tools for freelancers and clients',
+                 'icon' => 'bi-diagram-3',
                  'color' => 'primary',
-                 'cost' => config('settings.client_role_cost', 0),
+                 'cost' => config('settings.spm_subscription_cost', 29.99),
+                 'features' => [
+                     'Unlimited projects',
+                     'Task management',
+                     'Time tracking',
+                     'File sharing',
+                     'Client collaboration',
+                     'Progress reports'
+                 ],
+                 'popular' => true,
              ],
-             'freelancer' => [
-                 'name' => 'Freelancer',
-                 'description' => 'Offer services and find work',
-                 'icon' => 'bi-briefcase',
+             'premium_bids' => [
+                 'name' => 'Premium Bids Package',
+                 'description' => 'Increase your bid limit for more opportunities',
+                 'icon' => 'bi-graph-up-arrow',
                  'color' => 'success',
-                 'cost' => config('settings.freelancer_role_cost', 0),
+                 'cost' => config('settings.premium_bids_cost', 9.99),
+                 'features' => [
+                     '50 additional bids per month',
+                     'Priority bid highlighting',
+                     'Advanced bid analytics',
+                     'Bid history tracking'
+                 ],
              ],
-             'vendor' => [
-                 'name' => 'Vendor',
-                 'description' => 'Sell products and manage inventory',
-                 'icon' => 'bi-shop',
+             'verified_badge' => [
+                 'name' => 'Verified Badge',
+                 'description' => 'Get a verified badge to increase trust and visibility',
+                 'icon' => 'bi-patch-check',
+                 'color' => 'warning',
+                 'cost' => config('settings.verified_badge_cost', 19.99),
+                 'features' => [
+                     'Verified badge on profile',
+                     'Priority in search results',
+                     'Increased credibility',
+                     'One-time verification fee'
+                 ],
+             ],
+             'featured_listing' => [
+                 'name' => 'Featured Listing',
+                 'description' => 'Get your services/products featured prominently',
+                 'icon' => 'bi-star',
                  'color' => 'info',
-                 'cost' => config('settings.vendor_role_cost', 0),
+                 'cost' => config('settings.featured_listing_cost', 14.99),
+                 'features' => [
+                     'Featured in search results',
+                     'Highlighted profile',
+                     'Increased visibility',
+                     '30-day duration'
+                 ],
              ],
          ];
 
-         // Filter out roles the user already has
-         $rolesToShow = array_filter($availableRoles, function($role, $key) use ($userRoles) {
-             return !in_array($key, $userRoles);
-         }, ARRAY_FILTER_USE_BOTH);
-
-         return view('dashboards.select-role', compact('rolesToShow', 'user'));
+         return view('dashboards.buy-features', compact('availableFeatures', 'user'));
      }
 
     public function commonDashboard($user = null)

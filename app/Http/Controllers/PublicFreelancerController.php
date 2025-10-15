@@ -18,8 +18,15 @@ class PublicFreelancerController extends Controller
 
     public function show(User $user)
     {
-        $user->load(['services', 'profile']);
+        $user->load(['profile', 'reviews', 'services']);
 
-        return view('public.freelancers.show', compact('user'));
+        // Calculate ratings
+        $averageRating = $user->reviews()->avg('rating') ?? 0;
+        $totalReviews = $user->reviews()->count();
+
+        // Get badges
+        $badges = app(\App\Http\Controllers\ProfileController::class)->calculateBadges($user);
+
+        return view('profile.show', compact('user', 'averageRating', 'totalReviews', 'badges'));
     }
 }

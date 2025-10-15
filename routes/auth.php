@@ -29,18 +29,22 @@ Route::post('/register', function (Illuminate\Http\Request $request) {
         'password' => 'required|string|min:8|confirmed',
     ]);
 
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => 'client', // Default role
-    ]);
+     $user = User::create([
+         'name' => $request->name,
+         'email' => $request->email,
+         'password' => Hash::make($request->password),
+         'role' => 'client', // Default role
+     ]);
 
-    $user->assignRole('client');
+     $user->assignRole('client');
 
-    auth()->login($user);
+     // Generate avatar if not provided
+     $user->generateAvatar();
 
-    return redirect('/dashboard');
+     auth()->login($user);
+
+     // Redirect to onboarding for new users
+     return redirect()->route('onboarding.index');
 })->name('register.post')->middleware('guest');
 
 Route::post('/logout', function () {

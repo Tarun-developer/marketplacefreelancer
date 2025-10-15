@@ -25,20 +25,34 @@ class User extends Authenticatable implements HasMedia
      * @var list<string>
      */
      protected $fillable = [
-          'name',
-          'email',
-          'password',
-          'role',
-          'current_role',
-          'is_active',
-          'email_verified_at',
-          'has_spm_access',
-          'spm_access_expires_at',
-          'spm_plan',
-          'bids_used_this_month',
-          'bids_reset_date',
-          'extra_bids',
-      ];
+           'name',
+           'email',
+           'password',
+           'role',
+           'current_role',
+           'is_active',
+           'email_verified_at',
+           'has_spm_access',
+           'spm_access_expires_at',
+           'spm_plan',
+           'bids_used_this_month',
+           'bids_reset_date',
+           'extra_bids',
+           'onboarding_completed_at',
+           'timezone',
+           'language',
+           'profile_visibility',
+           'show_email',
+           'show_phone',
+           'show_location',
+           'allow_messaging',
+           'email_notifications',
+           'sms_notifications',
+           'push_notifications',
+           'new_message_notifications',
+           'order_notifications',
+           'review_notifications',
+       ];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -57,17 +71,28 @@ class User extends Authenticatable implements HasMedia
      */
      protected function casts(): array
      {
-         return [
-             'email_verified_at' => 'datetime',
-             'password' => 'hashed',
-             'is_active' => 'boolean',
-             'has_spm_access' => 'boolean',
-             'spm_access_expires_at' => 'datetime',
-             'bids_reset_date' => 'date',
-             'bids_used_this_month' => 'integer',
-             'extra_bids' => 'integer',
-         ];
-     }
+          return [
+              'email_verified_at' => 'datetime',
+              'password' => 'hashed',
+              'is_active' => 'boolean',
+              'has_spm_access' => 'boolean',
+              'spm_access_expires_at' => 'datetime',
+              'bids_reset_date' => 'date',
+              'bids_used_this_month' => 'integer',
+              'extra_bids' => 'integer',
+              'onboarding_completed_at' => 'datetime',
+              'show_email' => 'boolean',
+              'show_phone' => 'boolean',
+              'show_location' => 'boolean',
+              'allow_messaging' => 'boolean',
+              'email_notifications' => 'boolean',
+              'sms_notifications' => 'boolean',
+              'push_notifications' => 'boolean',
+              'new_message_notifications' => 'boolean',
+              'order_notifications' => 'boolean',
+              'review_notifications' => 'boolean',
+          ];
+      }
 
     public function profile()
     {
@@ -201,7 +226,7 @@ class User extends Authenticatable implements HasMedia
     {
         $this->addMediaCollection('avatar')
             ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif']);
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']);
     }
 
     public function registerMediaConversions(?Media $media = null): void
@@ -430,11 +455,91 @@ class User extends Authenticatable implements HasMedia
          }
      }
 
-     /**
-      * Add extra bids
-      */
-     public function addExtraBids(int $amount): void
-     {
-         $this->increment('extra_bids', $amount);
-     }
- }
+      /**
+       * Add extra bids
+       */
+      public function addExtraBids(int $amount): void
+      {
+          $this->increment('extra_bids', $amount);
+      }
+
+      /**
+       * Check if user has completed onboarding
+       */
+      public function hasCompletedOnboarding(): bool
+      {
+          return $this->onboarding_completed_at !== null;
+      }
+
+      /**
+       * Mark onboarding as completed
+       */
+      public function markOnboardingAsCompleted(): void
+      {
+          $this->update(['onboarding_completed_at' => now()]);
+      }
+
+      /**
+       * Generate avatar with initials if no avatar exists
+       */
+      public function generateAvatar(): void
+      {
+          if ($this->getFirstMedia('avatar')) {
+              return; // Already has avatar
+          }
+
+          $initials = $this->getInitials();
+          $color = $this->getAvatarColor($this->name);
+
+          $svg = $this->createAvatarSvg($initials, $color);
+
+          $this->addMediaFromString($svg)
+              ->usingName("avatar-{$this->id}")
+              ->usingFileName("avatar-{$this->id}.svg")
+              ->toMediaCollection('avatar');
+      }
+
+      /**
+       * Get user initials from name
+       */
+      private function getInitials(): string
+      {
+          $nameParts = explode(' ', trim($this->name));
+          $initials = '';
+
+          foreach ($nameParts as $part) {
+              if (!empty($part)) {
+                  $initials .= strtoupper(substr($part, 0, 1));
+              }
+          }
+
+          return strlen($initials) > 2 ? substr($initials, 0, 2) : $initials;
+      }
+
+      /**
+       * Get a color based on name for avatar
+       */
+      private function getAvatarColor(string $name): string
+      {
+          $colors = [
+              '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+              '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
+          ];
+
+          $hash = crc32($name);
+          return $colors[$hash % count($colors)];
+      }
+
+      /**
+       * Create SVG avatar string
+       */
+      private function createAvatarSvg(string $initials, string $color): string
+      {
+          return '<?xml version="1.0" encoding="UTF-8"?>
+          <svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+              <rect width="150" height="150" fill="' . $color . '"/>
+              <text x="75" y="85" font-family="Arial, sans-serif" font-size="60" font-weight="bold"
+                    text-anchor="middle" fill="white">' . htmlspecialchars($initials) . '</text>
+          </svg>';
+      }
+  }
