@@ -129,4 +129,11 @@ class FreelancerServiceController extends Controller
 
          return redirect()->route('freelancer.services.index')->with('success', 'Service deleted successfully.');
      }
+
+     public function profile()
+     {
+         $user = auth()->user();
+
+         return view('freelancer.profile', compact('user'));
+     }
 }
