@@ -129,10 +129,10 @@ class MessagingController extends Controller
         if ($user->hasRole('client')) {
             // 1. Freelancers who have submitted proposals/bids on their jobs
             $freelancerIds = DB::table('bids')
-                ->join('jobs', 'bids.job_id', '=', 'jobs.id')
-                ->where('jobs.user_id', $user->id)
+                ->join('marketplace_jobs', 'bids.job_id', '=', 'marketplace_jobs.id')
+                ->where('marketplace_jobs.client_id', $user->id)
                 ->distinct()
-                ->pluck('bids.user_id')
+                ->pluck('bids.freelancer_id')
                 ->toArray();
             $eligibleUserIds = array_merge($eligibleUserIds, $freelancerIds);
 
@@ -165,10 +165,10 @@ class MessagingController extends Controller
         if ($user->hasRole('freelancer')) {
             // 1. Clients whose jobs they have bid on
             $clientIds = DB::table('bids')
-                ->where('bids.user_id', $user->id)
-                ->join('jobs', 'bids.job_id', '=', 'jobs.id')
+                ->where('bids.freelancer_id', $user->id)
+                ->join('marketplace_jobs', 'bids.job_id', '=', 'marketplace_jobs.id')
                 ->distinct()
-                ->pluck('jobs.user_id')
+                ->pluck('marketplace_jobs.client_id')
                 ->toArray();
             $eligibleUserIds = array_merge($eligibleUserIds, $clientIds);
 
