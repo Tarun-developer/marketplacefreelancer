@@ -181,7 +181,7 @@
                                             <i class="bi bi-info-circle me-1"></i>
                                             <span id="hint-text">Please select a payment method and accept the terms to continue</span>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-lg" id="submit-btn" disabled>
+                                        <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
                                             <i class="bi bi-lock-fill me-2"></i>Proceed to Secure Payment
                                         </button>
                                         <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary">

@@ -83,7 +83,7 @@
                     @php
                         $userRole = auth()->user()->getRoleNames()->first();
                     @endphp
-                    @if(in_array($userRole, ['super_admin', 'admin', 'manager']))
+                    @if(in_array($userRole, ['super_admin', 'admin']))
                         <li><strong>As Admin:</strong> You can message any user on the platform</li>
                     @elseif($userRole === 'client')
                         <li><strong>As Client:</strong> You can message:</li>

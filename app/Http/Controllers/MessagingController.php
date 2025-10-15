@@ -116,7 +116,7 @@ class MessagingController extends Controller
         $userRole = $user->getRoleNames()->first();
 
         // Admin can chat with anyone
-        if (in_array($userRole, ['super_admin', 'admin', 'manager'])) {
+        if (in_array($userRole, ['super_admin', 'admin'])) {
             return User::where('id', '!=', $user->id)
                 ->where('is_active', true)
                 ->orderBy('name')
@@ -157,7 +157,7 @@ class MessagingController extends Controller
             $eligibleUserIds = array_merge($eligibleUserIds, $productVendorIds);
 
             // 4. Admins
-            $adminIds = User::role(['super_admin', 'admin', 'manager'])->pluck('id')->toArray();
+            $adminIds = User::role(['super_admin', 'admin'])->pluck('id')->toArray();
             $eligibleUserIds = array_merge($eligibleUserIds, $adminIds);
         }
 
@@ -183,7 +183,7 @@ class MessagingController extends Controller
             $eligibleUserIds = array_merge($eligibleUserIds, $serviceBuyerIds);
 
             // 3. Admins
-            $adminIds = User::role(['super_admin', 'admin', 'manager'])->pluck('id')->toArray();
+            $adminIds = User::role(['super_admin', 'admin'])->pluck('id')->toArray();
             $eligibleUserIds = array_merge($eligibleUserIds, $adminIds);
         }
 
@@ -200,7 +200,7 @@ class MessagingController extends Controller
             $eligibleUserIds = array_merge($eligibleUserIds, $customerIds);
 
             // 2. Admins
-            $adminIds = User::role(['super_admin', 'admin', 'manager'])->pluck('id')->toArray();
+            $adminIds = User::role(['super_admin', 'admin'])->pluck('id')->toArray();
             $eligibleUserIds = array_merge($eligibleUserIds, $adminIds);
         }
 
@@ -418,7 +418,7 @@ class MessagingController extends Controller
     {
         $user = auth()->user();
 
-        if ($user->hasRole('super_admin') || $user->hasRole('admin') || $user->hasRole('manager')) {
+        if ($user->hasRole('super_admin') || $user->hasRole('admin')) {
             return 'layouts.admin';
         } elseif ($user->hasRole('client')) {
             return 'layouts.client';

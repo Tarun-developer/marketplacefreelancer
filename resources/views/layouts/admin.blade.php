@@ -69,7 +69,7 @@
                      @php
                          $userRole = auth()->user()->getRoleNames()->first();
                      @endphp
-                     @if(in_array($userRole, ['super_admin', 'admin', 'manager']))
+                     @if(in_array($userRole, ['super_admin', 'admin']))
                          <!-- Marketplace Management -->
                          <li class="nav-item">
                              <div class="nav-link text-white-50 fw-bold small mt-2">MARKETPLACE</div>
