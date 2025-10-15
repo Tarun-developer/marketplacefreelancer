@@ -289,6 +289,36 @@
             color: var(--text-muted);
         }
 
+        .dropdown-menu {
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 0.625rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+        }
+
+        .btn-icon.position-relative .badge {
+            font-size: 0.65rem;
+            padding: 0.25em 0.5em;
+        }
+
+        .btn-icon:not(button) {
+            text-decoration: none;
+        }
+
         .role-badge {
             padding: 0.25rem 0.75rem;
             background: var(--accent-gradient);
@@ -521,20 +551,39 @@
                 <h1 class="top-bar-title">@yield('page-title', 'Dashboard')</h1>
             </div>
             <div class="top-bar-actions">
-                <button class="btn-icon" id="themeToggle">
+                <button class="btn-icon" id="themeToggle" title="Toggle Theme">
                     <i class="bi bi-moon"></i>
                 </button>
-                <button class="btn-icon">
+                <a href="{{ route('messages.index') }}" class="btn-icon position-relative" title="Messages">
+                    <i class="bi bi-chat-dots"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="topMessagesBadge" style="display: none;">0</span>
+                </a>
+                <button class="btn-icon position-relative" title="Notifications">
                     <i class="bi bi-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationsBadge" style="display: none;">0</span>
                 </button>
-                <div class="user-profile">
-                    <div class="user-avatar">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                <div class="dropdown">
+                    <div class="user-profile" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="user-avatar">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ auth()->user()->name }}</div>
+                            <div class="user-role">{{ ucfirst(auth()->user()->getRoleNames()->first() ?? 'User') }}</div>
+                        </div>
+                        <i class="bi bi-chevron-down ms-2"></i>
                     </div>
-                    <div class="user-info">
-                        <div class="user-name">{{ auth()->user()->name }}</div>
-                        <div class="user-role">{{ ucfirst(auth()->user()->getRoleNames()->first() ?? 'User') }}</div>
-                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="min-width: 200px;">
+                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('admin.settings.index') }}"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </header>
@@ -614,13 +663,21 @@
             try {
                 const response = await fetch('{{ route('messages.unread-count') }}');
                 const data = await response.json();
-                const badge = document.getElementById('messagesBadge');
+                const sidebarBadge = document.getElementById('messagesBadge');
+                const topBadge = document.getElementById('topMessagesBadge');
 
                 if (data.count > 0) {
-                    badge.textContent = data.count;
-                    badge.style.display = 'inline-block';
+                    if (sidebarBadge) {
+                        sidebarBadge.textContent = data.count;
+                        sidebarBadge.style.display = 'inline-block';
+                    }
+                    if (topBadge) {
+                        topBadge.textContent = data.count;
+                        topBadge.style.display = 'inline-block';
+                    }
                 } else {
-                    badge.style.display = 'none';
+                    if (sidebarBadge) sidebarBadge.style.display = 'none';
+                    if (topBadge) topBadge.style.display = 'none';
                 }
             } catch (error) {
                 console.error('Failed to fetch unread messages count:', error);

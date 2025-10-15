@@ -428,6 +428,36 @@
             font-size: 0.9rem;
         }
 
+        .dropdown-menu {
+            border-radius: 12px;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 0.625rem 1rem;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--accent-gradient);
+            color: white;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+        }
+
+        .top-bar-icon.position-relative .badge {
+            font-size: 0.65rem;
+            padding: 0.25em 0.5em;
+        }
+
+        .top-bar-icon:not(button) {
+            text-decoration: none;
+        }
+
         /* Content Area */
         .content-wrapper {
             padding: 2rem;
@@ -708,16 +738,34 @@
                 <button class="top-bar-icon" id="themeToggle" title="Toggle Theme">
                     <i class="bi bi-moon"></i>
                 </button>
-                <button class="top-bar-icon" title="Notifications">
-                    <i class="bi bi-bell"></i>
-                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-                </button>
-                <a href="{{ route('client.profile') }}" class="user-menu">
-                    <img src="{{ auth()->user()->getFirstMediaUrl('avatar', 'thumb') ?: asset('images/default-avatar.png') }}"
-                         alt="Avatar">
-                    <span class="user-menu-name">{{ auth()->user()->name }}</span>
-                    <i class="bi bi-chevron-down"></i>
+                <a href="{{ route('messages.index') }}" class="top-bar-icon position-relative" title="Messages">
+                    <i class="bi bi-chat-dots"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="topMessagesBadge" style="display: none;">0</span>
                 </a>
+                <button class="top-bar-icon position-relative" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationBadge" style="display: none;">0</span>
+                </button>
+                <div class="dropdown">
+                    <div class="user-menu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="{{ auth()->user()->getFirstMediaUrl('avatar', 'thumb') ?: asset('images/default-avatar.png') }}"
+                             alt="Avatar">
+                        <span class="user-menu-name">{{ auth()->user()->name }}</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" style="min-width: 200px;">
+                        <li><a class="dropdown-item" href="{{ route('client.profile') }}"><i class="bi bi-person me-2"></i>My Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="{{ route('client.wallet.index') }}"><i class="bi bi-wallet2 me-2"></i>Wallet</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </header>
 
@@ -804,17 +852,22 @@
             fetch('{{ route("messages.unread-count") }}')
                 .then(response => response.json())
                 .then(data => {
-                    const badge = document.getElementById('messagesBadge');
+                    const sidebarBadge = document.getElementById('messagesBadge');
+                    const topBadge = document.getElementById('topMessagesBadge');
                     const notificationBadge = document.getElementById('notificationBadge');
 
                     if (data.count > 0) {
-                        badge.textContent = data.count;
-                        badge.style.display = 'block';
-                        notificationBadge.textContent = data.count;
-                        notificationBadge.style.display = 'block';
+                        if (sidebarBadge) {
+                            sidebarBadge.textContent = data.count;
+                            sidebarBadge.style.display = 'block';
+                        }
+                        if (topBadge) {
+                            topBadge.textContent = data.count;
+                            topBadge.style.display = 'inline-block';
+                        }
                     } else {
-                        badge.style.display = 'none';
-                        notificationBadge.style.display = 'none';
+                        if (sidebarBadge) sidebarBadge.style.display = 'none';
+                        if (topBadge) topBadge.style.display = 'none';
                     }
                 })
                 .catch(error => console.error('Error fetching unread count:', error));
